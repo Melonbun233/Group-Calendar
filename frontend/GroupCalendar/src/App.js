@@ -1,11 +1,14 @@
 'use strict';
 /**
  * This is the main file for this application
+ * This is only responsible for user login status change
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
-import Login from "./Login";
+import {Platform, StyleSheet, Text, View, Button} from 'react-native';
+import Login from './Login';
+import MainPage from './MainPage';
+import cs from './common/CommonStyles';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -13,43 +16,52 @@ export default class App extends Component<Props> {
 		super(props);
 	  
 		this.state = {
-			login: false,
-			username: '',
-			password: '',
+			loginStatus: false,
+			user: {
+				user_id: 0
+				user_name: '',
+				user_pwd: '',
+				user_email: '',
+				//more
+			},
 		};
 		
-		this._onSuccessfulLogin = this._onSuccessfulLogin.bind(this);
-  	}
+		//bind callback functions
+		this.onLogin = this.onLogin.bind(this);
+		this.onLogout = this.onLogout.bind(this);
+	}
 
-	//this handler is called when username and password are correct
-	_onSuccessfulLogin = (_username, _password) => {	
-  		this.setState({
-  			login: true,
-  			username: _username,
-  			password: _password,
-  		});
-  	}
+	//this handler is called when user_name and user_pwd are correct
+	onLogin = (_user) => {	
+		this.setState({
+			loginStatus: true,
+			user: [_user],
+		});
+	}
+
+	//this function is triggered when logout button is pressed
+	onLogout = () => {
+		this.setState({
+			loginStatus: false,
+			user: {
+				user_name: '',
+				user_pwd: '',
+			},
+		});
+	}
 
 	render() {
-		if(this.state.login) {
-		  return (
-		  	<View style = {s.container}>
-		  		<Text>You have successfully login!</Text>
-		  		<Text>Username : {this.state.username}</Text>
-		  		<Text>Password : {this.state.password}</Text>
-		  	</View>
-		  	);
+		if(this.state.loginStatus) {
+			//render main page
+			return (
+				<MainPage 
+					user = {this.state.user} 
+					onLogout = {this.onLogout}
+				/>
+			);
 		} else {
-		  return (<Login callback = {this._onSuccessfulLogin} />);
+			//render login page
+			return (<Login onLogin = {this.onLogin} />);
 		}
 	}
 }
-
-const s = StyleSheet.create({
-  container: {
-	flex: 1,
-	justifyContent: 'center',
-	alignItems: 'center',
-	backgroundColor: '#F5FCFF',
-  },
-});
