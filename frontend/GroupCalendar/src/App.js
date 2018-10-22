@@ -16,7 +16,7 @@ export default class App extends Component<Props> {
 		super(props);
 	  
 		this.state = {
-			loginStatus: true,
+			loginStatus: false,
 			user: {
 				user_id: 0,
 				user_name: '',

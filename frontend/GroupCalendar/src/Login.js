@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, 
 		Alert, Button, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
-import GCNetwork from './common/GCNetwork';
+import Network from './common/GCNetwork';
 import * as config from './../config.json';
 
 export default class Login extends Component {
@@ -28,7 +28,7 @@ export default class Login extends Component {
 	onLoginButtonPressed = () => {
 		//we first get the user info by the username
 		this.setState({isLoading: true});
-		var response = GCNetwork.fetchUser(this.state.user)
+		var response = Network.fetchUser(this.state.user)
 		
 		switch(response.status) {
 			case 200: this.login(response.user);
@@ -73,6 +73,7 @@ export default class Login extends Component {
 						autoCorrect = {false}
 						autoCapitalize = 'none'
 						keyboardType = 'default'
+						textContentType = 'username'
 					/>
 					<TextInput 
 						style = {s.input}
@@ -81,6 +82,7 @@ export default class Login extends Component {
 						onChangeText = {(text) => this.setState({password: text})}
 						secureTextEntry= {true}
 						keyboardType = 'default'
+						textContentType = 'password'
 					/>
 					<View style = {s.buttonContainer}>
 						<Button

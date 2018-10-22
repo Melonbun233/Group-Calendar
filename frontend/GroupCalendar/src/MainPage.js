@@ -37,14 +37,7 @@ export default class MainPage extends Component {
 				{/*Title*/}
 				<View style = {[cs.container, s.topBar]}>
 					<View style = {s.title}>
-						<Text style = {cs.h1}>{this.state.title}</Text>
-					</View>
-					<View style = {s.button}>
-						<Button
-							title = 'Logout >'
-							color = '#66a3ff'
-							onPress = {this.props.onLogout}
-						/>
+						<Text style = {cs.h2}>{this.state.title}</Text>
 					</View>
 				</View>
 				{/*Calendar Display*/}
@@ -140,7 +133,10 @@ export default class MainPage extends Component {
 				//need to change this later
 				return(<Search/>);
 			case 'Profile' :
-				return(<Profile/>);
+				return(<Profile 
+					user = {this.props.user}
+					onLogout = {this.props.onLogout}
+				/>);
 		}
 	}
 }
@@ -164,16 +160,14 @@ const s = StyleSheet.create({
 	},
 	topBar: {
 		marginTop: 40,
-		marginBottom: 10,
 		flex: 1,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'center',
 		width: '100%',
 		borderBottomWidth: 1,
 		borderBottomColor: '#e1e1ea',
 	},
 	title: {
-		marginLeft: 20,
 	},
 	content: {
 		flex: 8,
