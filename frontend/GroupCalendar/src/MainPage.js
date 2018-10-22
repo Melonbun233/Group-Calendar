@@ -1,7 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, 
-	Alert, Button, TouchableOpacity} 
+	Alert, Button, TouchableWithoutFeedback} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import Profile from './Profile';
@@ -53,34 +53,38 @@ export default class MainPage extends Component {
 				</View>
 				{/*Content Selection*/}
 				<View style = {[cs.container, s.bottomBar]}>
-					<TouchableOpacity 
-						style = {[s.switchButton]}
+					<TouchableWithoutFeedback 
 						onPress = {() => this.switchContent('Calendar')}
 					>
+						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.calendar}}>
 						Calendar</Text>
-					</TouchableOpacity>
-					<TouchableOpacity 
-						style = {[s.switchButton]}
+						</View>
+					</TouchableWithoutFeedback>
+					<TouchableWithoutFeedback 
 						onPress = {() => this.switchContent('Project')}
 					>
+						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.project}}>
 						Project</Text>
-					</TouchableOpacity>
-					<TouchableOpacity 
-						style = {[s.switchButton]}
+						</View>
+					</TouchableWithoutFeedback>
+					<TouchableWithoutFeedback 
 						onPress = {() => this.switchContent('Search')}
 					>
+						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.search}}>
 						Search</Text>
-					</TouchableOpacity>
-					<TouchableOpacity 
-						style = {[s.switchButton]}
+						</View>
+					</TouchableWithoutFeedback>
+					<TouchableWithoutFeedback 
 						onPress = {() => this.switchContent('Profile')}
 					>
+						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.profile}}>
 						Profile</Text>
-					</TouchableOpacity>
+						</View>
+					</TouchableWithoutFeedback>
 				</View>
 			</View>
 		);

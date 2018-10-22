@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, 
 		Alert, Button, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
-import Network from './common/GCNetwork';
+import GCNetwork from './common/GCNetwork';
 import * as config from './../config.json';
 
 export default class Login extends Component {
@@ -28,25 +28,36 @@ export default class Login extends Component {
 	onLoginButtonPressed = () => {
 		//we first get the user info by the username
 		this.setState({isLoading: true});
-		var url = config.server.concat("/users");
-		Network.fetchUser(url, this.state.user)
-			.then(response => {
-				switch(response.status) {
-					case 200: this.props.onLogin(response.user);
-					break;
-					case 0:
-					case 400: 
-					case 404: this.setState({loginFailed: true});
-					break;
-					default: Alert.alert("HTTP error: ${status}");
-				}
-			});
+		var response = GCNetwork.fetchUser(this.state.user)
+		
+		switch(response.status) {
+			case 200: this.login(response.user);
+			break;
+			case 0:
+			case 400: 
+			case 404: this.setState({loginFailed: true});
+			break;
+			default: Alert.alert("HTTP ERROR", JSON.stringify(response.status));
+		}
+
 		this.setState({isLoading: false});
+	}
+
+	//Actually compare the password and call onLogin to jump to main page
+	login = (_user) => {
+		if (_user.user_password === this.state.password){
+			this.setState({loginFailed: false});
+			this.props.onLogin(_user);
+		} else {
+			this.setState({loginFailed: true});
+		}
 	}
 
 	render() {
 		const spinner = this.state.isLoading ?
 			<ActivityIndicator size='large'/> : null;
+		const fail = this.state.loginFailed ?
+			<Text style = {s.failLogin}>Email or Password Incorrect</Text> : null;
 		return (
 			<View style = {cs.container}>
 				<View style = {[cs.container, s.titleContainer]}>
@@ -56,7 +67,7 @@ export default class Login extends Component {
 				<View style = {[cs.container, s.contentContainer]}>
 					<TextInput 
 						style = {s.input}
-						placeholder = 'Username'
+						placeholder = 'Email'
 						placeholderTextColor = '#b3b3b3'
 						onChangeText = {(text) => this.setState({username: text})}
 						autoCorrect = {false}
@@ -78,6 +89,7 @@ export default class Login extends Component {
 							onPress = {this.onLoginButtonPressed}
 						/>
 					</View>
+					{fail}
 					{spinner}
 					<View style = {[cs.container, cs.flowBottom]}>
 						<Text style = {cs.smallText}> by Talking Code </Text> 
@@ -121,4 +133,8 @@ const s = StyleSheet.create({
 	bg: {
 		backgroundColor: '#ffffff',
 	},
+	failLogin: {
+		fontSize: 14,
+		color: '#ff0000',
+	}
 });
