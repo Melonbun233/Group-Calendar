@@ -13,6 +13,8 @@ app.get('/', (req,res) =>{
 	res.send('Hello World');
 });
 
+app.listen(3000, ()=>console.log('Listening on port 3000...'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
