@@ -4,13 +4,12 @@ var parser = require('body-parser');
 var user_controller = require('../controllers/userController');
 
 const {check, validationResult} = require('express-validator/check');
-var temp = {"email" : "234@gmail.com"};
+var temp = {"email" : "234gmail.com"};
 
 /* GET users. */
 router.get('/', 
-	[check('user_email').isEmail()],
+	[check(temp).isEmail()],
 	function(req, res){
-		//var json = JSON.parse(req);
 		console.log(temp.email);
 		const errors = validationResult(temp.email);
 		if (!errors.isEmpty()){
