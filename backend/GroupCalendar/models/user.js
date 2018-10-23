@@ -1,4 +1,4 @@
-var db = require('../db.js');
+var db = require('../databases/UserDB.js');
 
 
 exports.info_get = function(email, info){

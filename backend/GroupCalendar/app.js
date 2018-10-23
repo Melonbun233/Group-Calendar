@@ -3,7 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var db = require('./db');
+var UserDB = require('./databases/UserDB');
+var ProjectDB = require('./databases/ProjectDB');
+var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
 
 /*----require routers-----------*/
