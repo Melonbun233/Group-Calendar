@@ -10,7 +10,7 @@ router.get('/',
 	[check('user_email').isEmail()],
 	function(req, res){
 		var user_email = req.params.user_email;
-		const errors = validationResult(user_email);
+		const errors = validationResult(req);
 		if (!errors.isEmpty()){
 			console.log(user_email);
 			return res.status(400).json({error: "Invalid user name"});
