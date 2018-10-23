@@ -10,7 +10,7 @@ exports.user_info_get = function(req, res){
 };
 
 exports.user_info_put = function(req, res){
-	res.send('NOT IMPLEMENTED: user info get');
+	res.send('NOT IMPLEMENTED: user info put');
 };
 
 exports.user_id_post = function(req, res){
