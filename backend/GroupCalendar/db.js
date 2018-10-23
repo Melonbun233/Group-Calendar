@@ -11,7 +11,7 @@ db.connect(function(err) {
   console.log('You are now connected to mysql...');
 });
 
-var request = new mysql.Request();
+var request = mysql.Request();
 
 exports.query(query, function(err, res){
 	if (err){
