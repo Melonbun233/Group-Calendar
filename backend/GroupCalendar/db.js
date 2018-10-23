@@ -16,6 +16,6 @@ exports.query = function(query, result){
 	db.query(query, function(err, res){
 		if (err) throw err;
 		//console.log(res);
-		result.send(res);
+		result(null, res);
 	});
 };

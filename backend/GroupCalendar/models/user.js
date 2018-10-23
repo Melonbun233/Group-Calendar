@@ -6,6 +6,6 @@ exports.info_get = function(email, info){
 		function (err, res){
 			console.log('\ndb query working\n');
 			if (err) throw err;
-			info.send(res);
+			info(null, res);
 		});
 };
