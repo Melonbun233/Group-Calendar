@@ -4,11 +4,20 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
+	wholePage: {
+		width: '100%',
+		height: '100%',
+	},
 	container: {
 		flex: 1,
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
+		backgroundColor: '#ffffff',
+	},
+	header: {
+		flexDirection: 'row',
+		alignItems: 'flex-start',
 	},
 	title: {
 		fontSize: 60,
@@ -19,25 +28,21 @@ export default StyleSheet.create({
 	flowTop: {
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
-		alignItems: 'center',
 	},
 	//all items are dropped to bottom on the same column
 	flowBottom: {
 		flexDirection: 'column',
 		justifyContent: 'flex-end',
-		alignItems: 'center',
 	},
 	//all items are flowed to left on the same row
 	flowLeft: {
 		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
+		justifyContent: 'flex-start',
 	},
 	//all items are flowed to right on the same row
 	flowRight: {
 		flexDirection: 'column',
-		justifyContent: 'flex-start',
-		alignItems: 'center',
+		justifyContent: 'flex-end',
 	},
 	//basically just align item
 	flowStart: {
@@ -64,6 +69,16 @@ export default StyleSheet.create({
 		fontSize: 30,
 		fontWeight: 'bold',
 		color: '#000000',
+	},
+	h4: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		color: '#e6e6e6',
+	},
+	h5: {
+		fontSize: 18,
+		fontWeight: 'normal',
+		color: '#808080',
 	},
 	//normal text
 	normalText: {

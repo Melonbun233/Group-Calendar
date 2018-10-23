@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "react": "16.6.0-alpha.8af6728",
-    "react-native": "0.57.3"
+    "react-native": "0.57.3",
+    "react-native-google-signin": "^1.0.0-rc7",
+    "react-navigation": "^2.18.0",
+    "validate.js": "^0.12.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
