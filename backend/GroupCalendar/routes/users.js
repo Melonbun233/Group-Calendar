@@ -9,7 +9,7 @@ const {check, validationResult} = require('express-validator/check');
 router.get('/', 
 	[check('user_email').isEmail()],
 	function(req, res){
-		var user_email = req.params.user_email;
+		var user_email = JSON.parse(req);
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
 			console.log(user_email);
