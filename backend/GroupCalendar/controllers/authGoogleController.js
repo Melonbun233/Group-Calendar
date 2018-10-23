@@ -34,7 +34,7 @@ exports.auth_google = function(req, res){
   		function(user_err, user_result){
   		// if user could not be found in the DB, we should create a new account for the user
   		if(user_err){
-  			con_userDB.query("INSERT INTO Users (user_email) VALUES (google_res.email)"
+  			con_userDB.query("INSERT INTO Users (user_email) VALUES (google_res.email)",
   				function(user_err2, user_new){
   					if(user_err2) throw user_err2;
   				// user_new contains the user_id and we need to give new user a calendar id 
