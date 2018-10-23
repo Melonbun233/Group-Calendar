@@ -1,7 +1,7 @@
 //var User = require('../models/user');
 
 exports.user_info_get = function(req, res){
-	res.send('NOT IMPLEMENTED: user info get');
+	res.status(200).send('NOT IMPLEMENTED: user info get');
 };
 
 exports.user_info_put = function(req, res){
