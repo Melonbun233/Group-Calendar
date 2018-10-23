@@ -12,10 +12,10 @@ router.get('/',
 		//var json = JSON.parse(req);
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
-			console.log(req);
+			console.log(req.body);
 			return res.status(400).json({error: "Invalid user name"});
 		}
-		user_controller.user_info_get(user_email, res);
+		user_controller.user_info_get(req.body, res);
 	});
 
 router.put('/', user_controller.user_info_put);
