@@ -5,7 +5,8 @@ var router = express.Router();
 var user_controller = require('../controllers/userController');
 
 /* GET users listing. */
-router.get('/users', user_controller.user_info_get);
+//router.get('/users', user_controller.user_info_get);
+router.get('/users', (req,res)=>{res.send('***In users router***')});
 router.put('/users', user_controller.user_info_put);
 router.post('/users', user_controller.user_id_post);
 router.delete('/users', user_controller.user_delete);
