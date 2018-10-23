@@ -1,6 +1,7 @@
 var User = require('../models/user.js');
 
 exports.user_info_get = function(req, res){
+	console.log('\nIn userController user_info_get\n');
 	User.info_get(req, function(err, info){
 		if (err)
 			res.status(400).send('Invalid id_token');
