@@ -22,8 +22,8 @@ export default class GCNetwork extends Component {
 		// return fetch(url, {method: 'GET', body: JSON.stringify(_user)})
 		// 		.then(response => {
 		// 			return {
-		// 				status: [response.status],
-		// 				user: [response.json()]
+		// 				status: response.status,
+		// 				user: response.json(),
 		// 			}
 		// 		})
 		// 		.catch(error => {
@@ -36,8 +36,9 @@ export default class GCNetwork extends Component {
 		return {
 			status: 200,
 			user: {
-				user_name: 'admin',
-				user_email: 'zeng_zh@foxmail.com',
+				user_name: 'Admin',
+				user_pwd: 'qwer',
+				user_email: 'admin@mail.com',
 				user_id: '0',
 			}
 		};
@@ -69,11 +70,32 @@ export default class GCNetwork extends Component {
 		return {
 			status: 200,
 			profile: {
+				user_region: 'Canada',
 				user_descript: 'my name is Henry',
 				user_birth: '1997-05-03',
-				user_gender: 'mail',
+				user_gender: 'male',
 			}
 		}
-
 	}
+
+	static fetchUserWithGoogle(id_token){
+		var url = config.server.concat('/auth/google');
+		return fetch(url, {method: 'POST', body: JSON.stringify(id_token)})
+			.then(response => {
+				return {
+					status: response.status,
+					user: response.json(),
+				}
+			})
+			.catch(error => {
+				Alert.alert("Something Very Bad Happened");
+				return {
+					status: 0,
+				}
+			})
+	}
+
+
+
+
 }

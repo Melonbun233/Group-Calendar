@@ -11,10 +11,13 @@ import Search from './Search';
 
 export default class MainPage extends Component {
 
+	static navigationOptions = {
+		header: null
+	}
 	constructor(props) {
-	  super(props);
-	
-	  this.state = {
+		super(props);
+		var user = this.props.navigation.getParam('user', 'user');
+		this.state = {
 	  		//calendar is the default content page
 	  		title: 'Calendar',
 	  		buttonColor: {
@@ -23,12 +26,18 @@ export default class MainPage extends Component {
 	  			profile: '#000000',
 	  			search: '#000000',
 	  		},
-	  };
+	  		user,
+		};
+
+		this._onSignOut = this._onSignOut.bind(this);
 	}
 
+	componentDidMount() {
+		
+	}
 	//this function is invoked on switch button press
-	switchContent = (_name) => {
-		this.setState(this.getButtonColorState(_name));
+	_switchContent = (_name) => {
+		this.setState(this._getButtonColorState(_name));
 	}
 
 	render() {
@@ -37,17 +46,17 @@ export default class MainPage extends Component {
 				{/*Title*/}
 				<View style = {[cs.container, s.topBar]}>
 					<View style = {s.title}>
-						<Text style = {cs.h2}>{this.state.title}</Text>
+						<Text style = {cs.h3}>{this.state.title}</Text>
 					</View>
 				</View>
 				{/*Calendar Display*/}
 				<View style = {[cs.container, s.content]}>
-					{this.getContent()}
+					{this._getContent()}
 				</View>
 				{/*Content Selection*/}
 				<View style = {[cs.container, s.bottomBar]}>
 					<TouchableWithoutFeedback 
-						onPress = {() => this.switchContent('Calendar')}
+						onPress = {() => this._switchContent('Calendar')}
 					>
 						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.calendar}}>
@@ -55,7 +64,7 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
-						onPress = {() => this.switchContent('Project')}
+						onPress = {() => this._switchContent('Project')}
 					>
 						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.project}}>
@@ -63,7 +72,7 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
-						onPress = {() => this.switchContent('Search')}
+						onPress = {() => this._switchContent('Search')}
 					>
 						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.search}}>
@@ -71,11 +80,11 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
-						onPress = {() => this.switchContent('Profile')}
+						onPress = {() => this._switchContent('Profile')}
 					>
 						<View style = {s.switchButton}>
 						<Text style = {{color: this.state.buttonColor.profile}}>
-						Profile</Text>
+						Me</Text>
 						</View>
 					</TouchableWithoutFeedback>
 				</View>
@@ -84,7 +93,7 @@ export default class MainPage extends Component {
 	}
 
 	//this is used to modify button color on button press
-	getButtonColorState = (_name) => {
+	_getButtonColorState = (_name) => {
 		var ret;
 		switch (_name) {
 			default : 
@@ -123,7 +132,7 @@ export default class MainPage extends Component {
 	}
 
 	//choose which content based on title
-	getContent = () => {
+	_getContent = () => {
 		switch(this.state.title) {
 			case 'Calendar' :
 				return(<Calendar/>);
@@ -134,10 +143,14 @@ export default class MainPage extends Component {
 				return(<Search/>);
 			case 'Profile' :
 				return(<Profile 
-					user = {this.props.user}
-					onLogout = {this.props.onLogout}
+					user = {this.state.user}
+					onSignOut = {this._onSignOut}
 				/>);
 		}
+	}
+
+	_onSignOut = () => {
+		this.props.navigation.goBack();
 	}
 }
 
@@ -159,13 +172,13 @@ const s = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	topBar: {
-		marginTop: 40,
+		marginTop: 20,
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'center',
 		width: '100%',
 		borderBottomWidth: 1,
-		borderBottomColor: '#e1e1ea',
+		borderBottomColor: '#e6e6e6',
 	},
 	title: {
 	},
@@ -179,9 +192,6 @@ const s = StyleSheet.create({
 		justifyContent: 'space-between',
 		width: '100%',
 		borderTopWidth: 1,
-		borderTopColor: '#e1e1ea',
-	},
-	focus: {
-		backgroundColor: '#ff0000',
+		borderTopColor: '#e6e6e6',
 	},
 });
