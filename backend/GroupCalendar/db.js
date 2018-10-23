@@ -11,16 +11,9 @@ db.connect(function(err) {
   console.log('You are now connected to mysql...');
 });
 
-var request = mysql.Request();
-
 exports.query = function(query, res){ 
-	request.query(query, function(err, res){
-		if (err){
-			console.log("error while query");
-			res.send(err);
-		} else {
-			console.log("query successful");
-			res.send(res);
-		}
+	db.query(query, function(err, res){
+		if (err) throw err;
+		res.send(res);
 	});
 };
