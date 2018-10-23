@@ -1,7 +1,12 @@
-//var User = require('../models/user');
+var User = require('../models/user.js');
 
 exports.user_info_get = function(req, res){
-	res.status(200).send('NOT IMPLEMENTED: user info get');
+	User.info_get(function(err, info){
+		if (err)
+			res.status(400).send('Invalid id_token');
+		else 
+			res.json(info);
+	});
 };
 
 exports.user_info_put = function(req, res){
