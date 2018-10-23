@@ -8,7 +8,7 @@ exports.info_get = function(email, info){
 			if (err) 
 				throw err;
 			else if (res.length == 0){
-				console.log("query result length: %d", res.length;
+				console.log("query result length: %d", res.length);
 				info(null, 404);
 			}
 			else 
