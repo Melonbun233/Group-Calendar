@@ -10,10 +10,10 @@ exports.get_info = function(email, info){
 		});
 };
 exports.create_user = function(email, user_id){
-	var query = "INSERT INTO Users ('" + column + "') VALUES ('"+ values + "')";
+	var query = "INSERT INTO Users (user_email) VALUES ('" + email + "')";
 	db.query(query,
 		function (err, res){
 			if (err) throw err;
-			result()
+			user_id = res.insertId;
 		});
 };

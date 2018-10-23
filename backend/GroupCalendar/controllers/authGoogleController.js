@@ -10,8 +10,9 @@
 // the req is the idToken of user
 var express = require('Express');
 var auth = express();
+var User = require('../models/user.js');
 
-var CLIENT_ID = ???;
+var CLIENT_ID = 948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com;
 exports.auth_google = function(req, res){
 	const {OAuth2Client} = require('google-auth-library');
 	const client = new OAuth2Client(CLIENT_ID);

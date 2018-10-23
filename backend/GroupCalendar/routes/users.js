@@ -3,10 +3,20 @@ var router = express.Router();
 var parser = require('body-parser');
 var user_controller = require('../controllers/userController');
 
-/* GET users listing. */
-router.get('/', function(req, res){
-	user_controller.user_info_get(req.body, res);
-});
+const {check, validationResult} = require('express-validator/check');
+
+/* GET users. */
+router.get('/', 
+	[check('user_email').isEmail()],
+	function(req, res){
+		var user_email = req.params.user_email;
+		const errors = validationResult(req);
+		if (!errors.isEmpty()){
+			console.log(user_email);
+			return res.status(400).json({error: "Invalid user name"});
+		}
+		user_controller.user_info_get(user_email, res);
+	});
 
 router.put('/', user_controller.user_info_put);
 router.post('/', user_controller.user_id_post);
