@@ -5,7 +5,7 @@ exports.user_info_get = function(req, res){
 		if (info==null) 
 			res.status(400).send('Invalid id_token');
 		else 
-			res.json(info);
+			res.status(400).json(info);
 	});
 };
 
