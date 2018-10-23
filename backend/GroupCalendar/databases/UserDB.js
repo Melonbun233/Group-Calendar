@@ -9,7 +9,7 @@ var db = mysql.createConnection({
 
 db.connect(function(err) {
   if (err) throw err;
-  console.log('You are now connected to mysql...');
+  console.log('You are now connected to UserDB...');
 });
 
 exports.query = function(query, result){ 
