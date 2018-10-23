@@ -2,7 +2,7 @@ var db = require('../db.js');
 
 
 exports.info_get = function(email, info){
-	var query = 'SELECT * FROM Users WHERE user_email = ' + '123gmail.com';
+	var query = 'SELECT * FROM Users WHERE user_email = 123@gmail.com";
 	db.query(query,
 		function (err, res){
 			console.log('\ndb query working\n');
