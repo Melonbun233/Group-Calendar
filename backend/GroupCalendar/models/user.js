@@ -8,7 +8,7 @@ exports.info_get = function(email, info){
 			if (err) 
 				throw err;
 			else if (res.length == 0){
-				info(null, 404);
+				info(null, null);
 			}
 			else 
 				info(null, res);
