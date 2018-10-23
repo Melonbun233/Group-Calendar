@@ -5,13 +5,15 @@ var user_controller = require('../controllers/userController');
 
 const {check, validationResult} = require('express-validator/check');
 
+var json = JSON.parse(req);
+
 /* GET users. */
 router.get('/', 
 	[check('user_email').isEmail()],
 	function(req, res){
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
-			console.log(user_email);
+			console.log(json);
 			return res.status(400).json({error: "Invalid user name"});
 		}
 		user_controller.user_info_get(req.body, res);
