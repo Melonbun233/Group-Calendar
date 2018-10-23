@@ -12,10 +12,10 @@ db.connect(function(err) {
   console.log('You are now connected to mysql...');
 });
 
-exports.query = function(query, res){ 
+exports.query = function(query, result){ 
 	db.query(query, function(err, res){
 		if (err) throw err;
-		console.log(res);
-		//res.send(res);
+		//console.log(res);
+		result.send(res);
 	});
 };
