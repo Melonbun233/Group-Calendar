@@ -1,3 +1,12 @@
 {
 	"server" : "localhost",
+	"googleSignIn" : {
+		//"scopes" : "https://www.googleapis.com/auth/profile.readonly", 
+  		//"webClientId" : "404029675931-nasuengad4ri34fuhuo7dlticlpkm6ui.apps.googleusercontent.com",
+  		//"offlineAccess" : true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+  		//"hostedDomain" : '', // specifies a hosted domain restriction
+  		//"forceConsentPrompt" : true, // [Android] if you want to show the authorization prompt at each login
+  		//"accountName" : '', // [Android] specifies an account name on the device that should be used
+  		"iosClientId" : "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com", // [iOS] optional, if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+	}
 }
