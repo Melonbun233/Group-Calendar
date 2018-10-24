@@ -5,16 +5,13 @@ var calen = require('./calendar.js');
 exports.get_info = function(email, res){
 	var query = "SELECT * FROM Users WHERE user_email = '" + email + "'";
 	db.query(query,
-		function (err, sql_res){
+		function (sql_res){
 			//console.log(email);
 			//console.log(res);
-			if (err) 
-				throw err;
-			else if (sql_res.length == 0){
-				res(null, null);
-			}
+			if (sql_res.length == 0)
+				res(null);
 			else 
-				res(null, sql_res);
+				res(sql_res);
 		});
 };
 exports.get_info_byId = function(user_id, info){
