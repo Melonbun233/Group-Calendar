@@ -34,6 +34,7 @@ exports.auth_google = (req, res) => {
   verify(req.id_token)
     .catch((error) => {
       console.log(error);
+      res.status(400).send('Can\'t verify your google id token');
     });
   console.log('Successful Verification...');
   // auth_res.send('post test');
@@ -43,8 +44,8 @@ exports.auth_google = (req, res) => {
   console.log(endpoint_url);
 
   auth.get(endpoint_url, function(google_req, google_res){
-    // if(google_err) 
-    //  auth_res.status(400).send('Can\'t connect to Google auth center.');
+    if(google_res === null) 
+     res.status(400).send('Can\'t connect to Google auth center.');
 
     User.get_info(google_res.email, function(get_err, user_res){
       if(get_err) 
@@ -66,12 +67,12 @@ exports.auth_google = (req, res) => {
           console.log('New account has been setup');
           //   auth_res.status(400).send('Server fails to find the new user.');
           // successfully create a new user and return the user info
-          res.json(db_res);
+          res.status(200).json(db_res);
         });
       } else {
         // found the exisiting record
         console.log('Welcome Back');
-        res.json(user_res);
+        res.status(200).json(user_res);
       }
 
     });
