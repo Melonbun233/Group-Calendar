@@ -85,8 +85,9 @@ export default class GCNetwork extends Component {
 	}
 
 	//we currently use url to pass parameter because some inevitable bugs
-	static async fetchUserWithGoogle(idToken){
-		var url = config.server.concat('/auth/google?id_token=').concat(idToken);
+	static async fetchUserWithGoogle(idToken, user_email){
+		var url = config.server.concat('/auth/google?id_token=').concat(idToken)
+			.concat('&user_email=').concat(user_email);
 		Alert.alert(url);
 		//Alert.alert(url);
 		try {

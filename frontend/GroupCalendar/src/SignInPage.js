@@ -72,7 +72,8 @@ export default class SignInPage extends Component {
 				// 		userid: userInfo.user.id,
 				// 	}, signInByGoogle: true});
 
-				let res = await Network.fetchUserWithGoogle(userInfo.idToken);
+				let res = await Network.fetchUserWithGoogle(userInfo.idToken, 
+					userInfo.user.email);
 				//Alert.alert(JSON.stringify(res));
 				if(res !== null) {
 					if (res.status == 200) {
