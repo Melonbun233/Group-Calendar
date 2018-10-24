@@ -28,8 +28,8 @@ router.put('/', /*user_controller.user_info_put*/(req,res)=>{
 	if (!errors.isEmpty()){
 		return res.status(400).json({"error": "Invalid info to update."});
 	}*/
-	console.log(req.param('user_id'));
-	user_controller.user_info_put(req.param, res);
+	console.log(req.query);
+	user_controller.user_info_put(req.query, res);
 	console.log("put works");
 	res.send('put works in send');
 
