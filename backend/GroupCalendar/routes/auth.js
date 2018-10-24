@@ -9,7 +9,7 @@ router.post('/google', function(req, res){
 
 	console.log('Checking Google Auth\n');
 
-	if(req === null){
+	if(req.body.length == 0){
 		return res.status(404).send('No request Found\n');
 	}
 
