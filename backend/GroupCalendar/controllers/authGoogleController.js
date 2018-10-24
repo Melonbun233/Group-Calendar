@@ -32,8 +32,9 @@ exports.auth_google = (req, res) => {
 
   let id_token = req.param('id_token');
   let email = req.param('user_email');
+  let user_name = req.param('user_name');
 
-  if(id_token === 'undefined' || email === 'undefined'){
+  if(id_token === 'undefined' || email === 'undefined' || user_name === 'undefined'){
     res.status(400).send('Can\'t find your google id token\n');
     return console.log('Err: empty id_token');
   }
@@ -73,6 +74,10 @@ exports.auth_google = (req, res) => {
         console.log('Welcome new user\n');
         //   auth_res.status(400).send('Server fails to create a new account.');
         user_id = db_res.user_id;
+      });
+      User.update_user("user_name = '"+ user_name + "'", user_id, function(update_err, db_res){
+        if(update_err)
+          throw update_err;
       });
       User.get_info_byId(user_id, function(get_new_err, db_res){
         if(get_new_err)
