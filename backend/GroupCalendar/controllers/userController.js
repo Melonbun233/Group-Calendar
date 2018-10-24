@@ -1,9 +1,11 @@
 var User = require('../models/user.js');
 
 exports.user_info_get = function(email, res){
-	//console.log("email = %s", req);
-	User.get_info(email, function(info){
-		if (info === null)
+	console.log("getting user info");
+	User.get_info(email, function(err, info){
+		if (err)
+			console.log(err);
+		else if (info === null)
 			res.status(404).json({error: "User name does not refer to any entry."});
 		else
 			res.status(200).json(info);
