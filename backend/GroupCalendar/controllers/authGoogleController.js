@@ -37,8 +37,8 @@ exports.auth_google = function(auth_req, auth_res){
     console.log('Successful Verification...');
 
   
-  const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
-  // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
+  // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
+  var endpoint_url = "'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + id_token+ "'";
   console.log(endpoint_url);
 
   auth.get(endpoint_url, function(google_req, google_res){
