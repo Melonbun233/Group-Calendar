@@ -34,7 +34,7 @@ exports.auth_google = (req, res) => {
   let email = req.param('user_email');
   // let user_name = req.param('user_name');
 
-  if(id_token === 'undefined' || email === 'undefined' || user_name === 'undefined'){
+  if(id_token === 'undefined' || email === 'undefined'){
     res.status(400).send('Can\'t find your google id token\n');
     return console.log('Err: empty id_token');
   }
