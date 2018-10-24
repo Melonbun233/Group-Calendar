@@ -14,23 +14,23 @@ var User = require('../models/user.js');
 const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 
-async function verify(_idToken) {
-  const client = new OAuth2Client(CLIENT_ID);
-  const ticket = await client.verifyIdToken({
-    idToken: _idToken,
-    audience: CLIENT_ID, 
-  });
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-  // If request specified a G Suite domain:
-  //const domain = payload['hd'];
-}
+// async function verify(_idToken) {
+//   const client = new OAuth2Client(CLIENT_ID);
+//   const ticket = await client.verifyIdToken({
+//     idToken: _idToken,
+//     audience: CLIENT_ID, 
+//   });
+//   const payload = ticket.getPayload();
+//   const userid = payload['sub'];
+//   // If request specified a G Suite domain:
+//   //const domain = payload['hd'];
+// }
 
 exports.auth_google = (idToken, auth_res) => {
-  verify(idToken)
-    .catch((error) => {
-      console.log(error);
-    });
+  // verify(idToken)
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
 
   // var passport = require('passport');
   // var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
