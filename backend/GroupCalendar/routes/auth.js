@@ -9,8 +9,8 @@ router.post('/google', function(req, res){
 
 	console.log('Checking Google Auth');
 
-	if(req === null)
-		res.status(404).send('No id_token Found');
+	// if(req === null)
+	// 	res.status(404).send('No id_token Found');
 
 	res.send('auth_post test');
  	// auth_controller.auth_google(req.body, auth_res);
