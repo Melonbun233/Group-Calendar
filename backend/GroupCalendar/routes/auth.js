@@ -13,8 +13,9 @@ router.post('/google', function(req, res){
 		res.status(404).send('No id_token Found');
 
 	// res.send('auth_post test');
- 	auth_controller.auth_google(req.body, auth_res);
- 	res.status(200).jason(auth_res);
+
+ 	auth_controller.auth_google(req.body, res);
+ 	
 });
 
 module.exports = router;
