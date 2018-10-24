@@ -17,7 +17,7 @@ var authRouter = require('./routes/auth');
 
 var app = express();
 app.listen(8080, '0.0.0.0');
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(sqlinjection);
 
