@@ -76,7 +76,7 @@ exports.auth_google = (req, auth_res) => {
   //       auth_res.json(user_res);
   //     }
 
-  //   });
+    }
   	// con_userDB.query("SELECT * FROM Users WHERE user_email = google_res.email", 
   	// 	function(user_err, user_result){
   	// 	// if user could not be found in the DB, we should create a new account for the user
@@ -116,6 +116,4 @@ exports.auth_google = (req, auth_res) => {
   	// 		// the user has an account before
   	// 		res.json(user_result);
   	// 	}
-  });
-
-};
+  
