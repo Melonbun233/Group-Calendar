@@ -6,8 +6,12 @@ exports.get_info = function(email, info){
 	var query = "SELECT * FROM Users WHERE user_email = '" + email + "'";
 	db.query(query,
 		function (err, res){
-			if (err) throw err;
-			info(null, res);
+			if (err) 
+				throw err;
+			else if (res.length == 0)
+				info(null, null);
+			else 
+				info(null, res);
 		});
 };
 exports.get_info_byId = function(user_id, info){
