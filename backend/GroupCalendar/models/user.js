@@ -23,7 +23,7 @@ exports.update_info = function(info_json, res){
 		queries += ("UPDATE Users SET ? = ? WHERE user_id = ?",
 					[x, info_json.x, info_json.user_id]);
 		console.log(x);
-		console.log(info_json.x);
+		console.log(info_json("'",x,"'"));
 		console.log(info_json.user_id);
 	}
 	db.query(queries,
