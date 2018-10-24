@@ -10,10 +10,10 @@ exports.get_info = function(email, info){
 				throw err;
 			else if (res.length == 0){
 				console.log(res);
-				info(null, null);
+				info(null);
 			}
 			else 
-				info(null, res);
+				info(res);
 		});
 };
 exports.get_info_byId = function(user_id, info){
@@ -21,7 +21,7 @@ exports.get_info_byId = function(user_id, info){
 	db.query(query,
 		function (err, res){
 			if (err) throw err;
-			info(null, res);
+			info(res);
 		});
 };
 
@@ -34,7 +34,7 @@ exports.create_user = function(email, res){
 		function (err, res){
 			if (err) throw err;
 			user_id = res.insertId;
-			res(null, user_id);
+			res(user_id);
 		});
 	var calen_id = calen.create_calen(user_id);
 	var setCmd = "calendar_id = '" + calen_id + "'";
@@ -49,6 +49,6 @@ exports.update_user = function(setCmd, user_id, res){
 	db.query(query,
 		function (err, res){
 			if (err) throw err;
-			res(null, res);
+			res(res);
 		});
 };
