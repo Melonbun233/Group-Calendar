@@ -7,7 +7,7 @@ exports.get_info = function(email, res){
 	db.query(query,
 		function (err, sql_res){
 			console.log(email);
-			console.log(sql_res);
+			console.log(sql_res[0]);
 			if(err) 
 				res(err, null);
 			else if (sql_res.length == 0)
