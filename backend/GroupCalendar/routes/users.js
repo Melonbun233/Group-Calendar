@@ -10,8 +10,6 @@ const {check, validationResult} = require('express-validator/check');
 router.get('/', 
 	check('user_email').isEmail(),
 	function(req, res){
-		//console.log("req.body is");
-		//console.log(req.body);
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
 			return res.status(400).json({"error": "Invalid user name."});
@@ -21,7 +19,7 @@ router.get('/',
 
 router.put('/', /*(req,res)=>{
 	for (int i=0; i<req.length; i++){
-		check()
+		check('');
 	}*/
 	user_controller.user_info_put
 );
