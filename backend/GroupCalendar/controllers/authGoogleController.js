@@ -11,41 +11,44 @@
 var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
-var {OAuth2Client} = require('google-auth-library');
-
+const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
-exports.auth_google = function(idToken, auth_res){
-	const client = new OAuth2Client(CLIENT_ID);
-	async function verify() {
-		const ticket = await client.verifyIdToken({
-			idToken: idToken,
-			audience: CLIENT_ID, 
-		});
-		const payload = ticket.getPayload();
-		const userid = payload['sub'];
-  	// If request specified a G Suite domain:
-  	//const domain = payload['hd'];
-  }
-  verify().catch(console.error);
 
+// async function verify(_idToken) {
+//   const client = new OAuth2Client(CLIENT_ID);
+//   const ticket = await client.verifyIdToken({
+//     idToken: _idToken,
+//     audience: CLIENT_ID, 
+//   });
+//   const payload = ticket.getPayload();
+//   const userid = payload['sub'];
+//   // If request specified a G Suite domain:
+//   //const domain = payload['hd'];
+// }
 
-  var passport = require('passport');
-  var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-  var User = require('../models/User');
+exports.auth_google = (idToken, auth_res) => {
+  // verify(idToken)
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
 
-  passport.use(new GoogleStrategy({
-    clientID: "591307876438-4nmmm817vks785u467lo22kss40kqno2.apps.googleusercontent.com",
-    clientSecret: "BagENe4LxG_PZ_qz2oFX7Aok",
-    callbackURL: "http://127.0.0.1:3000/auth/google/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-   User.findOrCreate({ userid: profile.id }, { name: profile.displayName,userid: profile.id }, function (err, user) {
-     return done(err, user);
-   });
-  }
-  ));
+  // var passport = require('passport');
+  // var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+  // var User = require('../models/User');
 
-  module.exports = passport;
+  // passport.use(new GoogleStrategy({
+  //   clientID: "591307876438-4nmmm817vks785u467lo22kss40kqno2.apps.googleusercontent.com",
+  //   clientSecret: "BagENe4LxG_PZ_qz2oFX7Aok",
+  //   callbackURL: "http://127.0.0.1:3000/auth/google/callback"
+  // },
+  // function(accessToken, refreshToken, profile, done) {
+  //  User.findOrCreate({ userid: profile.id }, { name: profile.displayName,userid: profile.id }, function (err, user) {
+  //    return done(err, user);
+  //  });
+  // }
+  // ));
+
+  // module.exports = passport;
 
   // const {OAuth2Client} = require('google-auth-library');
   // const http = require('http');
