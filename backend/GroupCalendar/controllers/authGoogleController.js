@@ -27,7 +27,7 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 
-exports.auth_google = (req, auth_res) => {
+exports.auth_google = (req, res) => {
 
   console.log(req.id_token);
 
@@ -53,20 +53,20 @@ exports.auth_google = (req, auth_res) => {
       //   auth_res.status(400).send('Server fails to deal with your Google account.');
       var user_id;
       if(user_res === null){
-        User.create_user(google_res.email, function(create_err, res){
+        User.create_user(google_res.email, function(create_err, db_res){
           if(create_err) 
             throw create_err;
           console.log('Welcome new user');
           //   auth_res.status(400).send('Server fails to create a new account.');
-          user_id = res.user_id;
+          user_id = db_res.user_id;
         });
-        User.get_info_byId(user_id, function(get_new_err, res){
+        User.get_info_byId(user_id, function(get_new_err, db_res){
           if(get_new_err)
             throw get_new_err;
           console.log('New account has been setup');
           //   auth_res.status(400).send('Server fails to find the new user.');
           // successfully create a new user and return the user info
-          auth_res.json(res);
+          auth_res.json(db_res);
         });
       } else {
         // found the exisiting record
