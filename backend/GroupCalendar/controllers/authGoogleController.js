@@ -59,8 +59,8 @@ exports.auth_google = (req, res) => {
 
 
   User.get_info(email, function(get_err, user_res){
-    if(get_err) 
-      throw get_err;
+    // if(get_err) 
+    //   throw get_err;
     console.log('Finding your google email from our Database...\n');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var user_id;
