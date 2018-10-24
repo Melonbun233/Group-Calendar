@@ -17,8 +17,6 @@ var authRouter = require('./routes/auth');
 
 var app = express();
 app.listen(8080, '0.0.0.0');
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
 app.use(sqlinjection);
 
 // view engine setup
@@ -28,6 +26,8 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 //app.use(bodyParser());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
