@@ -8,14 +8,12 @@ exports.get_info = function(email, res){
 		function (err, sql_res){
 			console.log(email);
 			console.log(sql_res);
-			if(err) {
-				console.log("Error is ");
-				console.log(err);
-			}
+			if(err) 
+				res(err, null)
 			else if (sql_res.length == 0)
-				res(null);
+				res(null, null);
 			else 
-				res(sql_res);
+				res(null, sql_res);
 		});
 };
 exports.get_info_byId = function(user_id, res){
