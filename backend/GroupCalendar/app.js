@@ -16,7 +16,7 @@ var authRouter = require('./routes/auth');
 /*------------------------------*/
 
 var app = express();
-app.listen(8080, '0.0.0.0');
+
 app.use(sqlinjection);
 
 // view engine setup
@@ -26,17 +26,22 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({type: '*/*'}));
+app.use(cookieParser());
+
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+  	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  	res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+  	next();
 });
+
+app.listen(8080, '0.0.0.0');
 //app.use(express.json());
 //app.use(express.urlencoded({extended: true}));
 
 
 //app.use(bodyParser());
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
