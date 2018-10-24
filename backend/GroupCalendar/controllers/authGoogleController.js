@@ -75,10 +75,10 @@ exports.auth_google = (req, res) => {
         //   auth_res.status(400).send('Server fails to create a new account.');
         user_id = db_res.user_id;
       });
-      User.update_user("user_name = '"+ user_name + "'", user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
-      });
+      // User.update_user("user_name = '"+ user_name + "'", user_id, function(update_err, db_res){
+      //   if(update_err)
+      //     throw update_err;
+      // });
       User.get_info_byId(user_id, function(get_new_err, db_res){
         if(get_new_err)
           throw get_new_err;
