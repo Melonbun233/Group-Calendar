@@ -29,6 +29,8 @@ async function verify(_idToken) {
 
 exports.auth_google = (req, res) => {
 
+  console.log(req); /* test */
+
   if(req.id_token === null){
     res.status(400).send('Can\'t find your google id token\n');
   }
