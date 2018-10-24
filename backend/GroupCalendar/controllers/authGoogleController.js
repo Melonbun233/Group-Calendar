@@ -11,7 +11,7 @@
 var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
-const url = require('url');
+// var url = require('url');
 const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 
@@ -33,50 +33,50 @@ exports.auth_google = (req, auth_res) => {
 // exports.auth_google = function(auth_req, auth_res){
   // console.log(req.id_token);
 
-  verify(req.id_token)
-    .catch((error) => {
-      console.log(error);
-    });
+  // verify(req.id_token)
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
     console.log('Successful Verification...');
-
+    auth_res.send('post test');
   
-  // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
-  var endpoint_url = "'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + req.id_token+ "'";
-  console.log(endpoint_url);
+  // // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
+  // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
+  // console.log(endpoint_url);
 
-  auth.get(endpoint_url, function(google_req, google_res){
-   // if(google_err) 
-   //  auth_res.status(400).send('Can\'t connect to Google auth center.');
+  // auth.get(endpoint_url, function(google_req, google_res){
+  //  // if(google_err) 
+  //  //  auth_res.status(400).send('Can\'t connect to Google auth center.');
 
-    User.get_info(google_res.email, function(get_err, user_res){
-      if(get_err) 
-        throw get_err;
-      console.log('Finding your google email from our Database...');
-      //   auth_res.status(400).send('Server fails to deal with your Google account.');
-      var user_id;
-      if(user_res.user_id === null){
-        User.create_user(google_res.email, function(create_err, res){
-          if(create_err) 
-            throw create_err;
-          console.log('Welcome new user');
-          //   auth_res.status(400).send('Server fails to create a new account.');
-          user_id = res;
-        });
-        User.get_info_byId(user_id, function(get_new_err, res){
-          if(get_new_err)
-            throw get_new_err;
-          console.log('New account has been setup');
-          //   auth_res.status(400).send('Server fails to find the new user.');
-          // successfully create a new user and return the user info
-          auth_res.status(200).json(res);
-        });
-      } else {
-        // found the exisiting record
-        console.log('Welcome Back');
-        auth_res.status(200).json(user_res);
-      }
+  //   User.get_info(google_res.email, function(get_err, user_res){
+  //     if(get_err) 
+  //       throw get_err;
+  //     console.log('Finding your google email from our Database...');
+  //     //   auth_res.status(400).send('Server fails to deal with your Google account.');
+  //     var user_id;
+  //     if(user_res === null){
+  //       User.create_user(google_res.email, function(create_err, res){
+  //         if(create_err) 
+  //           throw create_err;
+  //         console.log('Welcome new user');
+  //         //   auth_res.status(400).send('Server fails to create a new account.');
+  //         user_id = res.user_id;
+  //       });
+  //       User.get_info_byId(user_id, function(get_new_err, res){
+  //         if(get_new_err)
+  //           throw get_new_err;
+  //         console.log('New account has been setup');
+  //         //   auth_res.status(400).send('Server fails to find the new user.');
+  //         // successfully create a new user and return the user info
+  //         auth_res.json(res);
+  //       });
+  //     } else {
+  //       // found the exisiting record
+  //       console.log('Welcome Back');
+  //       auth_res.json(user_res);
+  //     }
 
-    });
+    }
   	// con_userDB.query("SELECT * FROM Users WHERE user_email = google_res.email", 
   	// 	function(user_err, user_result){
   	// 	// if user could not be found in the DB, we should create a new account for the user
@@ -116,6 +116,4 @@ exports.auth_google = (req, auth_res) => {
   	// 		// the user has an account before
   	// 		res.json(user_result);
   	// 	}
-  });
-
-};
+  
