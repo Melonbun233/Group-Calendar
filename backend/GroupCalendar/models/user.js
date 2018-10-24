@@ -8,9 +8,9 @@ exports.get_info = function(email, res){
 
 		function (err, sql_res){
 			if(err) throw err;
-			//console.log(email);
-			//console.log(res);
-			if (sql_res.length == 0)
+			console.log(email);
+			console.log(res);
+			else if (sql_res.length == 0)
 				res(null);
 			else 
 				res(sql_res);
