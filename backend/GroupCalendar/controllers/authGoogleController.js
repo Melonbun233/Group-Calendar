@@ -54,13 +54,13 @@ exports.auth_google = (req, auth_res) => {
       console.log('Finding your google email from our Database...');
       //   auth_res.status(400).send('Server fails to deal with your Google account.');
       var user_id;
-      if(user_res.user_id === null){
+      if(user_res === null){
         User.create_user(google_res.email, function(create_err, res){
           if(create_err) 
             throw create_err;
           console.log('Welcome new user');
           //   auth_res.status(400).send('Server fails to create a new account.');
-          user_id = res;
+          user_id = res.user_id;
         });
         User.get_info_byId(user_id, function(get_new_err, res){
           if(get_new_err)

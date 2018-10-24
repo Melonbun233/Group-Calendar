@@ -58,17 +58,16 @@ exports.create_user = function(email, res){
 		function (err, sql_res){
 			if (err) 
 				res(err, null);
-			else
-				res(null, sql_res);
+
 			user_id = sql_res.insertId;
-			res(user_id);
 		});
 	var calen_id;
 	calen.create_calen(user_id, function(err, calen_res){
-		calen_id = calen_res;
+		calen_id = calen_res.calen_id;
 	});
 	var setCmd = "calendar_id = '" + calen_id + "'";
 	this.update_user(setCmd, user_id);
+	res(null, user_id);
 };
 
 // update user record with setCmd
