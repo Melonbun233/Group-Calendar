@@ -12,8 +12,6 @@ router.get('/',
 	function(req, res){
 		console.log("req.body is");
 		console.log(req.body);
-		console.log("req is");
-		console.log(req);
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
 			return res.status(400).json({"error": "Invalid user name."});
