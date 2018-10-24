@@ -27,10 +27,10 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 
-exports.auth_google = (id_token, auth_res) => {
-  console.log(id_token);
+exports.auth_google = (auth_req, auth_res) => {
+  console.log(auth_req.id_token);
 
-  verify(id_token)
+  verify(auth_req.id_token)
     .catch((error) => {
       console.log(error);
     });
@@ -126,8 +126,10 @@ exports.auth_google = (id_token, auth_res) => {
 
   // main();
 
-  const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token);
+  const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
   // var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
+  console.log(endpoint_url);
+
   auth.get(endpoint_url, function(google_req, google_res){
    // if(google_err) 
    //  auth_res.status(400).send('Can\'t connect to Google auth center.');
