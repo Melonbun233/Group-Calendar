@@ -128,18 +128,21 @@ exports.auth_google = (req, auth_res) => {
    // if(google_err) 
    //  auth_res.status(400).send('Can\'t connect to Google auth center.');
 
-    User.get_info(google_res.email, function(user_res){
-      // if(db_err) 
+    User.get_info(google_res.email, function(get_err, user_res){
+      if(get_err) 
+        throw get_err;
       //   auth_res.status(400).send('Server fails to deal with your Google account.');
       var user_id;
       if(user_res.user_id === null){
-        User.create_user(google_res.email, function(res){
-          // if(err) 
+        User.create_user(google_res.email, function(create_err, res){
+          if(create_err) 
+            throw create_err;
           //   auth_res.status(400).send('Server fails to create a new account.');
           user_id = res;
         });
-        User.get_info_byId(user_id, function(res){
-          // if(err)
+        User.get_info_byId(user_id, function(get_new_err, res){
+          if(get_new_err)
+            throw get_new_err;
           //   auth_res.status(400).send('Server fails to find the new user.');
           // successfully create a new user and return the user info
           auth_res.status(200).json(res);

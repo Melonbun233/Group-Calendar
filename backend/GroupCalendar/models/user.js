@@ -9,7 +9,7 @@ exports.get_info = function(email, res){
 			console.log(email);
 			console.log(sql_res);
 			if(err) 
-				res(err, null)
+				res(err, null);
 			else if (sql_res.length == 0)
 				res(null, null);
 			else 
@@ -20,11 +20,12 @@ exports.get_info_byId = function(user_id, res){
 	var query = "SELECT * FROM Users WHERE user_id = '" + user_id + "'";
 	db.query(query,
 		function (err, sql_res){
-			if (err) throw err;
-			if (sql_res.length == 0)
-				res(null);
+			if (err) 
+				res(err, null);
+			else if (sql_res.length == 0)
+				res(null, null);
 			else 
-				res(sql_res);
+				res(null, sql_res);
 		});
 };
 // exports.get_info_bySub = function(user_sub, res){
@@ -45,12 +46,18 @@ exports.create_user = function(email, res){
 	var user_id;
 	var query = "INSERT INTO Users (user_email) VALUES ('" + email + "')";
 	db.query(query,
-		function (err, res){
-			if (err) throw err;
-			user_id = res.insertId;
+		function (err, sql_res){
+			if (err) 
+				res(err, null);
+			else
+				res(null, sql_res);
+			user_id = sql_res.insertId;
 			res(user_id);
 		});
-	var calen_id = calen.create_calen(user_id);
+	var calen_id;
+	calen.create_calen(user_id, function(err, calen_res){
+		calen_id = calen_res;
+	});
 	var setCmd = "calendar_id = '" + calen_id + "'";
 	this.update_user(setCmd, user_id);
 };
@@ -61,8 +68,10 @@ exports.create_user = function(email, res){
 exports.update_user = function(setCmd, user_id, res){
 	var query = "UPDATE Users SET '" + setCmd + "'' WHERE user_id = '" + user_id +"'";
 	db.query(query,
-		function (err, res){
-			if (err) throw err;
-			res(res);
+		function (err,sql_res){
+			if (err) 
+				res(err, null);
+			else
+				res(null, sql_res);
 		});
 };
