@@ -47,7 +47,7 @@ exports.auth_google = function(idToken, auth_res){
           // if(err)
           //   auth_res.status(400).send('Server fails to find the new user.');
           // successfully create a new user and return the user info
-          auth_res.status(200)json.(res);
+          auth_res.status(200).json(res);
         });
       } else {
         // found the exisiting record
