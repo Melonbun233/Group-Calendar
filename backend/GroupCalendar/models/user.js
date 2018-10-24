@@ -27,6 +27,17 @@ exports.get_info_byId = function(user_id, res){
 				res(sql_res);
 		});
 };
+// exports.get_info_bySub = function(user_sub, res){
+// 	var query = "SELECT * FROM Users WHERE user_sub = '" + user_sub + "'";
+// 	db.query(query,
+// 		function (err, sql_res){
+// 			if (err) throw err;
+// 			if (sql_res.length == 0)
+// 				res(null);
+// 			else 
+// 				res(sql_res);
+// 		});
+// };
 
 // create a new record in Users table and initialize a new calendar record
 // return the new user_id
