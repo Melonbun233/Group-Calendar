@@ -25,12 +25,12 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json({type: 'application/*+json'}));
+app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(function(req, res, next) {
 	res.header("Access-Control-Allow-Origin", "*");
-  	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  	res.header("Access-Control-Allow-Headers", "*");
   	res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
   	next();
 });
