@@ -33,14 +33,15 @@ exports.auth_google = (req, res) => {
 
   if(req.id_token === null){
     res.status(400).send('Can\'t find your google id token\n');
+    return console.log('Err: empty id_token');
   }
 
   console.log(req.id_token);
 
   verify(req.id_token)
     .catch((error) => {
-      console.log(error);
       res.status(400).send('Can\'t verify your google id token\n');
+      return console.log(error);
     });
   console.log('Successful Verification...\n');
   // auth_res.send('post test');
@@ -50,8 +51,10 @@ exports.auth_google = (req, res) => {
   console.log(endpoint_url);
 
   auth.get(endpoint_url, function(google_req, google_res){
-    if(google_res === null) 
-     res.status(400).send('Can\'t connect to Google auth center.\n');
+    if(google_res === null){
+      return res.status(400).send('Can\'t connect to Google auth center.\n');
+    } 
+     
 
     User.get_info(google_res.email, function(get_err, user_res){
       if(get_err) 
