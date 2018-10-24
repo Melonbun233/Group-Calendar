@@ -16,6 +16,7 @@ exports.get_info = function(email, res){
 				res(null, sql_res);
 		});
 };
+
 exports.get_info_byId = function(user_id, res){
 	var query = "SELECT * FROM Users WHERE user_id = '" + user_id + "'";
 	db.query(query,

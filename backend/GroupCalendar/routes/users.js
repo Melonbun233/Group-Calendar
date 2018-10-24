@@ -10,19 +10,26 @@ const {check, validationResult} = require('express-validator/check');
 router.get('/', 
 	check('user_email').isEmail(),
 	function(req, res){
+		console.log(req.param('user_email'));
 		const errors = validationResult(req);
 		if (!errors.isEmpty()){
 			return res.status(400).json({"error": "Invalid user name."});
 		}
-		user_controller.user_info_get(req.body.user_email, res);
+		user_controller.user_info_get(req.param('user_email'), res);
 	});
 
-router.put('/', /*(req,res)=>{
-	for (int i=0; i<req.length; i++){
-		check('');
-	}*/
-	user_controller.user_info_put
-);
+router.put('/', user_controller.user_info_put/*(req,res)=>{
+
+	if (req.body.has('user_id'))
+		check('user_id').isNumeric();
+	if (req.body.has('user_name'))
+		check('user_name').isLength({max:50});
+	const errors = validationResult(req);
+	if (!errors.isEmpty()){
+		return res.status(400).json({"error": "Invalid info to update."});
+	}
+	user_controller.user_info_put(req.body, res);
+}*/);
 router.post('/', user_controller.user_id_post);
 router.delete('/', user_controller.user_delete);
 
