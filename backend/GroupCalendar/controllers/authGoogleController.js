@@ -16,9 +16,9 @@ const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 // var is_varified = 0;
 
-/* async */ function verify(_idToken) {
+ async function verify(_idToken) {
   const client = new OAuth2Client(CLIENT_ID);
-  const ticket = /* await */ client.verifyIdToken({
+  const ticket = await client.verifyIdToken({
     idToken: _idToken,
     audience: CLIENT_ID, 
   });
@@ -40,7 +40,7 @@ exports.auth_google = (req, res) => {
 
   verify(id_token)
   .catch((error) => {
-    // is_varified = 1;
+    // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token\n');
     return console.log(error);
   });
