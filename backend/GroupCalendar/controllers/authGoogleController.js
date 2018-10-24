@@ -27,12 +27,12 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 exports.auth_google = (req, auth_res) => {
-   verify(req.id_token)
+  
 
 // exports.auth_google = function(auth_req, auth_res){
   // console.log(req.id_token);
 
-  verify(req.id_token)
+  await verify(req.id_token)
     .catch((error) => {
       console.log(error);
     });
