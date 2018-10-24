@@ -3,7 +3,7 @@ var calen = require('./calendar.js');
 
 
 exports.get_info = function(email, info){
-	var query = "SELECT user_name FROM Users WHERE user_email = 'admin@mail.com'";
+	var query = "SELECT user_name FROM Users WHERE user_email = '" + email + "'";
 	db.query(query,
 		function (err, res){
 			console.log(email);

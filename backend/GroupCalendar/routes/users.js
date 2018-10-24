@@ -16,7 +16,7 @@ router.get('/',
 		if (!errors.isEmpty()){
 			return res.status(400).json({"error": "Invalid user name."});
 		}
-		user_controller.user_info_get(req.body, res);
+		user_controller.user_info_get(req.body.user_email, res);
 	});
 
 router.put('/', /*(req,res)=>{
