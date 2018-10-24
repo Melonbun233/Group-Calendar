@@ -7,7 +7,7 @@ var auth_controller = require('../controllers/authGoogleController');
 
 /* GET users listing. */
 router.post('/google', function(req, res){
-	//console.log(JSON.stringify(req.body));
+	console.log(req.param);
 
 	// if(!req.body){
 	// 	res.status(404).send('No request Found\n');

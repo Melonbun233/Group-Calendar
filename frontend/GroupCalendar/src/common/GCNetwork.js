@@ -84,14 +84,16 @@ export default class GCNetwork extends Component {
 		// }
 	}
 
+	//we currently use url to pass parameter because some inevitable bugs
 	static async fetchUserWithGoogle(idToken){
-		var url = config.server.concat('/auth/google');
+		var url = config.server.concat('/auth/google?id_token=').concat(idToken);
+		Alert.alert(url);
 		//Alert.alert(url);
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: JSON.stringify({"Content-Type": "application/json"}),
-				body: JSON.stringify({"tes": "tests"}),
+				// headers: JSON.stringify({"Content-Type": "application/json"}),
+				// body: JSON.stringify({"tes": "tests"}),
 			})
 			let responseJson = await response.json();
 			return {
