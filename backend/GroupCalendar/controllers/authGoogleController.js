@@ -93,11 +93,11 @@ exports.auth_google = (req, res) => {
     } else {
       // found the exisiting record
       console.log('Welcome Back\n');
-      // var setcmd = "user_name='" + user_name;
-      // User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
-      //   if(update_err)
-      //     throw update_err;
-      // });
+      var setcmd = "user_name='" + user_name;
+      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
+        if(update_err)
+          throw update_err;
+      });
 
       res.status(200).json(user_res);
 
