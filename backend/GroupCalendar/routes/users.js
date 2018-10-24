@@ -32,10 +32,10 @@ router.put('/', (req,res)=>{
 	}*/
 	var parsedUrl = url.parse(req.originalUrl);  
 	var parsedQ = querystring.parse(parsedUrl.query);
-	var stringQ = querystring.stringify(parsedQ)
-	console.log(stringQ);
-	user_controller.user_info_put(stringQ, res);
-	console.log("put works");
+	//var stringQ = querystring.stringify(parsedQ)
+	console.log(parsedQ);
+	user_controller.user_info_put(parsedQ, res);
+	console.log("put ends");
 
 });
 
