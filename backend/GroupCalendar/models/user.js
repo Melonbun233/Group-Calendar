@@ -9,13 +9,14 @@ exports.get_info = function(email, res){
 			console.log(email);
 			console.log(sql_res);
 			if(err) 
-				res(err, null)
+				res(err, null);
 			else if (sql_res.length == 0)
 				res(null, null);
 			else 
 				res(null, sql_res);
 		});
 };
+
 exports.get_info_byId = function(user_id, res){
 	var query = "SELECT * FROM Users WHERE user_id = '" + user_id + "'";
 	db.query(query,
