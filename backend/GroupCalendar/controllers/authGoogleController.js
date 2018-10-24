@@ -29,7 +29,7 @@ async function verify(_idToken) {
 
 exports.auth_google = (req, res) => {
 
-  console.log(req.header);/* test */
+  console.log(req.body);/* test */
 
   if(req.body == {}){
     res.status(400).send('Can\'t find your google id token\n');
