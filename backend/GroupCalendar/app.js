@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 app.listen(8080, '0.0.0.0');
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
