@@ -11,6 +11,7 @@
 var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
+const url = require('url');
 const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 
@@ -26,8 +27,10 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 
-exports.auth_google = (req, auth_res) => {
-  verify(req.id_token)
+exports.auth_google = (id_token, auth_res) => {
+  console.log(id_token);
+
+  verify(id_token)
     .catch((error) => {
       console.log(error);
     });
@@ -123,9 +126,9 @@ exports.auth_google = (req, auth_res) => {
 
   // main();
 
-
-  var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
-  auth.get(url, function(google_req, google_res){
+  const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token);
+  // var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
+  auth.get(endpoint_url, function(google_req, google_res){
    // if(google_err) 
    //  auth_res.status(400).send('Can\'t connect to Google auth center.');
 
