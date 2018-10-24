@@ -4,11 +4,11 @@ var parser = require('body-parser');
 var user_controller = require('../controllers/userController');
 
 const {check, validationResult} = require('express-validator/check');
-var temp = {"email" : "@gmail.com"};
+var temp = {"email" : "123@gmail.com"};
 
 /* GET users. */
 router.get('/', 
-	[check(temp).isEmail()],
+	[check('email').isEmail()],
 	function(req, res){
 		console.log(temp.email);
 		const errors = validationResult(temp.email);
