@@ -6,7 +6,7 @@ var auth_controller = require('../controllers/authGoogleController');
 
 /* GET users listing. */
 router.post('/google', function(req, res){
-
+	req.setRequestHeader("Content-type", "application/json");
 	console.log('Checking Google Auth\n');
 
 	if(req.body === NULL){
