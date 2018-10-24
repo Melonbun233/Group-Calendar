@@ -34,7 +34,7 @@ router.put('/', (req,res)=>{
 	console.log(parsedUrl);
 	var parsedQ = querystring.parse(parsedUrl.query);
 	console.log(parsedQ);
-	user_controller.user_info_put(params, res);
+	user_controller.user_info_put(parsedQ, res);
 	//console.log("put ends");
 
 });
