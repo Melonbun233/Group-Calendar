@@ -124,11 +124,11 @@ exports.auth_google = (req, auth_res) => {
 
 
   var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
-  auth.get(url, function(google_err, google_res){
-   if(google_err) 
-    auth_res.status(400).send('Can\'t connect to Google auth center.');
+  auth.get(url, function(google_req, google_res){
+   // if(google_err) 
+   //  auth_res.status(400).send('Can\'t connect to Google auth center.');
 
-  User.get_info(google_res.email, function(user_res){
+    User.get_info(google_res.email, function(user_res){
       // if(db_err) 
       //   auth_res.status(400).send('Server fails to deal with your Google account.');
       var user_id;
