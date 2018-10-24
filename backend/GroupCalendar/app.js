@@ -6,7 +6,7 @@ var logger = require('morgan');
 var UserDB = require('./databases/UserDB');
 var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
-const bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
 var sqlinjection = require('sql-injection');
 
 /*----require routers-----------*/

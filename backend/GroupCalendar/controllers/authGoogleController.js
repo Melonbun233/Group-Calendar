@@ -76,7 +76,7 @@ exports.auth_google = (req, res) => {
           console.log('New account has been setup\n');
           //   auth_res.status(400).send('Server fails to find the new user.');
           // successfully create a new user and return the user info
-          res.status(200).end(json(db_res));
+          res.status(200).send(json(db_res));
         });
       } else {
         // found the exisiting record
