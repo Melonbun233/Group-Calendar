@@ -15,7 +15,6 @@ db.connect(function(err) {
 exports.query = function(query, result){ 
 	db.query(query, function(err, res){
 		if (err) throw err;
-		//console.log(res);
-		result(null, res);
+		result(res);
 	});
 };

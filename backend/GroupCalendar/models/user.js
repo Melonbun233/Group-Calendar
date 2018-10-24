@@ -2,18 +2,17 @@ var db = require('../databases/UserDB.js');
 var calen = require('./calendar.js');
 
 
-exports.get_info = function(email, info){
+exports.get_info = function(email, res){
 	var query = "SELECT * FROM Users WHERE user_email = '" + email + "'";
 	db.query(query,
-		function (err, res){
-			if (err) 
-				throw err;
-			else if (res.length == 0){
-				console.log(res);
-				info(null);
-			}
+
+		function (sql_res){
+			//console.log(email);
+			//console.log(res);
+			if (sql_res.length == 0)
+				res(null);
 			else 
-				info(res);
+				res(sql_res);
 		});
 };
 exports.get_info_byId = function(user_id, info){
