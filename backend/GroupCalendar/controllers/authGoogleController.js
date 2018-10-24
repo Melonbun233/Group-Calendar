@@ -75,15 +75,15 @@ exports.auth_google = (req, res) => {
       User.get_info_byId(user_id, function(get_new_err, db_res){
         // if(get_new_err)
         //   throw get_new_err;
-        console.log('New account has been setup\n');
+        // console.log('New account has been setup\n');
         //   auth_res.status(400).send('Server fails to find the new user.');
         // successfully create a new user and return the user info
-        res.status(200).json(db_res);
+        res.status(200).json(db_res).send('New account has been setup\n');
       });
     } else {
       // found the exisiting record
-      console.log('Welcome Back\n');
-      res.status(200).json(user_res);
+      // console.log('Welcome Back\n');
+      res.status(200).json(user_res).send('Welcome Back');
     }
 
   });
