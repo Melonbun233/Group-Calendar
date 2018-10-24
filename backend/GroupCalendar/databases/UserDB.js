@@ -4,7 +4,8 @@ var db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'secretpw=ZZJ321',
-  database: 'UserDB'
+  database: 'UserDB',
+  multipleStatements: true
 });
 
 db.connect(function(err) {

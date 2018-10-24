@@ -13,8 +13,16 @@ exports.get_info = function(email, res){
 			else if (sql_res.length == 0)
 				res(null, null);
 			else 
-				res(null, sql_res);
+				res(null, sql_res[0]);
 		});
+};
+
+exports.update_info = function(info_json, res){/*
+	var queries = '';
+	info_json.forEach(function (item){
+		if ()
+		queries += mysql.format("UDPATE Users SET ")
+	})*/
 };
 
 exports.get_info_byId = function(user_id, res){
