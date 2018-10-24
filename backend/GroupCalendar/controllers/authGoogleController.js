@@ -35,17 +35,17 @@ exports.auth_google = (req, res) => {
   let user_name = req.param('user_name');
 
   if(id_token === 'undefined' || email === 'undefined'  || user_name === 'undefined' ){
-    res.status(400).send('Can\'t find your google id token\n');
+    res.status(400).send('Can\'t find your google id token');
     return console.log('Err: empty id_token');
   }
 
   verify(id_token)
   .catch((error) => {
     // is_varified = 0;
-    res.status(400).send('Can\'t verify your google id token\n');
+    res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
   });
-  console.log('Successful Verification...\n');
+  console.log('Successful Verification...');
   // auth_res.send('post test');
   
   // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
@@ -64,41 +64,41 @@ exports.auth_google = (req, res) => {
   User.get_info(email, function(get_err, user_res){
     if(get_err) 
       throw get_err;
-    console.log('Finding your google email from our Database...\n');
+    console.log('Finding your google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var user_id;
     if(user_res === null){
       User.create_user(email, function(create_err, db_res){
         if(create_err) 
           throw create_err;
-        console.log('Welcome new user\n');
+        console.log('Welcome new user');
         //   auth_res.status(400).send('Server fails to create a new account.');
         user_id = db_res.user_id;
       });
 
-      // console.log(user_name);
-      // var setcmd = "user_name='" + user_name;
-      // User.update_user(setcmd, user_id, function(update_err, db_res){
-      //   if(update_err)
-      //     throw update_err;
-      // });
+      var setcmd = "user_name='" + user_name + "'";
+      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
+        if(update_err)
+          throw update_err;
+      });
+      
       User.get_info_byId(user_id, function(get_new_err, db_res){
         if(get_new_err)
           throw get_new_err;
-        console.log('New account has been setup\n');
+        console.log('New account has been setup');
         //   auth_res.status(400).send('Server fails to find the new user.');
         // successfully create a new user and return the user info
         res.status(200).json(db_res);
       });
     } else {
       // found the exisiting record
-      console.log('Welcome Back\n');
+      console.log('Welcome Back');
       var setcmd = "user_name='" + user_name + "'";
       User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
         if(update_err)
           throw update_err;
       });
-      console.log('user_name');
+      console.log(user_name);
 
       res.status(200).json(user_res);
 
