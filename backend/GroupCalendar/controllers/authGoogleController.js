@@ -94,7 +94,7 @@ exports.auth_google = (req, res) => {
       // found the exisiting record
       console.log('Welcome Back\n');
       var setcmd = 'user_name =' + user_name;
-      User.update_user("user_name = '" + user_name + "'", user_res.user_id, function(update_err, db_res){
+      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
         if(update_err)
           throw update_err;
       });
