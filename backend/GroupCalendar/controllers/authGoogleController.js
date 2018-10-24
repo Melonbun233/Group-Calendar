@@ -30,6 +30,7 @@ async function verify(_idToken) {
 exports.auth_google = (req, res) => {
 
   let id_token = req.param('id_token');
+  let user_email = req.param('user_email');
 
   if(id_token == null){
     res.status(400).send('Can\'t find your google id token\n');
