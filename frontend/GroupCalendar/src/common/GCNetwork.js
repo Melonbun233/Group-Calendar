@@ -90,7 +90,7 @@ export default class GCNetwork extends Component {
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: JSON.stringify({"Content-Type": "application/x-www-form-urlencoded"}),
+				headers: JSON.stringify({"Content-Type": "application/json"}),
 				body: JSON.stringify({"tes": "tests"}),
 			})
 			let responseJson = await response.json();
