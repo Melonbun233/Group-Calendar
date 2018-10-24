@@ -20,8 +20,7 @@ exports.get_info = function(email, res){
 exports.update_info = function(info_json, res){
 	var queries = '';
 	for (var x in info_json){
-		queries += ("UPDATE Users SET ? = ? WHERE user_id = ?",
-					[x, info_json.user_name, info_json.user_id]);
+		queries += "UPDATE Users SET " + x + " = '" + info_json.x + "' WHERE user_id = '" + info_json.user_id + "'";
 		console.log(x);
 		console.log(info_json.user_name);
 		console.log(info_json.user_id);
