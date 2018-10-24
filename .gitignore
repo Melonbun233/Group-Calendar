@@ -1,3 +1,4 @@
+backend/GroupCalendar/bin/*.plist
 frontend/GroupCalendar/config.json
 # compiled output
 /dist

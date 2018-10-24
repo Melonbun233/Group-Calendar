@@ -7,28 +7,48 @@ var UserDB = require('./databases/UserDB');
 var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
+var sqlinjection = require('sql-injection');
 
 /*----require routers-----------*/
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
 /*------------------------------*/
 
 var app = express();
-app.listen(8080, '0.0.0.0');
-app.use(bodyParser.json());
+
+app.use(sqlinjection);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({type: 'application/*+json'}));
 app.use(cookieParser());
+
+app.use(function(req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+  	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  	res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+  	next();
+});
+
+app.listen(8080, '0.0.0.0');
+//app.use(express.json());
+//app.use(express.urlencoded({extended: true}));
+
+
+//app.use(bodyParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/auth',authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

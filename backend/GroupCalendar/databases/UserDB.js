@@ -4,7 +4,8 @@ var db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'secretpw=ZZJ321',
-  database: 'UserDB'
+  database: 'UserDB',
+  multipleStatements: true
 });
 
 db.connect(function(err) {
@@ -14,8 +15,9 @@ db.connect(function(err) {
 
 exports.query = function(query, result){ 
 	db.query(query, function(err, res){
-		if (err) throw err;
-		//console.log(res);
-		result(null, res);
+		if (err) 
+      result(err, null);
+		else 
+      result(null, res);
 	});
 };
