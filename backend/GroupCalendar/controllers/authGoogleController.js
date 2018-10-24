@@ -76,12 +76,12 @@ exports.auth_google = (req, res) => {
         user_id = db_res.user_id;
       });
 
-      console.log(user_name);
-      var setcmd = "user_name='" + user_name;
-      User.update_user(setcmd, user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
-      });
+      // console.log(user_name);
+      // var setcmd = "user_name='" + user_name;
+      // User.update_user(setcmd, user_id, function(update_err, db_res){
+      //   if(update_err)
+      //     throw update_err;
+      // });
       User.get_info_byId(user_id, function(get_new_err, db_res){
         if(get_new_err)
           throw get_new_err;
@@ -93,11 +93,11 @@ exports.auth_google = (req, res) => {
     } else {
       // found the exisiting record
       console.log('Welcome Back\n');
-      var setcmd = "user_name='" + user_name;
-      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
-      });
+      // var setcmd = "user_name='" + user_name;
+      // User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
+      //   if(update_err)
+      //     throw update_err;
+      // });
 
       res.status(200).json(user_res);
 
