@@ -17,12 +17,21 @@ exports.get_info = function(email, res){
 		});
 };
 
-exports.update_info = function(info_json, res){/*
+exports.update_info = function(info_json, res){
 	var queries = '';
-	info_json.forEach(function (item){
-		if ()
-		queries += mysql.format("UDPATE Users SET ")
-	})*/
+	for (var x in info_json){
+		queries += mysql.format("UPDATE Users SET ? = ? WHERE user_id = ?",
+					[x, info_json.x, info_json.user_id]);
+	}
+	db.query(queries,
+		function(err, sql_res){
+			if (err)
+				res(err, null);
+			else if (update_info)
+				res(null, null);
+			else 
+				res(null, sql_res[0]);
+		});
 };
 
 exports.get_info_byId = function(user_id, res){
