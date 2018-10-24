@@ -1,5 +1,5 @@
 var db = require('../databases/UserDB.js');
-var calen = require('./calender.js');
+var calen = require('./calendar.js');
 
 
 exports.get_info = function(email, info){
