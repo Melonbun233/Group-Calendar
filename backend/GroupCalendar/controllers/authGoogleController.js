@@ -98,6 +98,7 @@ exports.auth_google = (req, res) => {
         if(update_err)
           throw update_err;
       });
+      console.log('user_name');
 
       res.status(200).json(user_res);
 
