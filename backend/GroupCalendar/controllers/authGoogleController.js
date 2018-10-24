@@ -29,63 +29,61 @@ async function verify(_idToken) {
 
 exports.auth_google = (req, res) => {
 
-  console.log(req); /* test */
+  console.log(req.body); /* test */
 
-  if(req.id_token === null){
+  if(req.body == {}){
     res.status(400).send('Can\'t find your google id token\n');
     return console.log('Err: empty id_token');
   }
 
-  console.log(req.id_token);
-
-  verify(req.id_token)
-    .catch((error) => {
-      res.status(400).send('Can\'t verify your google id token\n');
-      return console.log(error);
-    });
-  console.log('Successful Verification...\n');
-  // auth_res.send('post test');
+  // verify(req.id_token)
+  //   .catch((error) => {
+  //     res.status(400).send('Can\'t verify your google id token\n');
+  //     return console.log(error);
+  //   });
+  // console.log('Successful Verification...\n');
+  // // auth_res.send('post test');
   
-  // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
-  var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
-  console.log(endpoint_url);
+  // // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
+  // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
+  // console.log(endpoint_url);
 
-  auth.get(endpoint_url, function(google_req, google_res){
-    if(google_res === null){
-      return res.status(400).send('Can\'t connect to Google auth center.\n');
-    } 
+  // auth.get(endpoint_url, function(google_req, google_res){
+  //   if(google_res === null){
+  //     return res.status(400).send('Can\'t connect to Google auth center.\n');
+  //   } 
      
 
-    User.get_info(google_res.email, function(get_err, user_res){
-      if(get_err) 
-        throw get_err;
-      console.log('Finding your google email from our Database...\n');
-      //   auth_res.status(400).send('Server fails to deal with your Google account.');
-      var user_id;
-      if(user_res === null){
-        User.create_user(google_res.email, function(create_err, db_res){
-          if(create_err) 
-            throw create_err;
-          console.log('Welcome new user\n');
-          //   auth_res.status(400).send('Server fails to create a new account.');
-          user_id = db_res.user_id;
-        });
-        User.get_info_byId(user_id, function(get_new_err, db_res){
-          if(get_new_err)
-            throw get_new_err;
-          console.log('New account has been setup\n');
-          //   auth_res.status(400).send('Server fails to find the new user.');
-          // successfully create a new user and return the user info
-          res.status(200).send(json(db_res));
-        });
-      } else {
-        // found the exisiting record
-        console.log('Welcome Back\n');
-        res.status(200).send(json(user_res));
-      }
+  //   User.get_info(google_res.email, function(get_err, user_res){
+  //     if(get_err) 
+  //       throw get_err;
+  //     console.log('Finding your google email from our Database...\n');
+  //     //   auth_res.status(400).send('Server fails to deal with your Google account.');
+  //     var user_id;
+  //     if(user_res === null){
+  //       User.create_user(google_res.email, function(create_err, db_res){
+  //         if(create_err) 
+  //           throw create_err;
+  //         console.log('Welcome new user\n');
+  //         //   auth_res.status(400).send('Server fails to create a new account.');
+  //         user_id = db_res.user_id;
+  //       });
+  //       User.get_info_byId(user_id, function(get_new_err, db_res){
+  //         if(get_new_err)
+  //           throw get_new_err;
+  //         console.log('New account has been setup\n');
+  //         //   auth_res.status(400).send('Server fails to find the new user.');
+  //         // successfully create a new user and return the user info
+  //         res.status(200).send(json(db_res));
+  //       });
+  //     } else {
+  //       // found the exisiting record
+  //       console.log('Welcome Back\n');
+  //       res.status(200).send(json(user_res));
+  //     }
 
-    });
-  });
+  //   });
+  // });
 }
   	// con_userDB.query("SELECT * FROM Users WHERE user_email = google_res.email", 
   	// 	function(user_err, user_result){

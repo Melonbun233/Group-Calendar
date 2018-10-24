@@ -16,7 +16,7 @@ router.post('/google', function(req, res){
 
 	// res.send('auth_post test');
 
- 	auth_controller.auth_google(req.body, res);
+ 	auth_controller.auth_google(req, res);
  	
 });
 
