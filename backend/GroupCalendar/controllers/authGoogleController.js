@@ -11,10 +11,10 @@
 var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
+var {OAuth2Client} = require('google-auth-library');
 
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 exports.auth_google = function(idToken, auth_res){
-	const {OAuth2Client} = require('google-auth-library');
 	const client = new OAuth2Client(CLIENT_ID);
 	async function verify() {
 		const ticket = await client.verifyIdToken({
@@ -28,12 +28,104 @@ exports.auth_google = function(idToken, auth_res){
   }
   verify().catch(console.error);
 
+
+  var passport = require('passport');
+  var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+  var User = require('../models/User');
+
+  passport.use(new GoogleStrategy({
+    clientID: "591307876438-4nmmm817vks785u467lo22kss40kqno2.apps.googleusercontent.com",
+    clientSecret: "BagENe4LxG_PZ_qz2oFX7Aok",
+    callbackURL: "http://127.0.0.1:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+   User.findOrCreate({ userid: profile.id }, { name: profile.displayName,userid: profile.id }, function (err, user) {
+     return done(err, user);
+   });
+  }
+  ));
+
+  module.exports = passport;
+
+  // const {OAuth2Client} = require('google-auth-library');
+  // const http = require('http');
+  // const url = require('url');
+  // const querystring = require('querystring');
+  // const opn = require('opn');
+
+  // // Download your OAuth2 configuration from the Google
+  // const keys = require('./keys.json');
+
+  // /**
+  //  * Start by acquiring a pre-authenticated oAuth2 client.
+  //  */
+  //  async function main() {
+  //   try {
+  //     const oAuth2Client = await getAuthenticatedClient();
+  //     // Make a simple request to the Google Plus API using our pre-authenticated client. The `request()` method
+  //     // takes an AxiosRequestConfig object.  Visit https://github.com/axios/axios#request-config.
+  //     const url = 'https://www.googleapis.com/plus/v1/people?query=pizza';
+  //     const res = await oAuth2Client.request({url})
+  //     console.log(res.data);
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  //   process.exit();
+  // }
+
+  // /**
+  //  * Create a new OAuth2Client, and go through the OAuth2 content
+  //  * workflow.  Return the full client to the callback.
+  //  */
+  //  function getAuthenticatedClient() {
+  //   return new Promise((resolve, reject) => {
+  //     // create an oAuth client to authorize the API call.  Secrets are kept in a `keys.json` file,
+  //     // which should be downloaded from the Google Developers Console.
+  //     const oAuth2Client = new OAuth2Client(
+  //       keys.web.client_id,
+  //       keys.web.client_secret,
+  //       keys.web.redirect_uris[0]
+  //       );
+
+  //     // Generate the url that will be used for the consent dialog.
+  //     const authorizeUrl = oAuth2Client.generateAuthUrl({
+  //       access_type: 'offline',
+  //       scope: 'https://www.googleapis.com/auth/plus.me'
+  //     });
+
+  //     // Open an http server to accept the oauth callback. In this simple example, the
+  //     // only request to our webserver is to /oauth2callback?code=<code>
+  //     const server = http.createServer(async (req, res) => {
+  //       if (req.url.indexOf('/oauth2callback') > -1) {
+  //       // acquire the code from the querystring, and close the web server.
+  //       const qs = querystring.parse(url.parse(req.url).query);
+  //       console.log(`Code is ${qs.code}`);
+  //       res.end('Authentication successful! Please return to the console.');
+  //       server.close();
+
+  //       // Now that we have the code, use that to acquire tokens.
+  //       const r = await oAuth2Client.getToken(qs.code)
+  //       // Make sure to set the credentials on the OAuth2 client.
+  //       oAuth2Client.setCredentials(r.tokens);
+  //       console.info('Tokens acquired.');
+  //       resolve(oAuth2Client);
+  //     }
+  //   }).listen(3000, () => {
+  //     // open the browser to the authorize url to start the workflow
+  //     opn(authorizeUrl);
+  //   });
+  // });
+  // }
+
+  // main();
+
+
   var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + idToken;
   auth.get(url, function(google_err, google_res){
-  	if(google_err) 
-      auth_res.status(400).send('Can\'t connect to Google auth center.');
+   if(google_err) 
+    auth_res.status(400).send('Can\'t connect to Google auth center.');
 
-    User.get_info(google_res.email, function(user_res){
+  User.get_info(google_res.email, function(user_res){
       // if(db_err) 
       //   auth_res.status(400).send('Server fails to deal with your Google account.');
       var user_id;
@@ -94,6 +186,6 @@ exports.auth_google = function(idToken, auth_res){
   	// 		// the user has an account before
   	// 		res.json(user_result);
   	// 	}
-  	});
-  
+  });
+
 };
