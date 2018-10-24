@@ -24,8 +24,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json({type: 'application/*+json'}));
+//app.use(bodyParser.urlencoded({extended: true}));
+//app.use(bodyParser.json({type: 'application/*+json'}));
 app.use(cookieParser());
 
 app.use(function(req, res, next) {
@@ -36,8 +36,8 @@ app.use(function(req, res, next) {
 });
 
 app.listen(8080, '0.0.0.0');
-//app.use(express.json());
-//app.use(express.urlencoded({extended: true}));
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 
 //app.use(bodyParser());
