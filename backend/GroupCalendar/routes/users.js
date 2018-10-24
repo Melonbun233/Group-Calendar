@@ -8,15 +8,15 @@ var temp = {"email" : "234@gmail.com"};
 
 /* GET users. */
 router.get('/', 
-	[check('email').isEmail()],
+	[check('user_email').isEmail()],
 	function(req, res){
-		console.log(temp.email);
-		const errors = validationResult(temp.email);
+		console.log(req.params.user_email);
+		const errors = validationResult(req.params.user_email);
 		if (!errors.isEmpty()){
 			//console.log(errors);
 			return res.status(400).json({"error": "Invalid user name"});
 		}
-		user_controller.user_info_get(temp.email, res);
+		user_controller.user_info_get(req.params.user_email, res);
 	});
 
 router.put('/', user_controller.user_info_put);
