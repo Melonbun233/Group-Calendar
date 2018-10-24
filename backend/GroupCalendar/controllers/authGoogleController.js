@@ -83,7 +83,14 @@ exports.auth_google = (req, res) => {
     } else {
       // found the exisiting record
       console.log('Welcome Back\n');
+<<<<<<< HEAD
       res.status(200).json(user_res);
+=======
+      console.log(user_res);
+      res.status(200).json(user_res);
+      // console.log('Welcome Back\n');
+      //res.status(200).json(user_res).send('Welcome Back');
+>>>>>>> 1df478f47ba67444094010e0462f92d861b3ca2d
     }
 
   });
