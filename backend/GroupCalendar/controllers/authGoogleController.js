@@ -27,7 +27,7 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 
-exports.auth_google = (auth_req, auth_res) => {
+exports.auth_google = function(auth_req, auth_res){
   console.log(auth_req.id_token);
 
   verify(auth_req.id_token)
