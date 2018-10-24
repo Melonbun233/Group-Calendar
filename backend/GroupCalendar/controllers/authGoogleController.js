@@ -65,7 +65,7 @@ exports.auth_google = (req, res) => {
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var user_id;
     if(user_res === null){
-      User.create_user(google_res.email, function(create_err, db_res){
+      User.create_user(email, function(create_err, db_res){
         if(create_err) 
           throw create_err;
         console.log('Welcome new user\n');
