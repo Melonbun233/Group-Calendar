@@ -26,11 +26,13 @@ async function verify(_idToken) {
   // If request specified a G Suite domain:
   //const domain = payload['hd'];
 }
+exports.auth_google = (req, auth_res) => {
+   verify(req.id_token)
 
-exports.auth_google = function(auth_req, auth_res){
-  console.log(auth_req.id_token);
+// exports.auth_google = function(auth_req, auth_res){
+  // console.log(req.id_token);
 
-  verify(auth_req.id_token)
+  verify(req.id_token)
     .catch((error) => {
       console.log(error);
     });
