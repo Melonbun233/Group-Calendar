@@ -25,7 +25,7 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json({type: '*/*'}));
+app.use(bodyParser.json({type: 'application/json'}));
 app.use(cookieParser());
 
 app.use(function(req, res, next) {
