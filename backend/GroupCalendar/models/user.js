@@ -5,7 +5,9 @@ var calen = require('./calendar.js');
 exports.get_info = function(email, res){
 	var query = "SELECT * FROM Users WHERE user_email = '" + email + "'";
 	db.query(query,
-		function (sql_res){
+
+		function (err, sql_res){
+			if(err) throw err;
 			//console.log(email);
 			//console.log(res);
 			if (sql_res.length == 0)
@@ -14,12 +16,15 @@ exports.get_info = function(email, res){
 				res(sql_res);
 		});
 };
-exports.get_info_byId = function(user_id, info){
+exports.get_info_byId = function(user_id, res){
 	var query = "SELECT * FROM Users WHERE user_id = '" + user_id + "'";
 	db.query(query,
-		function (err, res){
+		function (err, sql_res){
 			if (err) throw err;
-			info(null, res);
+			if (sql_res.length == 0)
+				res(null);
+			else 
+				res(sql_res);
 		});
 };
 
@@ -32,7 +37,7 @@ exports.create_user = function(email, res){
 		function (err, res){
 			if (err) throw err;
 			user_id = res.insertId;
-			res(null, user_id);
+			res(user_id);
 		});
 	var calen_id = calen.create_calen(user_id);
 	var setCmd = "calendar_id = '" + calen_id + "'";
@@ -47,6 +52,6 @@ exports.update_user = function(setCmd, user_id, res){
 	db.query(query,
 		function (err, res){
 			if (err) throw err;
-			res(null, res);
+			res(res);
 		});
 };
