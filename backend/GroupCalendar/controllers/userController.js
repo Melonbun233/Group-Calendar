@@ -17,7 +17,7 @@ exports.user_info_put = function(info_json, res){
 		if (err)
 			console.log(err);
 		else if (updated_info === null)
-			res.status(400).json({"error": "User id does not refer to any entry."});
+			res.status(404).json({"error": "User id does not refer to any entry."});
 		else
 			res.status(200).json(updated_info);
 	});
