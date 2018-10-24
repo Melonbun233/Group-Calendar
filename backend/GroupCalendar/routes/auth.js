@@ -15,7 +15,7 @@ router.post('/google', function(req, res){
 
 	console.log(req.param('id_token'));
 	console.log(req.param('user_email'));
-	// console.log(req.param('user_name'));
+	console.log(req.param('user_name'));
 	
 	// res.send('auth_post test');
 

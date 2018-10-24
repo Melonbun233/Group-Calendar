@@ -83,7 +83,7 @@ exports.create_user = function(email, res){
 // format of setCmd:
 // "column1 = val1, column2 = val2, ..."
 exports.update_user = function(setCmd, user_id, res){
-	var query = "UPDATE Users SET '" + setCmd + "'' WHERE user_id = '" + user_id +"'";
+	var query = "UPDATE Users SET '" + setCmd + "' WHERE user_id = '" + user_id +"'";
 	db.query(query,
 		function (err,sql_res){
 			if (err) 
