@@ -1,7 +1,7 @@
 var User = require('../models/user.js');
 
 exports.user_info_get = function(req, res){
-	console.log("email = ?", req);
+	console.log("email = %s", req);
 	User.get_info(req, function(err, info){
 		if (err) 
 			throw err;
