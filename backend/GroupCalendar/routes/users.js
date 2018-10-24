@@ -31,11 +31,12 @@ router.put('/', (req,res)=>{
 		return res.status(400).json({"error": "Invalid info to update."});
 	}*/
 	var parsedUrl = url.parse(req.originalUrl);  
+	console.log(parsedUrl);
 	var parsedQ = querystring.parse(parsedUrl.query);
 	//var stringQ = querystring.stringify(parsedQ)
 	console.log(parsedQ);
-	user_controller.user_info_put(parsedQ, res);
-	console.log("put ends");
+	//user_controller.user_info_put(parsedQ, res);
+	//console.log("put ends");
 
 });
 
