@@ -33,12 +33,12 @@ exports.auth_google = (req, auth_res) => {
 // exports.auth_google = function(auth_req, auth_res){
   // console.log(req.id_token);
 
-  verify(req.id_token)
-    .catch((error) => {
-      console.log(error);
-    });
+  // verify(req.id_token)
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
     console.log('Successful Verification...');
-
+    auth_res.send('post test');
   
   // // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
   // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + req.id_token;
