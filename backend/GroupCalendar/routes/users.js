@@ -10,7 +10,9 @@ const {check, validationResult} = require('express-validator/check');
 router.get('/', 
 	[check('user_email').isEmail()],
 	function(req, res){
+		console.log(req.param('user_email'));
 		console.log(req.body);
+
 		const errors = validationResult(req.body);
 		if (!errors.isEmpty()){
 			//console.log(errors);
