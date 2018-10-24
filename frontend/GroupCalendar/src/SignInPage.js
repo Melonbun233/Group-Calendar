@@ -22,10 +22,11 @@ export default class SignInPage extends Component {
 		this.state = {
 		  	signInFailed: false,
 		  	isLoading: false,
+		  	isSigning: false, //by google
 		  	user_email: '',
 		  	user_pwd: '',
 		};
-		
+		//this._onSignOut = this._onSignOut.bind(this);
 	}
 
 	async componentDidMount() {
@@ -33,68 +34,82 @@ export default class SignInPage extends Component {
 	}
 
 	//Function handles button press
-	_onSignInButtonPressed = () => {
+	_onSignInButtonPressed = async () => {
 		//we first get the user info by the username
 		this.setState({isLoading: true});
-		var response = Network.fetchUser(this.state.user)
-		
-		switch(response.status) {
-			case 200: this._signIn(response.user);
-			break;
-			case 0:
-			case 400: 
-			case 404: this.setState({signInFailed: true});
-			break;
-			default: Alert.alert("HTTP ERROR", JSON.stringify(response.status));
+		let res = await Network.fetchUser(this.state.user_email);
+		if(res !== null){
+			if(res.status == 200){
+				if (res.body.user_pwd == this.state.user_pwd &&
+					res.body.user_email == this.state.user_email){
+					this.setState({signInFailed: false, isLoading: false});
+					this.props.navigation.navigate('Main', 
+						{user: res.body, signInByGoogle: false});
+				} else {
+					this.setState({signInFailed: true});
+				}
+			} else if (res.status == 400 || res.status == 404) {
+				this.setState({signInFailed: true});
+			} else {
+				Alert.alert("Internet Error", JSON.stringify(res.error));
+			}
 		}
 		this.setState({isLoading: false});
 	}
 
-	//Actually compare the password and call onLogin to jump to main page
-	_signIn = (user) => {
-		if (user.user_pwd === this.state.user_pwd &&
-			user.user_email === this.state.user_email){
-			this.setState({signInFailed: false});
-			this.props.navigation.navigate('Main', {user});
-		} else {
-			this.setState({signInFailed: true});
-		}
-	}
 
-	_googleSignIn = async () => {
-		this.setState({isLoading: true});
+
+	_onGoogleSignInPressed = async () => {
+		this.setState({isSigning: true});
 		await GoogleSignin.hasPlayServices();
-		//await GoogleSignin.signOut();
 		await GoogleSignin.signIn()
-			.then((userInfo) => 
+			.then(async (userInfo) => 
 			{
-				var user = {
-						user_name: userInfo.user.name,
-						user_email: userInfo.user.email,
-						user_id: userInfo.user.id,
-					};
-				this.setState({
-					isLoading: false,
-				})
-				this.props.navigation.navigate('Main', {user});
+				// this.props.navigation.navigate('Main',
+				// 	{user: {
+				// 		user_email: userInfo.user.email,
+				// 		user_name: userInfo.user.name,
+				// 		userid: userInfo.user.id,
+				// 	}, signInByGoogle: true});
+
+				let res = await Network.fetchUserWithGoogle(userInfo.idToken);
+				//Alert.alert(JSON.stringify(res));
+				if(res !== null) {
+					if (res.status == 200) {
+						this.setState({isSigning: false});
+						this.props.navigation.navigate('Main', 
+							{user: res.user, signInByGoogle: true});
+					} else if (res.status == 400) {
+						Alert.alert('Something Wrong with Your Google Account');
+					} else {
+						Alert.alert("Internet Error", JSON.stringify(res.error));
+					}
+					// switch(res.status) {
+					// 	case 200: {
+					// 		this.setState({isSigning: false});
+					// 		this.props.navigation.navigate('Main', 
+					// 			{user: response.user, signInByGoogle: true});
+					// 	}
+					// 	break;
+					// 	case 400: Alert.alert('Something Wrong with Your Google Account');
+					// 	break;
+					// }
+				}
 			})
 			.catch((error) => {
 				if(error.code === statusCodes.SIGN_IN_CANCELLED) {
 					//user canceled the login flow
-					Alert.alert(JSON.stringify(error));
 				} else if (error.code === statusCodes.IN_PROGRESS) {
 					//in progress
-					Alert.alert(JSON.stringify(error));
 				} else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
       				// play services not available or outdated
-      				Alert.alert(JSON.stringify(error));
+      				Alert.alert('Play Service Not Avaliable');
    				} else {
       				//some other error happened
-      				Alert.alert(JSON.stringify(error));
+      				//console.error(JSON.stringify(error));
     			}
-    			this.setState({isLoading: false});
 			});
-		
+		this.setState({isSigning: false});
 	}
 
 	render() {
@@ -117,7 +132,7 @@ export default class SignInPage extends Component {
 				<View style = {[cs.container, s.titleContainer]}>
 					<Text style = {cs.title}>Group</Text>
 					<Text style = {cs.title}>Calendar</Text>
-					<Text style = {[cs.h3, s.welcom]}>Welcom Back</Text>
+					<Text style = {[cs.h3, s.welcome]}>Welcomee Back</Text>
 				</View>
 				{/*user email and passwrod*/}
 				<View style = {[cs.container, s.contentContainer]}>
@@ -128,7 +143,7 @@ export default class SignInPage extends Component {
 						onChangeText = {(text) => this.setState({user_email: text})}
 						autoCorrect = {false}
 						autoCapitalize = 'none'
-						keyboardType = 'default'
+						keyboardType = 'email-address'
 						textContentType = 'username'
 					/>
 					<TextInput 
@@ -139,6 +154,7 @@ export default class SignInPage extends Component {
 						secureTextEntry= {true}
 						keyboardType = 'default'
 						textContentType = 'password'
+						clearTextOnFocus = {true}
 					/>
 					<View style = {s.buttonContainer}>
 						<Button
@@ -150,13 +166,15 @@ export default class SignInPage extends Component {
 					</View>
 					{fail}
 					{spinner}
-					<GoogleSigninButton
-    					style={{ width: 48, height: 48 }}
-    					size={GoogleSigninButton.Size.Icon}
-    					color={GoogleSigninButton.Color.Dark}
-    					onPress={this._googleSignIn}
-    					disabled={this.state.isLoading} 
-    				/>
+					<View style = {s.googleSignIn}>
+						<GoogleSigninButton
+	    					style={{ width: 250, height: 48 }}
+	    					size={GoogleSigninButton.Size.Standard}
+	    					color={GoogleSigninButton.Color.Dark}
+	    					onPress={this._onGoogleSignInPressed}
+	    					disabled={this.state.isSigning} 
+	    				/>
+    				</View>
 					<View style = {[cs.container, cs.flowBottom]}>
 						<Text style = {cs.smallText}> by Talking Code </Text> 
 					</View>
@@ -169,31 +187,41 @@ export default class SignInPage extends Component {
 
 
 const s = StyleSheet.create({
-	welcom: {
+	welcome: {
 		color: '#e6e6e6',
 	},
 	signUpContainer: {
+		flex: 2,
 		width: '100%',
 		paddingRight: 20,
+		paddingTop: 30,
 		alignItems: 'flex-end',
 	},
 	titleContainer: {
-		margin: 10,
-		justifyContent: 'flex-end',
+		margin: 12,
+		marginBottom: 0,
+		marginTop: 0,
+		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		flex: 2,
+		flex: 10,
 	},
 	contentContainer: {
 		margin: 10,
+		marginTop: 0,
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		flex: 4,
+		flex: 21,
 	},
 	buttonContainer: {
 		margin: 5,
 		width: 250,
 		height: 40,
 		backgroundColor: '#66a3ff'
+	},
+	googleSignIn: {
+		flex: 10,
+		alignItems: 'center',
+		justifyContent: 'flex-end',
 	},
 	input: {
 		width: 250,

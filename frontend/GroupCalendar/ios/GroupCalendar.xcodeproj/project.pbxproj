@@ -1315,6 +1315,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
+					"/Users/melonbun/workspace/cpen321/frontend/GroupCalendar/node_modules/react-native-google-signin/ios/GoogleSdk",
 				);
 				INFOPLIST_FILE = GroupCalendar/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1343,6 +1344,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
+					"/Users/melonbun/workspace/cpen321/frontend/GroupCalendar/node_modules/react-native-google-signin/ios/GoogleSdk",
 				);
 				INFOPLIST_FILE = GroupCalendar/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

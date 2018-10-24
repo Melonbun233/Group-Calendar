@@ -8,6 +8,7 @@ import Profile from './Profile';
 import Calendar from './Calendar';
 import Project from './Project';
 import Search from './Search';
+import { GoogleSignin } from 'react-native-google-signin';
 
 export default class MainPage extends Component {
 
@@ -149,7 +150,17 @@ export default class MainPage extends Component {
 		}
 	}
 
-	_onSignOut = () => {
+	_onSignOut = async () => {
+		 //we need to sign out google account
+		if(this.props.navigation.state.params.signInByGoogle) {
+			try {
+    			await GoogleSignin.revokeAccess();
+    			await GoogleSignin.signOut();
+    			//Alert.alert('Signed out');
+  			} catch (error) {
+    			Alert.alert('Something Bad Happened During Signing Out');
+  			}
+		}
 		this.props.navigation.goBack();
 	}
 }

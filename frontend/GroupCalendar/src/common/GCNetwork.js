@@ -17,31 +17,35 @@ export default class GCNetwork extends Component {
 	//		404: cannot find 
 	//	Note that user name should be validated 
 	//
-	static fetchUser(_user) {
-		//var url = config.server.concat('/users');
-		// return fetch(url, {method: 'GET', body: JSON.stringify(_user)})
-		// 		.then(response => {
-		// 			return {
-		// 				status: response.status,
-		// 				user: response.json(),
-		// 			}
-		// 		})
-		// 		.catch(error => {
-		// 			Alert.alert("Something Very Bad Happened");
-		// 			return {
-		// 				status: 0,
-		// 			}
-		// 		});
-		//this is for test
-		return {
-			status: 200,
-			user: {
-				user_name: 'Admin',
-				user_pwd: 'qwer',
-				user_email: 'admin@mail.com',
-				user_id: '0',
+	static async fetchUser(_user_email) {
+		let url = config.server.concat('/users?user_email=').concat(_user_email);
+		//let url = 'https://facebook.github.io/react-native/movies.json';
+		try {
+		    let response = await fetch( url, 
+		    {	
+		    	method: 'GET', 
+			});
+		    let responseJson = await response.json();
+		    return {
+		    	status: response.status,
+		    	body: responseJson,
+		    }
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
 			}
-		};
+		}
+		//this is for test
+		// return {
+		// 	status: 200,
+		// 	user: {
+		// 		user_name: 'Admin',
+		// 		user_pwd: 'qwer',
+		// 		user_email: 'admin@mail.com',
+		// 		user_id: '0',
+		// 	}
+		// };
 	}
 
 	//	Function used to fetch user profile
@@ -51,48 +55,66 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static fetchProfile(_user_id){
-		// var url = config.server.concat('/users/profile');
-		// return fetch(url, {method: 'GET', body: JSON.stringify({user_id: [_userid]})})
-		// 	.then(response => {
-		// 		return {
-		// 			status: [response.status],
-		// 			profile: [response.json()]
-		// 		}
-		// 	})
-		// 	.catch(error => {
-		// 		Alert.alert("Something Very Bad Happened");
-		// 		return {
-		// 			status: 0,
-		// 		}
-		// 	});
-		//this is only used for test
-		return {
-			status: 200,
-			profile: {
-				user_region: 'Canada',
-				user_descript: 'my name is Henry',
-				user_birth: '1997-05-03',
-				user_gender: 'male',
+	static async fetchProfile(_user_id){
+		let url = config.server.concat('/users/profile?user_id=').concat(_user_id);
+		try {
+			let response = await fetch(url, {
+				method: 'GET'
+			});
+			let responseJson = await response.json();
+			return {
+				status: response.status,
+				body: responseJson,
+			}
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
 			}
 		}
+		//this is only used for test
+		// return {
+		// 	status: 200,
+		// 	profile: {
+		// 		user_region: 'Canada',
+		// 		user_descript: 'my name is Henry',
+		// 		user_birth: '1997-05-03',
+		// 		user_gender: 'male',
+		// 	}
+		// }
 	}
 
-	static fetchUserWithGoogle(id_token){
+	static async fetchUserWithGoogle(idToken){
 		var url = config.server.concat('/auth/google');
-		return fetch(url, {method: 'POST', body: JSON.stringify(id_token)})
-			.then(response => {
-				return {
-					status: response.status,
-					user: response.json(),
-				}
+		//Alert.alert(url);
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: JSON.stringify({"Content-Type": "application/json"}),
+				body: JSON.stringify({"tes": "test"}),
 			})
-			.catch(error => {
-				Alert.alert("Something Very Bad Happened");
-				return {
-					status: 0,
-				}
-			})
+			let responseJson = await response.json();
+			return {
+				status: response.status,
+				body: responseJson,
+			}
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
+			}
+		}
+
+		// return {
+		// 	status: 200,
+		// 	user: {
+		// 		id_token: idToken,
+		// 		user_name: 'Zhuohang Zeng',
+		// 		user_pwd: '',
+		// 		user_email: 'zzhuohang@gmail.com',
+		// 		user_id: '0',
+		// 	}
+		// }
 	}
 
 

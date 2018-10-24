@@ -23,21 +23,22 @@ export default class Profile extends Component {
 	}
 
 	//callback function for refreshing
-	_onRefresh = () => {
+	_onRefresh = async () => {
 		this.setStatus({isRefreshing: true});
-		var response = Network.fetchProfile(this.props.user.user_id);
-		switch(response.statue) {
-			case 200: this.setStatus(response.profile);
-			break;
-			case 0:
-			case 400:
-			case 404: this.setStatus({logInfoChanged: true});
-			break;
-			default: {
-				Alert.alert("HTTP ERROR", JSON.stringify(response.status));
-				this.setStatus(logInfoChanged: true);
-			}
-		}
+		let res = await Network.fetchProfile(this.props.user.user_id);
+		//TOGO : THIS REQUIRE REMAKE
+		// switch(response.statue) {
+		// 	case 200: this.setStatus(response.profile);
+		// 	break;
+		// 	case 0:
+		// 	case 400:
+		// 	case 404: this.setStatus({logInfoChanged: true});
+		// 	break;
+		// 	default: {
+		// 		Alert.alert("HTTP ERROR", JSON.stringify(response.status));
+		// 		this.setStatus(logInfoChanged: true);
+		// 	}
+		// }
 		this.setStatus({isRefreshing: false});
 	}
 
@@ -56,7 +57,8 @@ export default class Profile extends Component {
 					{/*Username and email*/}
 					<View style = {[cs.container, s.userNameContainer]}>
 						<Text style = {cs.h2}>{this.props.user.user_name}</Text>
-						<Text style = {cs.h5}>{this.props.user.user_email}</Text>
+						<Text style = {cs.h5}
+							selectable = {true}>{this.props.user.user_email}</Text>
 					</View>
 					{/*gender*/}
 					{/*log out button*/}
