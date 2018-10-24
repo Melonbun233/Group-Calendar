@@ -11,7 +11,7 @@
 var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
-// const url = require('url');
+const url = require('url');
 const {OAuth2Client} = require('google-auth-library');
 var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
 
@@ -37,8 +37,8 @@ exports.auth_google = (auth_req, auth_res) => {
     console.log('Successful Verification...');
 
   
-  // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
-  var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
+  const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
+  // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
   console.log(endpoint_url);
 
   auth.get(endpoint_url, function(google_req, google_res){
