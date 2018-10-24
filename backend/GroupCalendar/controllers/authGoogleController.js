@@ -8,7 +8,7 @@
 // });
 
 // the req is the idToken of user
-var express = require('Express');
+var express = require('express');
 var auth = express();
 var User = require('../models/user.js');
 
