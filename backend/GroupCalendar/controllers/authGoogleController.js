@@ -26,17 +26,18 @@ async function verify(_idToken) {
   // If request specified a G Suite domain:
   //const domain = payload['hd'];
 }
+
 exports.auth_google = (req, auth_res) => {
   
 
 // exports.auth_google = function(auth_req, auth_res){
   // console.log(req.id_token);
 
-  await verify(req.id_token)
-    .catch((error) => {
-      console.log(error);
-    });
-    console.log('Successful Verification...');
+  // verify(req.id_token)
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+  //   console.log('Successful Verification...');
 
   
   // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
