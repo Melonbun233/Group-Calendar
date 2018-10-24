@@ -18,22 +18,20 @@ exports.get_info = function(email, res){
 };
 
 exports.update_info = function(info_json, res){
-	var queries = '';
+	//var queries = '';
 	for (var x in info_json){
-		queries += "UPDATE Users SET " + x + " = '" + info_json.x + "' WHERE user_id = '" + info_json.user_id + "'";
+		var query = "UPDATE Users SET " + x + " = '" + info_json.x + "' WHERE user_id = '" + info_json.user_id + "'";
+		db.query(query,
+			function (err, sql_res){
+				console.log(sql_res[0]);
+				if(err) 
+					res(err, null);
+		});
 		console.log(x);
-		console.log(info_json.user_name);
+		console.log(info_json.x);
 		console.log(info_json.user_id);
 	}
-	db.query(queries,
-		function(err, sql_res){
-			if (err)
-				res(err, null);
-			else if (update_info)
-				res(null, null);
-			else 
-				res(null, sql_res[0]);
-		});
+	res(null, info_json);
 };
 
 exports.get_info_byId = function(user_id, res){
