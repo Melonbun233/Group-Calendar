@@ -72,29 +72,20 @@ export default class SignInPage extends Component {
 				// 		userid: userInfo.user.id,
 				// 	}, signInByGoogle: true});
 
-				let res = await Network.fetchUserWithGoogle(userInfo.idToken, 
-					userInfo.user.email);
+				let res = await Network.fetchUserWithGoogle(userInfo)
+					//.idToken, 
+					//userInfo.user.email)//userInfo.idToken.user.name);
 				//Alert.alert(JSON.stringify(res));
 				if(res !== null) {
 					if (res.status == 200) {
 						this.setState({isSigning: false});
 						this.props.navigation.navigate('Main', 
-							{user: res.user, signInByGoogle: true});
+							{user: res.body, signInByGoogle: true});
 					} else if (res.status == 400) {
 						Alert.alert('Something Wrong with Your Google Account');
 					} else {
 						Alert.alert("Internet Error", JSON.stringify(res.error));
 					}
-					// switch(res.status) {
-					// 	case 200: {
-					// 		this.setState({isSigning: false});
-					// 		this.props.navigation.navigate('Main', 
-					// 			{user: response.user, signInByGoogle: true});
-					// 	}
-					// 	break;
-					// 	case 400: Alert.alert('Something Wrong with Your Google Account');
-					// 	break;
-					// }
 				}
 			})
 			.catch((error) => {
@@ -133,7 +124,7 @@ export default class SignInPage extends Component {
 				<View style = {[cs.container, s.titleContainer]}>
 					<Text style = {cs.title}>Group</Text>
 					<Text style = {cs.title}>Calendar</Text>
-					<Text style = {[cs.h3, s.welcome]}>Welcomee Back</Text>
+					<Text style = {[cs.h3, s.welcome]}>Welcome Back</Text>
 				</View>
 				{/*user email and passwrod*/}
 				<View style = {[cs.container, s.contentContainer]}>

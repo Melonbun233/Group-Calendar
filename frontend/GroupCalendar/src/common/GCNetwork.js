@@ -84,11 +84,43 @@ export default class GCNetwork extends Component {
 		// }
 	}
 
+	//we will assume user information is checked
+	static async createUser(_user_email, _user_name, _user_pwd) {
+		// let url = config.server.concat('/users?user_email=').concat(_user_email)
+		// 	.concat('&user_name=').concat(_user_name).concat('&user_pwd=').
+		// 	concat(_user_pwd);
+		// try {
+		// 	let response = await fetch(url, {
+		// 		method: 'POST'
+		// 	});
+		// 	let responseJson = await response.json();
+		// 	return {
+		// 		status: response.status,
+		// 		body: responseJson,
+		// 	}
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
+		// 	}
+		// }
+
+		//this is only used for test
+		return {
+			status: 200,
+			body: {
+				user_email: _user_email,
+				user_name: _user_name,
+				user_pwd: _user_pwd,
+			}
+		}
+	}
+
 	//we currently use url to pass parameter because some inevitable bugs
-	static async fetchUserWithGoogle(idToken, user_email){
-		var url = config.server.concat('/auth/google?id_token=').concat(idToken)
-			.concat('&user_email=').concat(user_email);
-		Alert.alert(url);
+	static async fetchUserWithGoogle(userInfo){
+		var url = await config.server.concat('/auth/google?id_token=').concat(userInfo.idToken)
+			.concat('&user_email=').concat(userInfo.user.email)
+			.concat('&user_name=').concat(userInfo.user.name);
 		//Alert.alert(url);
 		try {
 			let response = await fetch(url, {
@@ -119,8 +151,5 @@ export default class GCNetwork extends Component {
 		// 	}
 		// }
 	}
-
-
-
 
 }
