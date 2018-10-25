@@ -18,23 +18,20 @@ exports.get_info = function(email, res){
 };
 
 exports.update_info = function(info_json, res){
-	var queries = '';
+	//var queries = '';
 	for (var x in info_json){
-		queries += ("UPDATE Users SET ? = ? WHERE user_id = ?",
-					[x, info_json[x], info_json.user_id]);
+		var query = "UPDATE Users SET " + x + " = '" + info_json.x + "' WHERE user_id = '" + info_json.user_id + "'";
+		db.query(query,
+			function (err, sql_res){
+				console.log(sql_res[0]);
+				if(err) 
+					res(err, null);
+		});
 		console.log(x);
 		console.log(info_json.x);
 		console.log(info_json.user_id);
 	}
-	db.query(queries,
-		function(err, sql_res){
-			if (err)
-				res(err, null);
-			else if (update_info)
-				res(null, null);
-			else 
-				res(null, sql_res[0]);
-		});
+	res(null, info_json);
 };
 
 exports.get_info_byId = function(user_id, res){
@@ -86,7 +83,7 @@ exports.create_user = function(email, res){
 // format of setCmd:
 // "column1 = val1, column2 = val2, ..."
 exports.update_user = function(setCmd, user_id, res){
-	var query = "UPDATE Users SET '" + setCmd + "'' WHERE user_id = '" + user_id +"'";
+	var query = "UPDATE Users SET " + setCmd + " WHERE user_id=" + user_id;
 	db.query(query,
 		function (err,sql_res){
 			if (err) 

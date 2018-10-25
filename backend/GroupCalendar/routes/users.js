@@ -29,13 +29,13 @@ router.put('/', (req,res)=>{
 	const errors = validationResult(req);
 	if (!errors.isEmpty()){
 		return res.status(400).json({"error": "Invalid info to update."});
-	}*//*
-	console.log(req);
+	}*/
 	var parsedUrl = url.parse(req.originalUrl);  
-	var parsedQs = querystring.parse(parsedUrl.query);
-	user_controller.user_info_put(parsedQs, res);
-	console.log("put works");
-	res.send('put works in send');*/
+	console.log(parsedUrl);
+	var parsedQ = querystring.parse(parsedUrl.query);
+	console.log(parsedQ);
+	user_controller.user_info_put(parsedQ, res);
+	//console.log("put ends");
 
 });
 
