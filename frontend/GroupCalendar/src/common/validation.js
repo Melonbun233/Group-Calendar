@@ -24,8 +24,8 @@ export const constraint = {
 		presence: true,
 		length: {
 			minimum: 6,
-			maximum: 20,
-			tooLong: 'maximum length is 20',
+			maximum: 14,
+			tooLong: 'maximum length is 14',
 			tooShort: 'minimum length is 6',
 		},
 	},
@@ -33,10 +33,10 @@ export const constraint = {
 	password: {
 		presence: true,
 		length: {
-			minimum: 8,
-			maximum: 12,
-			tooLong: 'maximum legth is 12',
-			tooShort: 'minimum legth is 8',
+			minimum: 6,
+			maximum: 14,
+			tooLong: 'maximum legth is 14',
+			tooShort: 'minimum legth is 6',
 		},
 	},
 }

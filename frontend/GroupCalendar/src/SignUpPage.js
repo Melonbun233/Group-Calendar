@@ -113,17 +113,16 @@ export default class SignUpPage extends Component {
 	}
 
 	_onSubmitEmail = () => {
-		this.lastname.focus();
-	}
-
-	_onSubmitLastname = () => {
 		this.firstname.focus();
 	}
 
 	_onSubmitFirstname = () => {
-		this.username.focus();
+		this.lastname.focus();
 	}
 
+	_onSubmitLastname = () => {
+		this.username.focus();
+	}
 	_onSubmitUsername = () => {
 		this.password.focus();
 	}
@@ -164,7 +163,7 @@ export default class SignUpPage extends Component {
 						onFocus = {this._onFocus}
 						error = {errors.email}
 						keyboardType = 'email-address'
-						title = 'this email will be used when signing in'
+						title = 'this email will be used to sign in'
 					/>
 				{/*Fist name*/}
 					<TextField
@@ -208,7 +207,7 @@ export default class SignUpPage extends Component {
 						onSubmitEditing = {this._onSubmitUsername}
 						onFocus = {this._onFocus}
 						error = {errors.username}
-						title = 'length should be between 6 and 20 inclusively'
+						title = 'length should be between 6 and 14 inclusively'
 					/>
 				{/*Password*/}
 					<TextField
@@ -225,7 +224,7 @@ export default class SignUpPage extends Component {
 						error = {errors.password}
 						secureTextEntry = {true}
 						clearTextOnFocus = {true}
-						title = 'length should be between 8 and 12 inclusively'
+						title = 'length should be between 6 and 14 inclusively'
 					/>
 					<Ripple
 						disabled = {isLoading}
