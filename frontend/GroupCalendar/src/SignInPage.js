@@ -76,8 +76,8 @@ export default class SignInPage extends Component {
 		//we first get the user info by the username
 		this.setState({isLoading: true});
 		let res = await Network.fetchUser(this.state.user_email);
-		if(res !== null){
-			if(res.status == 200){
+		switch (res.status) {
+			case 200: {
 				if (res.body.user_pwd == this.state.user_pwd &&
 					res.body.user_email == this.state.user_email){
 					this.setState({isLoading: false});
@@ -89,14 +89,15 @@ export default class SignInPage extends Component {
 						password: 'incorrect email or password',
 					}});
 				}
-			} else if (res.status == 400 || res.status == 404) {
-				this.setState({errors: {
+			}
+			break;
+			case 400:
+			case 404: this.setState({errors: {
 						email: 'incorrect email or password',
 						password: 'incorrect email or password',
-					}});
-			} else {
-				Alert.alert("Internet Error", JSON.stringify(res.error));
-			}
+						}});
+			break;
+			default: Alert.alert("Internet Error", JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
@@ -107,15 +108,19 @@ export default class SignInPage extends Component {
 		await GoogleSignin.signIn()
 			.then(async (userInfo) => 
 			{
-				let res = await Network.fetchUserWithGoogle(userInfo)
-				if(res !== null) {
-					if (res.status == 200) {
+				let res = await Network.fetchUserWithGoogle(userInfo);
+				switch (res.status) {
+					case 200: {
 						this.setState({isSigning: false});
 						this.props.navigation.navigate('Main', 
 							{user: res.body, signInByGoogle: true});
-					} else if (res.status == 400) {
+					}
+					break;
+					case 400: {
 						Alert.alert('Something Wrong with Your Google Account');
-					} else {
+					}
+					break;
+					default: {
 						Alert.alert("Internet Error", JSON.stringify(res.error));
 					}
 				}

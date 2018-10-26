@@ -98,16 +98,16 @@ export default class SignUpPage extends Component {
 					user_pwd,
 				});
 		//Alert.alert(JSON.stringify(res.body));
-		if (res !== null) {
-			if(res.status == 200) {
+		switch (res.status) {
+			case 200: {
 				this.setState({isLoading: false});
 				this.props.navigation.navigate('Main',
 					{user: res.body, signInByGoogle: false});
-			} else if (res.status == 400) {
-				Alert.alert('Invalid Inputs');
-			} else {
-				Alert.alert("Internet Error", JSON.stringify(res.error));
 			}
+			break;
+			case 400: Alert.alert('Invalid Inputs');
+			break;
+			default: Alert.alert("Internet Error", JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
