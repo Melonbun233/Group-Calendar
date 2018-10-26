@@ -4,7 +4,8 @@
 
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
-		Alert, Button, ActivityIndicator, ScrollView} from 'react-native';
+		Alert, Button, ActivityIndicator, ScrollView, TouchableOpacity} 
+		from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
 import Network from './common/GCNetwork';
@@ -50,6 +51,7 @@ export default class SignInPage extends Component {
 	}
 
 	_onSubmitPassword = () => {
+		this.password.blur();
 		this._onSignInButtonPressed();
 	}
 
@@ -97,10 +99,14 @@ export default class SignInPage extends Component {
 				}
 			})
 			.catch((error) => {
-				if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      				// play services not available or outdated
+				if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+					//user canceled the login flow
+   				} else if (error.code === statusCodes.IN_PROGRESS) {
+					//in progress
+				} else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+					// play services not available or outdated
       				Alert.alert('Play Service Not Avaliable');
-   				} else {
+				} else {
       				//some other error happened
       				Alert.alert('Something Bad Happend\n', JSON.stringify(error));
     			}
@@ -122,7 +128,7 @@ export default class SignInPage extends Component {
 			<ScrollView
 				style = {[s.scrollContainer]}
 				keyboardShouldPersistTaps = 'never'
-				//scrollEnabled = {false}
+				scrollEnabled = {false}
 			>
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
@@ -170,23 +176,28 @@ export default class SignInPage extends Component {
 				</View>
 
 			{/*sign in buttons*/}
-				<View style = {[cs.container, s.buttonContainer]}>
-					<Button
-						title = {this.state.isLoading ? 'Signing in...' : 'Sign in'}
+				
+				<TouchableOpacity
 						disabled = {this.state.isLoading}
-						color = '#ffffff'
 						onPress = {this._onSignInButtonPressed}
-					/>
-				</View>
-				<View style = {[cs.container, s.buttonContainer]}>
-					<Button
-    					//style = {{ width: 230, height: 48 }}
-    					title = 'Sign in by Google'
-    					onPress = {this._onGoogleSignInPressed}
-    					color = '#ffffff'
-    					disabled = {this.state.isSigning} 
-    				/>
-				</View>
+				>
+					<View style = {[cs.container, s.buttonContainer]}>
+						<Text style = {s.buttonMsg}>
+							{this.state.isLoading ? 'Signing in...' : 'Sign in'}
+						</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity
+					//style = {{ width: 230, height: 48 }}
+					title = 'Sign in by Google'
+					onPress = {this._onGoogleSignInPressed}
+					color = '#ffffff'
+					disabled = {this.state.isSigning} 
+				>
+    				<View style = {[cs.container, s.buttonContainer]}>
+    					<Text style = {s.buttonMsg}>Sign in with Google</Text>
+    				</View>
+    			</TouchableOpacity>
 				{fail}
 			</ScrollView>
 			</KeyboardAvoidingView>
@@ -229,8 +240,12 @@ const s = StyleSheet.create({
 		marginTop: 5,
 		marginBottom: 5,
 		width: '80%',
-		height: '6%',
+		height: 40,
 		backgroundColor: '#66a3ff',
+	},
+	buttonMsg: {
+		color : '#ffffff',
+		fontSize: 18,
 	},
 	failLogin: {
 		alignItems: 'center',

@@ -5,28 +5,28 @@ export const constraint = {
 	email: {
 		presence: true,
 		email: {
-			message: 'This is not a valid email address',
+			message: 'invalid email address',
+		},
+	},
+	firstname: {
+		presence: {
+			allowEmpty: false,
 		},
 	},
 	//first or last name
 	lastname: {
 		presence: {
-			message: 'Last name is required',
-		}
+			allowEmpty: false,
+		},
 	},
-	firstname: {
-		presence: {
-			message: 'First name is required',
-		}
-	},
-	//check user nmae
+	//check user name
 	username: {
 		presence: true,
 		length: {
 			minimum: 6,
 			maximum: 20,
-			tooLong: 'Maximum length is 20',
-			tooShort: 'Minimum length is 6',
+			tooLong: 'maximum length is 20',
+			tooShort: 'minimum length is 6',
 		},
 	},
 	//check password
@@ -35,8 +35,8 @@ export const constraint = {
 		length: {
 			minimum: 8,
 			maximum: 12,
-			tooLong: 'Maximum legth is 12',
-			tooShort: 'Minimum legth is 8',
+			tooLong: 'maximum legth is 12',
+			tooShort: 'minimum legth is 8',
 		},
 	},
 }

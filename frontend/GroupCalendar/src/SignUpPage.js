@@ -19,7 +19,7 @@ export default class SignUpPage extends Component {
 		this.state = {
 			user_email: '',
 			user_lastname: '',
-			user_firstnmae: '',
+			user_firstname: '',
 			user_name: '',
 			user_pwd: '',
 			isLoading: false,
@@ -153,6 +153,7 @@ export default class SignUpPage extends Component {
 						autoCorrect = {false}
 						returnKeyType = 'next'
 						autoCapitalize = 'none'
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_email: text})}
 						onSubmitEditing = {this._onSubmitEmail}
 						onFocus = {this._onFocus}
@@ -167,6 +168,7 @@ export default class SignUpPage extends Component {
 						autoCorrect = {false}
 						autoCapitalize = 'words'
 						returnKeyType = 'next'
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_lastname: text})}
 						onSubmitEditing = {this._onSubmitLastname}
 						onFocus = {this._onFocus}
@@ -180,6 +182,7 @@ export default class SignUpPage extends Component {
 						autoCorrect = {false}
 						autoCapitalize = 'words'
 						returnKeyType = 'next'
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_firstname: text})}
 						onSubmitEditing = {this._onSubmitFirstname}
 						onFocus = {this._onFocus}
@@ -193,6 +196,7 @@ export default class SignUpPage extends Component {
 						autoCorrect = {false}
 						autoCapitalize = 'none'
 						returnKeyType = 'next'
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_name: text})}
 						onSubmitEditing = {this._onSubmitUsername}
 						onFocus = {this._onFocus}
@@ -206,6 +210,7 @@ export default class SignUpPage extends Component {
 						autoCorrect = {false}
 						autoCapitalize = 'none'
 						returnKeyType = 'done'
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_pwd: text})}
 						onSubmitEditing = {this._onSubmitPassword}
 						onFocus = {this._onFocus}
