@@ -3,9 +3,9 @@
 //We will also implement sign up here
 
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, 
+import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
 		Alert, Button, ActivityIndicator, ScrollView} from 'react-native';
-import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
+import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
@@ -109,19 +109,20 @@ export default class SignInPage extends Component {
 	}
 
 	render() {
-		const spinner = this.state.isLoading ?
-			<ActivityIndicator size='large'/> : null;
 		const fail = this.state.signInFailed ?
 			<View style = {s.failLogin}>
 			<Text style = {s.failLogin}>Email or Password Incorrect</Text>
 			</View> : null;
 
 		return (
-			<View style = {[cs.container, cs.wholePage]}>
+			<KeyboardAvoidingView 
+				behavior="padding" 
+				style = {[cs.container, cs.wholePage, s.scrollContainer]}
+			>
 			<ScrollView
 				style = {[s.scrollContainer]}
 				keyboardShouldPersistTaps = 'never'
-				scrollEnabled = {false}
+				//scrollEnabled = {false}
 			>
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
@@ -143,6 +144,7 @@ export default class SignInPage extends Component {
 						ref = {this.emailRef}
 						label = 'Email'
 						fontSize = {18}
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_email: text})}
 						autoCorrect = {false}
 						autoCapitalize = 'none'
@@ -154,7 +156,9 @@ export default class SignInPage extends Component {
 					<TextField
 						ref = {this.passwordRef}
 						fontSize = {18}
+						labelHeight = {24}
 						label = 'Password'
+						inputContainerPadding = {4}
 						onChangeText = {(text) => this.setState({user_pwd: text})}
 						secureTextEntry= {true}
 						keyboardType = 'default'
@@ -185,7 +189,7 @@ export default class SignInPage extends Component {
 				</View>
 				{fail}
 			</ScrollView>
-			</View>
+			</KeyboardAvoidingView>
 			);
 	}
 } 
