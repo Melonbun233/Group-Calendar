@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import {StyleSheet, TextInput, Text, View, 
 		Button, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
+import Ripple from 'react-native-material-ripple';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
 import validate from 'validate.js';
@@ -66,6 +67,7 @@ export default class SignUpPage extends Component {
 	_onSubmit = async () => {
 		let {user_email, user_lastname, user_firstname, 
 			user_name, user_pwd, errors} = this.state;
+		this.setState({isLoading: true});
 		//validate user input here
 		let invalid = validate({
 			//attributes
@@ -82,6 +84,7 @@ export default class SignUpPage extends Component {
 				errors[key] = val;
 			}
 			this.setState(errors);
+			this.setState({isLoading: false});
 			return;
 		}
 		//correct info, create a new user
@@ -130,11 +133,13 @@ export default class SignUpPage extends Component {
 	}
 
 	render() {
-		let {user_email, user_lastname, user_firstname, user_name, user_pwd, errors} = 
+		let {user_email, user_lastname, user_firstname, 
+			user_name, user_pwd, errors, isLoading} = 
 			this.state;
 		return (
 			<KeyboardAvoidingView 
-				behavior="padding" 
+				keyboardVerticalOffset = {0}
+				behavior = "padding" 
 				style = {[cs.container, s.scrollContainer]}
 			>
 			<ScrollView
@@ -159,20 +164,7 @@ export default class SignUpPage extends Component {
 						onFocus = {this._onFocus}
 						error = {errors.email}
 						keyboardType = 'email-address'
-					/>
-				{/*Last name*/}
-					<TextField
-						ref = {this.lastnameRef}
-						label = 'Last Name'
-						value = {user_lastname}
-						autoCorrect = {false}
-						autoCapitalize = 'words'
-						returnKeyType = 'next'
-						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_lastname: text})}
-						onSubmitEditing = {this._onSubmitLastname}
-						onFocus = {this._onFocus}
-						error = {errors.lastname}
+						title = 'this email will be used when signing in'
 					/>
 				{/*Fist name*/}
 					<TextField
@@ -188,6 +180,21 @@ export default class SignUpPage extends Component {
 						onFocus = {this._onFocus}
 						error = {errors.firstname}
 					/>
+				{/*Last name*/}
+					<TextField
+						ref = {this.lastnameRef}
+						label = 'Last Name'
+						value = {user_lastname}
+						autoCorrect = {false}
+						autoCapitalize = 'words'
+						returnKeyType = 'next'
+						labelHeight = {24}
+						onChangeText = {(text) => this.setState({user_lastname: text})}
+						onSubmitEditing = {this._onSubmitLastname}
+						onFocus = {this._onFocus}
+						error = {errors.lastname}
+					/>
+				
 				{/*Username*/}
 					<TextField
 						ref = {this.usernameRef}
@@ -201,6 +208,7 @@ export default class SignUpPage extends Component {
 						onSubmitEditing = {this._onSubmitUsername}
 						onFocus = {this._onFocus}
 						error = {errors.username}
+						title = 'length should be between 6 and 20 inclusively'
 					/>
 				{/*Password*/}
 					<TextField
@@ -217,14 +225,17 @@ export default class SignUpPage extends Component {
 						error = {errors.password}
 						secureTextEntry = {true}
 						clearTextOnFocus = {true}
+						title = 'length should be between 8 and 12 inclusively'
 					/>
-					<View style = {[cs.container, s.signUpContainer]}>
-					<Button
-						title = 'Submit'
-						color = '#66a3ff'
+					<Ripple
+						disabled = {isLoading}
 						onPress = {this._onSubmit}
-					/>
-					</View>
+						style = {[cs.container, s.signUpButton]}
+					>
+						<Text style = {s.signUpMsg}>
+						{isLoading ? 'Signing up for you...' : 'Submit'}
+						</Text>
+					</Ripple>
 				</View>
 				
 			</ScrollView>
@@ -256,10 +267,15 @@ const s = StyleSheet.create({
 		width: '70%',
 		flex: 5,
 	},
-	signUpContainer: {
-		flex: 2,
+	signUpButton: {
 		marginTop: 5,
 		alignItems: 'center',
-		justifyContent: 'flex-end',
+		height: 40,
+		width: '100%',
+		backgroundColor: '#66a3ff',
+	},
+	signUpMsg: {
+		color: '#ffffff',
+		fontSize: 18,
 	},
 })

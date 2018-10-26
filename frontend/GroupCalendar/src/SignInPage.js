@@ -4,10 +4,11 @@
 
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
-		Alert, Button, ActivityIndicator, ScrollView, TouchableOpacity} 
+		Alert, Button, ActivityIndicator, ScrollView} 
 		from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
+import Ripple from 'react-native-material-ripple';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
 import * as config from './../config.json';
@@ -22,12 +23,15 @@ export default class SignInPage extends Component {
 		super(props);
 	
 		this.state = {
-		  	signInFailed: false,
 		  	isLoading: false,
 		  	isSigning: false, //by google
 		  	user_email: '',
 		  	user_pwd: '',
+		  	errors: {},
 		};
+
+		//general callback when focusing text field
+		this._onFocus = this._onFocus.bind(this);
 
 		this._onSubmitEmail = this._onSubmitEmail.bind(this);
 		this._onSubmitPassword = this._onSubmitPassword.bind(this);
@@ -35,11 +39,23 @@ export default class SignInPage extends Component {
 		//setting up references
 		this.emailRef = this._updateRef.bind(this, 'email');
 		this.passwordRef = this._updateRef.bind(this, 'password');
+		this._onSignInButtonPressed = this._onSignInButtonPressed.bind(this);
 	}
 
 	//only called once
 	async componentDidMount() {
     	GoogleSignin.configure(config.googleSignIn);
+	}
+
+	_onFocus = () => {
+		let {errors} = this.state;
+		for (let key in errors) {
+			let ref = this[key];
+			if(ref.isFocused()){
+				delete errors[key];
+			}
+		}
+		this.setState({errors});
 	}
 
 	_updateRef = (name, ref) => {
@@ -64,14 +80,20 @@ export default class SignInPage extends Component {
 			if(res.status == 200){
 				if (res.body.user_pwd == this.state.user_pwd &&
 					res.body.user_email == this.state.user_email){
-					this.setState({signInFailed: false, isLoading: false});
+					this.setState({isLoading: false});
 					this.props.navigation.navigate('Main', 
 						{user: res.body, signInByGoogle: false});
 				} else {
-					this.setState({signInFailed: true});
+					this.setState({errors: {
+						email: 'incorrect email or password',
+						password: 'incorrect email or password',
+					}});
 				}
 			} else if (res.status == 400 || res.status == 404) {
-				this.setState({signInFailed: true});
+				this.setState({errors: {
+						email: 'incorrect email or password',
+						password: 'incorrect email or password',
+					}});
 			} else {
 				Alert.alert("Internet Error", JSON.stringify(res.error));
 			}
@@ -115,11 +137,7 @@ export default class SignInPage extends Component {
 	}
 
 	render() {
-		const fail = this.state.signInFailed ?
-			<View style = {s.failLogin}>
-			<Text style = {s.failLogin}>Email or Password Incorrect</Text>
-			</View> : null;
-
+		let {errors} = this.state;
 		return (
 			<KeyboardAvoidingView 
 				behavior="padding" 
@@ -158,6 +176,8 @@ export default class SignInPage extends Component {
 						returnKeyType = 'next'
 						keyboardType = 'email-address'
 						textContentType = 'username'
+						error = {errors.email}
+						onFocus = {this._onFocus}
 					/>
 					<TextField
 						ref = {this.passwordRef}
@@ -172,33 +192,29 @@ export default class SignInPage extends Component {
 						onSubmitEditing = {this._onSubmitPassword}
 						textContentType = 'password'
 						clearTextOnFocus = {true}
+						error = {errors.password}
+						onFocus = {this._onFocus}
 					/>
 				</View>
 
 			{/*sign in buttons*/}
 				
-				<TouchableOpacity
-						disabled = {this.state.isLoading}
-						onPress = {this._onSignInButtonPressed}
+				<Ripple
+					disabled = {this.state.isLoading}
+					onPress = {this._onSignInButtonPressed}
+					style = {[cs.container, s.buttonContainer]}
 				>
-					<View style = {[cs.container, s.buttonContainer]}>
 						<Text style = {s.buttonMsg}>
 							{this.state.isLoading ? 'Signing in...' : 'Sign in'}
 						</Text>
-					</View>
-				</TouchableOpacity>
-				<TouchableOpacity
-					//style = {{ width: 230, height: 48 }}
-					title = 'Sign in by Google'
+				</Ripple>
+				<Ripple
 					onPress = {this._onGoogleSignInPressed}
-					color = '#ffffff'
 					disabled = {this.state.isSigning} 
+					style = {[cs.container, s.buttonContainer]}
 				>
-    				<View style = {[cs.container, s.buttonContainer]}>
-    					<Text style = {s.buttonMsg}>Sign in with Google</Text>
-    				</View>
-    			</TouchableOpacity>
-				{fail}
+    					<Text style = {s.buttonMsg}>Sign in by Google</Text>
+    			</Ripple>
 			</ScrollView>
 			</KeyboardAvoidingView>
 			);
