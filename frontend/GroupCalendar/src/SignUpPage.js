@@ -2,9 +2,12 @@
 //this should be navigated from introPage
 import React, {Component} from 'react';
 import {StyleSheet, TextInput, Text, View, 
-		Button, Alert, KeyboardAvoidingView} from 'react-native';
+		Button, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
+import {TextField} from 'react-native-material-textfield';
 import cs from './common/CommonStyles';
-import Network from './common/GCNetwork.js';
+import Network from './common/GCNetwork';
+import validate from 'validate.js';
+import {constraint} from './common/validation';
 
 export default class SignUpPage extends Component {
 	static navigationOptions = {
@@ -15,23 +18,82 @@ export default class SignUpPage extends Component {
 	
 		this.state = {
 			user_email: '',
+			user_lastname: '',
+			user_firstnmae: '',
 			user_name: '',
 			user_pwd: '',
-			emailIsValid: true,
-			nameIsValid: true,
-			pwdIsValid: true,
 			isLoading: false,
+			errors: {},
 		};
+
+		//general callback when focusing text field
+		this._onFocus = this._onFocus.bind(this);
+		//general callback when submit all info
+		this._onSubmit = this._onSubmit.bind(this);
+
+		//on submit callback
+		this._onSubmitEmail = this._onSubmitEmail.bind(this);
+		this._onSubmitLastname = this._onSubmitLastname.bind(this);
+		this._onSubmitFirstname = this._onSubmitFirstname.bind(this);
+		this._onSubmitUsername = this._onSubmitUsername.bind(this);
+		this._onSubmitPassword = this._onSubmitPassword.bind(this);
+
+		//seting up references
+		this.firstnameRef = this._updateRef.bind(this, 'firstname');
+		this.lastnameRef = this._updateRef.bind(this, 'lastname');
+		this.usernameRef = this._updateRef.bind(this, 'username');
+		this.passwordRef = this._updateRef.bind(this, 'password');
+		this.emailRef = this._updateRef.bind(this, 'email');
 	}
 
-	_onSignUpButtonPressed = async () => {
+	_updateRef = (name, ref) => {
+		this[name] = ref;
+	}
+	//remove error
+	_onFocus = () => {
+		let {errors} = this.state;
+		for (let name in errors) {
+			let ref = this[name];
+			if(ref.isFocused()){
+				delete errors[name];
+			}
+		}
+
+		this.setState({errors});
+	}
+
+	//check error
+	_onSubmit = async () => {
+		let {user_email, user_lastname, user_firstname, 
+			user_name, user_pwd, errors} = this.state;
 		//validate user input here
+		let invalid = validate({
+			//attributes
+			email: user_email, 
+			lastname: user_lastname,
+			firstname: user_firstname,
+			username: user_name,
+			password: user_pwd,
+			}, constraint, {fullMessages: false});
+		//some error occured
+		if (invalid) {
+			for (let key in invalid) {
+				let val = invalid[key][0];
+				errors[key] = val;
+			}
+			this.setState(errors);
+			return;
+		}
+		//correct info, create a new user
 		this.setState({isLoading: true});
 		let res = await Network.createUser(
-				this.state.user_email,
-				this.state.user_name,
-				this.state.user_pwd,
-				);
+				{
+					user_email,
+					user_lastname,
+					user_firstname,
+					user_name,
+					user_pwd,
+				});
 		//Alert.alert(JSON.stringify(res.body));
 		if (res !== null) {
 			if(res.status == 200) {
@@ -47,98 +109,152 @@ export default class SignUpPage extends Component {
 		this.setState({isLoading: false});
 	}
 
+	_onSubmitEmail = () => {
+		this.lastname.focus();
+	}
+
+	_onSubmitLastname = () => {
+		this.firstname.focus();
+	}
+
+	_onSubmitFirstname = () => {
+		this.username.focus();
+	}
+
+	_onSubmitUsername = () => {
+		this.password.focus();
+	}
+
+	_onSubmitPassword = () => {
+		this.password.blur();
+	}
+
 	render() {
+		let {user_email, user_lastname, user_firstname, user_name, user_pwd, errors} = 
+			this.state;
 		return (
-			<View style = {cs.container}>
-				<View style = {[cs.container, s.welcome]}>
-					<Text style = {s.welcomeMsg}>Welcome</Text>
+			<KeyboardAvoidingView 
+				behavior="padding" 
+				style = {[cs.container, s.scrollContainer]}
+			>
+			<ScrollView
+				style = {[s.scrollContainer]}
+				keyboardShouldPersistTaps = 'never'
+			>
+				<View style = {[cs.container, s.welcomeContainer]}>
+					<Text style = {s.welcomeMsg}>Sign Up</Text>
 				</View>
-				<KeyboardAvoidingView style = {[cs.container, s.contentContainer]}>
-					<TextInput
-						style = {s.input}
-						placeholder = 'Email'
-						placeholderTextColor = '#b3b3b3'
+				<View style = {[s.contentContainer]}>
+				{/*Email*/}
+					<TextField
+						ref = {this.emailRef}
+						label = 'Email'
+						value = {user_email}
+						autoCorrect = {false}
+						returnKeyType = 'next'
+						autoCapitalize = 'none'
 						onChangeText = {(text) => this.setState({user_email: text})}
+						onSubmitEditing = {this._onSubmitEmail}
+						onFocus = {this._onFocus}
+						error = {errors.email}
 						keyboardType = 'email-address'
-						autoCapitalize = 'none'
-						autoCorrect = {false}
-						onSubmitEditing = {this._onSignUpButtonPressed}
-						blurOnSubmit={false} 
 					/>
-					<TextInput
-						style = {s.input}
-						placeholder = 'Name'
-						placeholderTextColor = '#b3b3b3'
-						onChangeText = {(text) => this.setState({user_name: text})}
-						keyboardType = 'default'
+				{/*Last name*/}
+					<TextField
+						ref = {this.lastnameRef}
+						label = 'Last Name'
+						value = {user_lastname}
+						autoCorrect = {false}
 						autoCapitalize = 'words'
-						autoCorrect = {false}
-						onSubmitEditing = {this._onSignUpButtonPressed}
-						blurOnSubmit={false} 
+						returnKeyType = 'next'
+						onChangeText = {(text) => this.setState({user_lastname: text})}
+						onSubmitEditing = {this._onSubmitLastname}
+						onFocus = {this._onFocus}
+						error = {errors.lastname}
 					/>
-					<TextInput
-						style = {s.input}
-						placeholder = 'Password'
-						placeholderTextColor = '#b3b3b3'
-						onChangeText = {(text) => this.setState({user_pwd: text})}
-						keyboardType = 'default'
+				{/*Fist name*/}
+					<TextField
+						ref = {this.firstnameRef}
+						label = 'First Name'
+						value = {user_firstname}
+						autoCorrect = {false}
+						autoCapitalize = 'words'
+						returnKeyType = 'next'
+						onChangeText = {(text) => this.setState({user_firstname: text})}
+						onSubmitEditing = {this._onSubmitFirstname}
+						onFocus = {this._onFocus}
+						error = {errors.firstname}
+					/>
+				{/*Username*/}
+					<TextField
+						ref = {this.usernameRef}
+						label = 'Username'
+						value = {user_name}
+						autoCorrect = {false}
 						autoCapitalize = 'none'
+						returnKeyType = 'next'
+						onChangeText = {(text) => this.setState({user_name: text})}
+						onSubmitEditing = {this._onSubmitUsername}
+						onFocus = {this._onFocus}
+						error = {errors.username}
+					/>
+				{/*Password*/}
+					<TextField
+						ref = {this.passwordRef}
+						label = 'Password'
+						value = {user_pwd}
 						autoCorrect = {false}
-						secureTextEntry= {true}
-						onSubmitEditing = {this._onSignUpButtonPressed}
-						blurOnSubmit={false} 
+						autoCapitalize = 'none'
+						returnKeyType = 'done'
+						onChangeText = {(text) => this.setState({user_pwd: text})}
+						onSubmitEditing = {this._onSubmitPassword}
+						onFocus = {this._onFocus}
+						error = {errors.password}
+						secureTextEntry = {true}
+						clearTextOnFocus = {true}
 					/>
-				</KeyboardAvoidingView>
-				<View style = {[cs.container, s.signUpContainer]}>
+					<View style = {[cs.container, s.signUpContainer]}>
 					<Button
-						title = 'Sign up'
+						title = 'Submit'
 						color = '#66a3ff'
-						onPress = {this._onSignUpButtonPressed}
+						onPress = {this._onSubmit}
 					/>
+					</View>
 				</View>
-			</View>
+				
+			</ScrollView>
+			</KeyboardAvoidingView>
 		);
 	}
 }
 
 const s = StyleSheet.create({
-	welcome: {
-		flex: 2,
-		alignItems: 'flex-start',
-		justifyContent: 'center',
-		paddingTop: '10%',
+	scrollContainer:{
+		backgroundColor: '#ffffff',
 		width: '100%',
+		height: '100%',
+	},
+	welcomeContainer: {
+		alignItems: 'flex-start',
+		width: '100%',
+		flex: 2,
 		paddingLeft: '15%',
 	},
 	welcomeMsg: {
 		fontSize: 50,
 		color: '#000000',
 		fontWeight: 'bold',
+		paddingTop: '10%',
 	},
 	contentContainer: {
-		flex: 4,
-		width: "100%",
-		paddingTop: 0,
-		paddingLeft: '10%',
-		alignItems: 'flex-start',
-		justifyContent: 'flex-start',
+		marginLeft: '15%',
+		width: '70%',
+		flex: 5,
 	},
 	signUpContainer: {
 		flex: 2,
-		width: '100%',
-		alignItems: 'flex-start',
-		justifyContent: 'flex-start',
-		paddingLeft: '13%',
-
-	},
-	input: {
-		width: 250,
-		height: 36,
-		padding: 10,
-		margin: 10,
-		paddingTop: 0,
-		fontSize: 18,
-		borderBottomWidth: 1,
-		borderColor: '#e6e6e6',
+		marginTop: 5,
+		alignItems: 'center',
+		justifyContent: 'flex-end',
 	},
 })

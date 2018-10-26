@@ -4,8 +4,9 @@
 
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, 
-		Alert, Button, ActivityIndicator} from 'react-native';
+		Alert, Button, ActivityIndicator, ScrollView} from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
+import {TextField} from 'react-native-material-textfield';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
 import * as config from './../config.json';
@@ -26,11 +27,30 @@ export default class SignInPage extends Component {
 		  	user_email: '',
 		  	user_pwd: '',
 		};
-		//this._onSignOut = this._onSignOut.bind(this);
+
+		this._onSubmitEmail = this._onSubmitEmail.bind(this);
+		this._onSubmitPassword = this._onSubmitPassword.bind(this);
+
+		//setting up references
+		this.emailRef = this._updateRef.bind(this, 'email');
+		this.passwordRef = this._updateRef.bind(this, 'password');
 	}
 
+	//only called once
 	async componentDidMount() {
     	GoogleSignin.configure(config.googleSignIn);
+	}
+
+	_updateRef = (name, ref) => {
+		this[name] = ref;
+	}
+
+	_onSubmitEmail = () => {
+		this.password.focus();
+	}
+
+	_onSubmitPassword = () => {
+		this._onSignInButtonPressed();
 	}
 
 	//Function handles button press
@@ -57,25 +77,13 @@ export default class SignInPage extends Component {
 		this.setState({isLoading: false});
 	}
 
-
-
 	_onGoogleSignInPressed = async () => {
 		this.setState({isSigning: true});
 		await GoogleSignin.hasPlayServices();
 		await GoogleSignin.signIn()
 			.then(async (userInfo) => 
 			{
-				// this.props.navigation.navigate('Main',
-				// 	{user: {
-				// 		user_email: userInfo.user.email,
-				// 		user_name: userInfo.user.name,
-				// 		userid: userInfo.user.id,
-				// 	}, signInByGoogle: true});
-
 				let res = await Network.fetchUserWithGoogle(userInfo)
-					//.idToken, 
-					//userInfo.user.email)//userInfo.idToken.user.name);
-				//Alert.alert(JSON.stringify(res));
 				if(res !== null) {
 					if (res.status == 200) {
 						this.setState({isSigning: false});
@@ -89,16 +97,12 @@ export default class SignInPage extends Component {
 				}
 			})
 			.catch((error) => {
-				if(error.code === statusCodes.SIGN_IN_CANCELLED) {
-					//user canceled the login flow
-				} else if (error.code === statusCodes.IN_PROGRESS) {
-					//in progress
-				} else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+				if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
       				// play services not available or outdated
       				Alert.alert('Play Service Not Avaliable');
    				} else {
       				//some other error happened
-      				//console.error(JSON.stringify(error));
+      				Alert.alert('Something Bad Happend\n', JSON.stringify(error));
     			}
 			});
 		this.setState({isSigning: false});
@@ -108,10 +112,17 @@ export default class SignInPage extends Component {
 		const spinner = this.state.isLoading ?
 			<ActivityIndicator size='large'/> : null;
 		const fail = this.state.signInFailed ?
-			<Text style = {s.failLogin}>Email or Password Incorrect</Text> : null;
+			<View style = {s.failLogin}>
+			<Text style = {s.failLogin}>Email or Password Incorrect</Text>
+			</View> : null;
 
 		return (
 			<View style = {[cs.container, cs.wholePage]}>
+			<ScrollView
+				style = {[s.scrollContainer]}
+				keyboardShouldPersistTaps = 'never'
+				scrollEnabled = {false}
+			>
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
 					<Button 
@@ -126,51 +137,54 @@ export default class SignInPage extends Component {
 					<Text style = {cs.title}>Calendar</Text>
 					<Text style = {[cs.h3, s.welcome]}>Welcome Back</Text>
 				</View>
-				{/*user email and passwrod*/}
-				<View style = {[cs.container, s.contentContainer]}>
-					<TextInput 
-						style = {s.input}
-						placeholder = 'Email'
-						placeholderTextColor = '#b3b3b3'
+				{/*user email and password*/}
+				<View style = {[s.contentContainer]}>
+					<TextField
+						ref = {this.emailRef}
+						label = 'Email'
+						fontSize = {18}
 						onChangeText = {(text) => this.setState({user_email: text})}
 						autoCorrect = {false}
 						autoCapitalize = 'none'
+						onSubmitEditing = {this._onSubmitEmail}
+						returnKeyType = 'next'
 						keyboardType = 'email-address'
 						textContentType = 'username'
 					/>
-					<TextInput 
-						style = {s.input}
-						placeholder = 'Password'
-						placeholderTextColor = '#b3b3b3'
+					<TextField
+						ref = {this.passwordRef}
+						fontSize = {18}
+						label = 'Password'
 						onChangeText = {(text) => this.setState({user_pwd: text})}
 						secureTextEntry= {true}
 						keyboardType = 'default'
+						returnKeyType = 'go'
+						onSubmitEditing = {this._onSubmitPassword}
 						textContentType = 'password'
 						clearTextOnFocus = {true}
 					/>
-					<View style = {s.buttonContainer}>
-						<Button
-							title = {this.state.isLoading ? 'Signing in...' : 'Sign in'}
-							disabled = {this.state.isLoading}
-							color = '#ffffff'
-							onPress = {this._onSignInButtonPressed}
-						/>
-					</View>
-					{fail}
-					{spinner}
-					<View style = {s.googleSignIn}>
-						<GoogleSigninButton
-	    					style={{ width: 250, height: 48 }}
-	    					size={GoogleSigninButton.Size.Standard}
-	    					color={GoogleSigninButton.Color.Dark}
-	    					onPress={this._onGoogleSignInPressed}
-	    					disabled={this.state.isSigning} 
-	    				/>
-    				</View>
-					<View style = {[cs.container, cs.flowBottom]}>
-						<Text style = {cs.smallText}> by Talking Code </Text> 
-					</View>
 				</View>
+
+			{/*sign in buttons*/}
+				<View style = {[cs.container, s.buttonContainer]}>
+					<Button
+						title = {this.state.isLoading ? 'Signing in...' : 'Sign in'}
+						disabled = {this.state.isLoading}
+						color = '#ffffff'
+						onPress = {this._onSignInButtonPressed}
+					/>
+				</View>
+				<View style = {[cs.container, s.buttonContainer]}>
+					<Button
+    					//style = {{ width: 230, height: 48 }}
+    					title = 'Sign in by Google'
+    					onPress = {this._onGoogleSignInPressed}
+    					color = '#ffffff'
+    					disabled = {this.state.isSigning} 
+    				/>
+				</View>
+				{fail}
+			</ScrollView>
 			</View>
 			);
 	}
@@ -182,54 +196,41 @@ const s = StyleSheet.create({
 	welcome: {
 		color: '#e6e6e6',
 	},
+	scrollContainer: {
+		flex: 1,
+		width: '100%',
+		height: '100%',
+	},
 	signUpContainer: {
-		flex: 2,
+		flex: 1,
 		width: '100%',
 		paddingRight: 20,
 		paddingTop: 30,
 		alignItems: 'flex-end',
 	},
 	titleContainer: {
-		margin: 12,
-		marginBottom: 0,
-		marginTop: 0,
+		marginLeft: '10%',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		flex: 10,
+		flex: 1,
 	},
 	contentContainer: {
-		margin: 10,
-		marginTop: 0,
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		flex: 21,
+		marginLeft: '10%',
+		width: '80%',
+		flex: 1,
 	},
 	buttonContainer: {
-		margin: 5,
-		width: 250,
-		height: 40,
-		backgroundColor: '#66a3ff'
-	},
-	googleSignIn: {
-		flex: 10,
-		alignItems: 'center',
-		justifyContent: 'flex-end',
-	},
-	input: {
-		width: 250,
-		height: 36,
-		padding: 4,
-		margin: 3,
-		fontSize: 18,
-		borderBottomWidth: 1,
-		borderColor: '#e6e6e6',
-	},
-	//background color
-	bg: {
-		backgroundColor: '#ffffff',
+		flex: 1,
+		marginLeft: '10%',
+		marginTop: 5,
+		marginBottom: 5,
+		width: '80%',
+		height: '6%',
+		backgroundColor: '#66a3ff',
 	},
 	failLogin: {
+		alignItems: 'center',
 		fontSize: 14,
 		color: '#ff0000',
-	}
+	},
 });
