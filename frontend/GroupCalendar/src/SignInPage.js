@@ -4,7 +4,7 @@
 
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
-		Alert, Button, ActivityIndicator, ScrollView} 
+		Alert, Button, ActivityIndicator, ScrollView, AsyncStorage} 
 		from 'react-native';
 import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
@@ -23,8 +23,12 @@ export default class SignInPage extends Component {
 		super(props);
 	
 		this.state = {
+			//checking whether user has signed in
+			isChecking: true,
+			//user is signing by app
 		  	isLoading: false,
-		  	isSigning: false, //by google
+		  	//user is signing by google
+		  	isSigning: false, 
 		  	user_email: '',
 		  	user_pwd: '',
 		  	errors: {},
@@ -43,8 +47,30 @@ export default class SignInPage extends Component {
 	}
 
 	//only called once
+	//we will check whether user has signed out
+	//if not, we will just sign in automatically
 	async componentDidMount() {
     	GoogleSignin.configure(config.googleSignIn);
+    	await this.checkUserSignedIn();
+	}
+
+	//check whether user has signed in
+	async checkUserSignedIn(){
+		let {isChecking} = this.state;
+		try {
+			let id_token = await AsyncStorage.getItem('id_token');
+			let profile = await AsyncStorage.getItem('profile');
+			if (id_token === null){
+				//user hasn't signed in
+				this.setState({isChecking: false});
+			} else {
+				//we already have id_token, we use it to sign in
+				this.setState({isChecking: false});
+				this.props.navigation.navigate('Main');
+			}
+		} catch (error) {
+			Alert.alert('Something Bad Happened');
+		}
 	}
 
 	_onFocus = () => {
@@ -71,49 +97,58 @@ export default class SignInPage extends Component {
 		this._onSignInButtonPressed();
 	}
 
-	//Function handles button press
+	//Function handles sign in button press
+	// we will send email and password to 
 	_onSignInButtonPressed = async () => {
+		let {user_email, user_pwd} = this.state;
 		//we first get the user info by the username
 		this.setState({isLoading: true});
-		let res = await Network.fetchUser(this.state.user_email);
+		let res = await Network.verifyUser(user_email, user_pwd);
 		switch (res.status) {
+			//correct user_email and user_pwd
+			//we save the user info to async storage and jump to main pages
 			case 200: {
-				if (res.body.user_pwd == this.state.user_pwd &&
-					res.body.user_email == this.state.user_email){
-					this.setState({isLoading: false});
-					this.props.navigation.navigate('Main', 
-						{user: res.body, signInByGoogle: false});
-				} else {
-					this.setState({errors: {
-						email: 'incorrect email or password',
-						password: 'incorrect email or password',
-					}});
-				}
+				//on success, user profile and id_token are returned
+				//store id_token and profile for other screens to use
+				await AsyncStorage.setItem('id_token', res.id_token);
+				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
+				await AsyncStorage.setItem('signInByGoogle', 'false');
+
+				this.setState({isLoading: false});
+				//jump to main page
+				this.props.navigation.navigate('Main');
 			}
 			break;
 			case 400:
-			case 404: this.setState({errors: {
+			case 404: this.setState(
+					{errors: {
 						email: 'incorrect email or password',
 						password: 'incorrect email or password',
-						}});
+					}});
 			break;
 			default: Alert.alert("Internet Error", JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
 
+	//sign in by google
+	//on successful signin, we send the google id_token to server and get 
+	//	our id_token
 	_onGoogleSignInPressed = async () => {
 		this.setState({isSigning: true});
 		await GoogleSignin.hasPlayServices();
 		await GoogleSignin.signIn()
 			.then(async (userInfo) => 
 			{
-				let res = await Network.fetchUserWithGoogle(userInfo);
+				let res = await Network.verifyUserByGoogle(userInfo);
 				switch (res.status) {
 					case 200: {
+						//store id_token and profile for other screens to use
+						AsyncStorage.setItem('id_token', res.id_token);
+						AsyncStorage.setItem('profile', JSON.stringify(res.profile));
+						AsyncStorage.setItem('signInByGoogle', 'true');
 						this.setState({isSigning: false});
-						this.props.navigation.navigate('Main', 
-							{user: res.body, signInByGoogle: true});
+						this.props.navigation.navigate('Main');
 					}
 					break;
 					case 400: {
@@ -121,7 +156,7 @@ export default class SignInPage extends Component {
 					}
 					break;
 					default: {
-						Alert.alert("Internet Error", JSON.stringify(res.error));
+						Alert.alert('Internet Error', JSON.stringify(res.error));
 					}
 				}
 			})
@@ -142,7 +177,13 @@ export default class SignInPage extends Component {
 	}
 
 	render() {
-		let {errors} = this.state;
+		let {isSigning, isLoading, isChecking, errors} = this.state;
+		if (isChecking) {
+			return (
+				<View></View>
+			);
+		}
+		//let {errors} = this.state;
 		return (
 			<KeyboardAvoidingView 
 				behavior="padding" 
@@ -205,17 +246,17 @@ export default class SignInPage extends Component {
 			{/*sign in buttons*/}
 				
 				<Ripple
-					disabled = {this.state.isLoading}
+					disabled = {isLoading}
 					onPress = {this._onSignInButtonPressed}
 					style = {[cs.container, s.buttonContainer]}
 				>
 						<Text style = {s.buttonMsg}>
-							{this.state.isLoading ? 'Signing in...' : 'Sign in'}
+							{isLoading ? 'Signing in...' : 'Sign in'}
 						</Text>
 				</Ripple>
 				<Ripple
 					onPress = {this._onGoogleSignInPressed}
-					disabled = {this.state.isSigning} 
+					disabled = {isSigning} 
 					style = {[cs.container, s.buttonContainer]}
 				>
     					<Text style = {s.buttonMsg}>Sign in by Google</Text>
