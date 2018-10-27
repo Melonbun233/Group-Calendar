@@ -3,9 +3,12 @@
 //We will also implement sign up here
 
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, 
-		Alert, Button, ActivityIndicator} from 'react-native';
-import { GoogleSignin, GoogleSigninButton, statusCodes } from 'react-native-google-signin';
+import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
+		Alert, Button, ActivityIndicator, ScrollView} 
+		from 'react-native';
+import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
+import {TextField} from 'react-native-material-textfield';
+import Ripple from 'react-native-material-ripple';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
 import * as config from './../config.json';
@@ -20,17 +23,52 @@ export default class SignInPage extends Component {
 		super(props);
 	
 		this.state = {
-		  	signInFailed: false,
 		  	isLoading: false,
 		  	isSigning: false, //by google
 		  	user_email: '',
 		  	user_pwd: '',
+		  	errors: {},
 		};
-		//this._onSignOut = this._onSignOut.bind(this);
+
+		//general callback when focusing text field
+		this._onFocus = this._onFocus.bind(this);
+
+		this._onSubmitEmail = this._onSubmitEmail.bind(this);
+		this._onSubmitPassword = this._onSubmitPassword.bind(this);
+
+		//setting up references
+		this.emailRef = this._updateRef.bind(this, 'email');
+		this.passwordRef = this._updateRef.bind(this, 'password');
+		this._onSignInButtonPressed = this._onSignInButtonPressed.bind(this);
 	}
 
+	//only called once
 	async componentDidMount() {
     	GoogleSignin.configure(config.googleSignIn);
+	}
+
+	_onFocus = () => {
+		let {errors} = this.state;
+		for (let key in errors) {
+			let ref = this[key];
+			if(ref.isFocused()){
+				delete errors[key];
+			}
+		}
+		this.setState({errors});
+	}
+
+	_updateRef = (name, ref) => {
+		this[name] = ref;
+	}
+
+	_onSubmitEmail = () => {
+		this.password.focus();
+	}
+
+	_onSubmitPassword = () => {
+		this.password.blur();
+		this._onSignInButtonPressed();
 	}
 
 	//Function handles button press
@@ -38,26 +76,31 @@ export default class SignInPage extends Component {
 		//we first get the user info by the username
 		this.setState({isLoading: true});
 		let res = await Network.fetchUser(this.state.user_email);
-		if(res !== null){
-			if(res.status == 200){
+		switch (res.status) {
+			case 200: {
 				if (res.body.user_pwd == this.state.user_pwd &&
 					res.body.user_email == this.state.user_email){
-					this.setState({signInFailed: false, isLoading: false});
+					this.setState({isLoading: false});
 					this.props.navigation.navigate('Main', 
 						{user: res.body, signInByGoogle: false});
 				} else {
-					this.setState({signInFailed: true});
+					this.setState({errors: {
+						email: 'incorrect email or password',
+						password: 'incorrect email or password',
+					}});
 				}
-			} else if (res.status == 400 || res.status == 404) {
-				this.setState({signInFailed: true});
-			} else {
-				Alert.alert("Internet Error", JSON.stringify(res.error));
 			}
+			break;
+			case 400:
+			case 404: this.setState({errors: {
+						email: 'incorrect email or password',
+						password: 'incorrect email or password',
+						}});
+			break;
+			default: Alert.alert("Internet Error", JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
-
-
 
 	_onGoogleSignInPressed = async () => {
 		this.setState({isSigning: true});
@@ -65,62 +108,51 @@ export default class SignInPage extends Component {
 		await GoogleSignin.signIn()
 			.then(async (userInfo) => 
 			{
-				// this.props.navigation.navigate('Main',
-				// 	{user: {
-				// 		user_email: userInfo.user.email,
-				// 		user_name: userInfo.user.name,
-				// 		userid: userInfo.user.id,
-				// 	}, signInByGoogle: true});
-
-				let res = await Network.fetchUserWithGoogle(userInfo.idToken, 
-					userInfo.user.email);
-				//Alert.alert(JSON.stringify(res));
-				if(res !== null) {
-					if (res.status == 200) {
+				let res = await Network.fetchUserWithGoogle(userInfo);
+				switch (res.status) {
+					case 200: {
 						this.setState({isSigning: false});
 						this.props.navigation.navigate('Main', 
-							{user: res.user, signInByGoogle: true});
-					} else if (res.status == 400) {
+							{user: res.body, signInByGoogle: true});
+					}
+					break;
+					case 400: {
 						Alert.alert('Something Wrong with Your Google Account');
-					} else {
+					}
+					break;
+					default: {
 						Alert.alert("Internet Error", JSON.stringify(res.error));
 					}
-					// switch(res.status) {
-					// 	case 200: {
-					// 		this.setState({isSigning: false});
-					// 		this.props.navigation.navigate('Main', 
-					// 			{user: response.user, signInByGoogle: true});
-					// 	}
-					// 	break;
-					// 	case 400: Alert.alert('Something Wrong with Your Google Account');
-					// 	break;
-					// }
 				}
 			})
 			.catch((error) => {
-				if(error.code === statusCodes.SIGN_IN_CANCELLED) {
+				if (error.code === statusCodes.SIGN_IN_CANCELLED) {
 					//user canceled the login flow
-				} else if (error.code === statusCodes.IN_PROGRESS) {
+   				} else if (error.code === statusCodes.IN_PROGRESS) {
 					//in progress
 				} else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      				// play services not available or outdated
+					// play services not available or outdated
       				Alert.alert('Play Service Not Avaliable');
-   				} else {
+				} else {
       				//some other error happened
-      				//console.error(JSON.stringify(error));
+      				Alert.alert('Something Bad Happend\n', JSON.stringify(error));
     			}
 			});
 		this.setState({isSigning: false});
 	}
 
 	render() {
-		const spinner = this.state.isLoading ?
-			<ActivityIndicator size='large'/> : null;
-		const fail = this.state.signInFailed ?
-			<Text style = {s.failLogin}>Email or Password Incorrect</Text> : null;
-
+		let {errors} = this.state;
 		return (
-			<View style = {[cs.container, cs.wholePage]}>
+			<KeyboardAvoidingView 
+				behavior="padding" 
+				style = {[cs.container, cs.wholePage, s.scrollContainer]}
+			>
+			<ScrollView
+				style = {[s.scrollContainer]}
+				keyboardShouldPersistTaps = 'never'
+				scrollEnabled = {false}
+			>
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
 					<Button 
@@ -133,54 +165,63 @@ export default class SignInPage extends Component {
 				<View style = {[cs.container, s.titleContainer]}>
 					<Text style = {cs.title}>Group</Text>
 					<Text style = {cs.title}>Calendar</Text>
-					<Text style = {[cs.h3, s.welcome]}>Welcomee Back</Text>
+					<Text style = {[cs.h3, s.welcome]}>Welcome Back</Text>
 				</View>
-				{/*user email and passwrod*/}
-				<View style = {[cs.container, s.contentContainer]}>
-					<TextInput 
-						style = {s.input}
-						placeholder = 'Email'
-						placeholderTextColor = '#b3b3b3'
+				{/*user email and password*/}
+				<View style = {[s.contentContainer]}>
+					<TextField
+						ref = {this.emailRef}
+						label = 'Email'
+						fontSize = {18}
+						labelHeight = {24}
 						onChangeText = {(text) => this.setState({user_email: text})}
 						autoCorrect = {false}
 						autoCapitalize = 'none'
+						onSubmitEditing = {this._onSubmitEmail}
+						returnKeyType = 'next'
 						keyboardType = 'email-address'
 						textContentType = 'username'
+						error = {errors.email}
+						onFocus = {this._onFocus}
 					/>
-					<TextInput 
-						style = {s.input}
-						placeholder = 'Password'
-						placeholderTextColor = '#b3b3b3'
+					<TextField
+						ref = {this.passwordRef}
+						fontSize = {18}
+						labelHeight = {24}
+						label = 'Password'
+						inputContainerPadding = {4}
 						onChangeText = {(text) => this.setState({user_pwd: text})}
 						secureTextEntry= {true}
 						keyboardType = 'default'
+						returnKeyType = 'go'
+						onSubmitEditing = {this._onSubmitPassword}
 						textContentType = 'password'
 						clearTextOnFocus = {true}
+						error = {errors.password}
+						onFocus = {this._onFocus}
 					/>
-					<View style = {s.buttonContainer}>
-						<Button
-							title = {this.state.isLoading ? 'Signing in...' : 'Sign in'}
-							disabled = {this.state.isLoading}
-							color = '#ffffff'
-							onPress = {this._onSignInButtonPressed}
-						/>
-					</View>
-					{fail}
-					{spinner}
-					<View style = {s.googleSignIn}>
-						<GoogleSigninButton
-	    					style={{ width: 250, height: 48 }}
-	    					size={GoogleSigninButton.Size.Standard}
-	    					color={GoogleSigninButton.Color.Dark}
-	    					onPress={this._onGoogleSignInPressed}
-	    					disabled={this.state.isSigning} 
-	    				/>
-    				</View>
-					<View style = {[cs.container, cs.flowBottom]}>
-						<Text style = {cs.smallText}> by Talking Code </Text> 
-					</View>
 				</View>
-			</View>
+
+			{/*sign in buttons*/}
+				
+				<Ripple
+					disabled = {this.state.isLoading}
+					onPress = {this._onSignInButtonPressed}
+					style = {[cs.container, s.buttonContainer]}
+				>
+						<Text style = {s.buttonMsg}>
+							{this.state.isLoading ? 'Signing in...' : 'Sign in'}
+						</Text>
+				</Ripple>
+				<Ripple
+					onPress = {this._onGoogleSignInPressed}
+					disabled = {this.state.isSigning} 
+					style = {[cs.container, s.buttonContainer]}
+				>
+    					<Text style = {s.buttonMsg}>Sign in by Google</Text>
+    			</Ripple>
+			</ScrollView>
+			</KeyboardAvoidingView>
 			);
 	}
 } 
@@ -191,54 +232,45 @@ const s = StyleSheet.create({
 	welcome: {
 		color: '#e6e6e6',
 	},
+	scrollContainer: {
+		flex: 1,
+		width: '100%',
+		height: '100%',
+	},
 	signUpContainer: {
-		flex: 2,
+		flex: 1,
 		width: '100%',
 		paddingRight: 20,
 		paddingTop: 30,
 		alignItems: 'flex-end',
 	},
 	titleContainer: {
-		margin: 12,
-		marginBottom: 0,
-		marginTop: 0,
+		marginLeft: '10%',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		flex: 10,
+		flex: 1,
 	},
 	contentContainer: {
-		margin: 10,
-		marginTop: 0,
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		flex: 21,
+		marginLeft: '10%',
+		width: '80%',
+		flex: 1,
 	},
 	buttonContainer: {
-		margin: 5,
-		width: 250,
+		flex: 1,
+		marginLeft: '10%',
+		marginTop: 5,
+		marginBottom: 5,
+		width: '80%',
 		height: 40,
-		backgroundColor: '#66a3ff'
+		backgroundColor: '#66a3ff',
 	},
-	googleSignIn: {
-		flex: 10,
-		alignItems: 'center',
-		justifyContent: 'flex-end',
-	},
-	input: {
-		width: 250,
-		height: 36,
-		padding: 4,
-		margin: 3,
+	buttonMsg: {
+		color : '#ffffff',
 		fontSize: 18,
-		borderBottomWidth: 1,
-		borderColor: '#e6e6e6',
-	},
-	//background color
-	bg: {
-		backgroundColor: '#ffffff',
 	},
 	failLogin: {
+		alignItems: 'center',
 		fontSize: 14,
 		color: '#ff0000',
-	}
+	},
 });

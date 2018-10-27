@@ -13,7 +13,8 @@ import { GoogleSignin } from 'react-native-google-signin';
 export default class MainPage extends Component {
 
 	static navigationOptions = {
-		header: null
+		header: null,
+		gesturesEnabled: false,
 	}
 	constructor(props) {
 		super(props);
@@ -161,7 +162,7 @@ export default class MainPage extends Component {
     			Alert.alert('Something Bad Happened During Signing Out');
   			}
 		}
-		this.props.navigation.goBack();
+		this.props.navigation.popToTop();
 	}
 }
 
