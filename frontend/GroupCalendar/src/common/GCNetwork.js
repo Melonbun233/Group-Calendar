@@ -17,35 +17,42 @@ export default class GCNetwork extends Component {
 	//		404: cannot find 
 	//	Note that user name should be validated 
 	//
-	static async fetchUser(_user_email) {
-		let url = config.server.concat('/users?user_email=').concat(_user_email);
-		//let url = 'https://facebook.github.io/react-native/movies.json';
-		try {
-		    let response = await fetch( url, 
-		    {	
-		    	method: 'GET', 
-			});
-		    let responseJson = await response.json();
-		    return {
-		    	status: response.status,
-		    	body: responseJson,
-		    }
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
-		}
-		//this is for test
-		// return {
-		// 	status: 200,
-		// 	user: {
-		// 		user_name: 'Admin',
-		// 		user_pwd: 'qwer',
-		// 		user_email: 'admin@mail.com',
-		// 		user_id: '0',
+	static async verifyUser(_user_email, _user_pwd) {
+		// let url = config.server.concat('/');
+		// try {
+		//     let response = await fetch( url, 
+		//     {	
+		//     	method: 'POST', 
+		//     	headers: {"Content-Type": "application/json"},
+		//     	body: JSON.stringify({"user_id":"2345234"})
+		// 	});
+		//     let responseJson = await response.json();
+		//     return {
+		//     	status: response.status,
+		//     	profile: responseJson.profile,
+		//     	id_token: responseJson.id_token,
+		//     }
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
 		// 	}
-		// };
+		// }
+
+		//this is for test
+		return {
+			status: 200,
+			id_token: 'this is id_token',
+			profile: {
+				user_email: 'admin@mail.com',
+				user_id: '0',
+				user_description: 'my name is henry',
+				user_region: 'Canada',
+				user_lastname: 'Zeng',
+				user_firstname: 'Zhuohang',
+				is_admin: 1,
+			}
+		};
 	}
 
 	//	Function used to fetch user profile
@@ -55,41 +62,16 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static async fetchProfile(_user_id){
-		let url = config.server.concat('/users/profile?user_id=').concat(_user_id);
-		try {
-			let response = await fetch(url, {
-				method: 'GET'
-			});
-			let responseJson = await response.json();
-			return {
-				status: response.status,
-				body: responseJson,
-			}
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
-		}
-		//this is only used for test
-		// return {
-		// 	status: 200,
-		// 	profile: {
-		// 		user_region: 'Canada',
-		// 		user_descript: 'my name is Henry',
-		// 		user_birth: '1997-05-03',
-		// 		user_gender: 'male',
-		// 	}
-		// }
-	}
-
-	//we will assume user information is checked
-	static async createUser(userInfo) {
-		// url = await this._getUrl(config.server.concat('/users?'), userInfo);
+	static async fetchProfile(_user_id, _id_token){
+		// let url = config.server.concat('/users/profile');
 		// try {
 		// 	let response = await fetch(url, {
-		// 		method: 'POST'
+		// 		method: 'GET',
+		// 		headers: {"Content-Type": "application/json"},
+		// 		body: JSON.stringify({
+		// 			user_id: _user_id,
+		// 			id_token: _id_token,
+		// 		})
 		// 	});
 		// 	let responseJson = await response.json();
 		// 	return {
@@ -102,38 +84,36 @@ export default class GCNetwork extends Component {
 		// 		error: _error,
 		// 	}
 		// }
-
+		
 		//this is only used for test
 		return {
 			status: 200,
-			body:userInfo,
-		}
+			profile: {
+				user_email: 'test@fetch.com',
+				user_id: '0',
+				user_description: 'my name is henry',
+				user_region: 'Canada',
+				user_lastname: 'Zeng',
+				user_firstname: 'Zhuohang',
+				is_admin: 1,
+			}
+		};
 	}
 
-	static _getUrl = async (url, info) => {
-		//Alert.alert(JSON.stringify(info));
-		for (let key in info) {
-			url = url + '&' + key + '=' + info[key];
-		}
-		return url;
-	}
-	//we currently use url to pass parameter because some inevitable bugs
-	static async fetchUserWithGoogle(userInfo){
-		var url = await config.server.concat('/auth/google?id_token=')
-			.concat(userInfo.idToken)
-			.concat('&user_email=').concat(userInfo.user.email)
-			.concat('&user_name=').concat(userInfo.user.name);
-		//Alert.alert(url);
+	//we will assume user information is checked
+	static async createUser(userInfo) {
+		url = config.server.concat('/users');
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				// headers: JSON.stringify({"Content-Type": "application/json"}),
-				// body: JSON.stringify({"tes": "tests"}),
-			})
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(userInfo),
+			});
 			let responseJson = await response.json();
 			return {
 				status: response.status,
-				body: responseJson,
+				id_token: responseJson.id_token,
+				profile: responseJson.profile,
 			}
 		} catch (_error) {
 			return {
@@ -142,16 +122,58 @@ export default class GCNetwork extends Component {
 			}
 		}
 
-		// return {
-		// 	status: 200,
-		// 	user: {
-		// 		id_token: idToken,
-		// 		user_name: 'Zhuohang Zeng',
-		// 		user_pwd: '',
-		// 		user_email: 'zzhuohang@gmail.com',
-		// 		user_id: '0',
+		//this is only used for test
+		return {
+			status: 200,
+			id_token: 'this is id_token',
+			profile: {
+				user_email: 'admin@mail.com',
+				user_id: '0',
+				user_description: 'my name is henry',
+				user_region: 'Canada',
+				user_lastname: 'Zeng',
+				user_firstname: 'Zhuohang',
+				is_admin: 1,
+			}
+		};
+	}
+
+
+	static async verifyUserByGoogle(userInfo){
+		// var url = config.server.concat('/auth/google');
+		// try {
+		// 	let response = await fetch(url, {
+		// 		method: 'POST',
+		// 		headers: {"Content-Type": "application/json"},
+		// 		body: JSON.stringify(userInfo),
+		// 	})
+		// 	let responseJson = await response.json();
+		// 	return {
+		// 		status: response.status,
+		// 		id_token: responseJson.id_token,
+		// 		profile: responseJson.profile,
+		// 	}
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
 		// 	}
 		// }
+
+		//this is for test
+		return {
+			status: 200,
+			id_token: 'this is id_token',
+			profile: {
+				user_email: 'admin@mail.com',
+				user_id: '0',
+				user_description: 'my name is henry',
+				user_region: 'Canada',
+				user_lastname: 'Zeng',
+				user_firstname: 'Zhuohang',
+				is_admin: 1,
+			}
+		};
 	}
 
 }

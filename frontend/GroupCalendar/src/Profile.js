@@ -4,61 +4,85 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, 
-		ScrollView, RefreshControl} from 'react-native';
+import {Platform, StyleSheet, Text, View, Button, Alert,
+		ScrollView, RefreshControl, AsyncStorage, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork'
 
 export default class Profile extends Component {
 	constructor(props) {
 		super(props);
-	
 		this.state = {
 			//this only set to true when we have found the user id somehow changed
 			//when this is set to false, we will need to log in again
-			logInfoChanged: false,
 			isRefreshing: false, 
+			isLoading: true,
 			profile: {},
 		}
+		this._onRefresh = this._onRefresh.bind(this);
+	}
+
+	async componentDidMount() {
+		let id_token = await AsyncStorage.getItem('id_token');
+
+		let profile = await AsyncStorage.getItem('profile')
+			.then((res) => JSON.parse(res));
+		//Alert.alert(id_token);
+
+		this.setState ({
+			profile: profile,
+			id_token: id_token,
+			isLoading: false,
+		});
 	}
 
 	//callback function for refreshing
 	_onRefresh = async () => {
-		this.setStatus({isRefreshing: true});
-		let res = await Network.fetchProfile(this.props.user.user_id);
-		//TOGO : THIS REQUIRE REMAKE
-		// switch(response.statue) {
-		// 	case 200: this.setStatus(response.profile);
-		// 	break;
-		// 	case 0:
-		// 	case 400:
-		// 	case 404: this.setStatus({logInfoChanged: true});
-		// 	break;
-		// 	default: {
-		// 		Alert.alert("HTTP ERROR", JSON.stringify(response.status));
-		// 		this.setStatus(logInfoChanged: true);
-		// 	}
-		// }
-		this.setStatus({isRefreshing: false});
+		let {profile, id_token} = this.state;
+
+		this.setState({isRefreshing: true});
+		let res = await Network.fetchProfile(profile.user_id, id_token);
+		switch(res.status) {
+			case 200: this.setState({profile: res.profile});
+			break;
+			//fetch failed, probably user has expired the session
+			//we will log out
+			case 400:
+			case 404: this.props.onSessionOut();
+			break;
+			default: Alert.alert("HTTP ERROR", JSON.stringify(res.error));
+		}
+		this.setState({isRefreshing: false});
 	}
 
-	render() {
+	render() { 
+		let {isLoading, isRefreshing} = this.state;
+		if (isLoading) {
+			return (
+				<View style = {cs.container}>
+					<ActivityIndicator size = 'large'/>
+				</View>
+			);
+		}
+		let {profile} = this.state;
 		return(
 			<View style = {[cs.container, s.content]}>
 				<ScrollView 
 					style = {s.content}
 					refreshControl = {
 						<RefreshControl 
-							refreshing = {this.state.isRefreshing}
-							onRefresh = {() => this._onRefresh}
+							refreshing = {isRefreshing}
+							onRefresh = {this._onRefresh}
 						/>
 					}
 				>
 					{/*Username and email*/}
 					<View style = {[cs.container, s.userNameContainer]}>
-						<Text style = {cs.h2}>{this.props.user.user_name}</Text>
+						<Text style = {cs.h2}>
+						{profile.user_lastname} {profile.user_firstname}
+						</Text>
 						<Text style = {cs.h5}
-							selectable = {true}>{this.props.user.user_email}</Text>
+							selectable = {true}>{profile.user_email}</Text>
 					</View>
 					{/*gender*/}
 					{/*log out button*/}
@@ -67,7 +91,7 @@ export default class Profile extends Component {
 							<Button 
 								title = 'Sign out'
 								color = '#66a3ff'
-								onPress = {this.props.onSignOut}
+								onPress = {() => this.props.onSignOut()}
 							/>
 						</View>
 					</View>

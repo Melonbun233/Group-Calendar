@@ -36,13 +36,11 @@ export default class SignUpPage extends Component {
 		this._onSubmitEmail = this._onSubmitEmail.bind(this);
 		this._onSubmitLastname = this._onSubmitLastname.bind(this);
 		this._onSubmitFirstname = this._onSubmitFirstname.bind(this);
-		this._onSubmitUsername = this._onSubmitUsername.bind(this);
 		this._onSubmitPassword = this._onSubmitPassword.bind(this);
 
 		//seting up references
 		this.firstnameRef = this._updateRef.bind(this, 'firstname');
 		this.lastnameRef = this._updateRef.bind(this, 'lastname');
-		this.usernameRef = this._updateRef.bind(this, 'username');
 		this.passwordRef = this._updateRef.bind(this, 'password');
 		this.emailRef = this._updateRef.bind(this, 'email');
 	}
@@ -66,7 +64,7 @@ export default class SignUpPage extends Component {
 	//check error
 	_onSubmit = async () => {
 		let {user_email, user_lastname, user_firstname, 
-			user_name, user_pwd, errors} = this.state;
+			user_pwd, errors} = this.state;
 		this.setState({isLoading: true});
 		//validate user input here
 		let invalid = validate({
@@ -74,7 +72,6 @@ export default class SignUpPage extends Component {
 			email: user_email, 
 			lastname: user_lastname,
 			firstname: user_firstname,
-			username: user_name,
 			password: user_pwd,
 			}, constraint, {fullMessages: false});
 		//some error occured
@@ -94,7 +91,6 @@ export default class SignUpPage extends Component {
 					user_email,
 					user_lastname,
 					user_firstname,
-					user_name,
 					user_pwd,
 				});
 		//Alert.alert(JSON.stringify(res.body));
@@ -107,7 +103,7 @@ export default class SignUpPage extends Component {
 			break;
 			case 400: Alert.alert('Invalid Inputs');
 			break;
-			default: Alert.alert("Internet Error", JSON.stringify(res.error));
+			default: Alert.alert('Internet Error', JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
@@ -121,9 +117,6 @@ export default class SignUpPage extends Component {
 	}
 
 	_onSubmitLastname = () => {
-		this.username.focus();
-	}
-	_onSubmitUsername = () => {
 		this.password.focus();
 	}
 
@@ -133,7 +126,7 @@ export default class SignUpPage extends Component {
 
 	render() {
 		let {user_email, user_lastname, user_firstname, 
-			user_name, user_pwd, errors, isLoading} = 
+			user_pwd, errors, isLoading} = 
 			this.state;
 		return (
 			<KeyboardAvoidingView 
@@ -192,22 +185,6 @@ export default class SignUpPage extends Component {
 						onSubmitEditing = {this._onSubmitLastname}
 						onFocus = {this._onFocus}
 						error = {errors.lastname}
-					/>
-				
-				{/*Username*/}
-					<TextField
-						ref = {this.usernameRef}
-						label = 'Username'
-						value = {user_name}
-						autoCorrect = {false}
-						autoCapitalize = 'none'
-						returnKeyType = 'next'
-						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_name: text})}
-						onSubmitEditing = {this._onSubmitUsername}
-						onFocus = {this._onFocus}
-						error = {errors.username}
-						title = 'length should be between 6 and 14 inclusively'
 					/>
 				{/*Password*/}
 					<TextField

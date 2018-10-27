@@ -1,7 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, 
-	Alert, Button, TouchableWithoutFeedback} 
+import {Text, TextInput, View, StyleSheet, AsyncStorage,
+	Alert, Button, TouchableWithoutFeedback, ActivityIndicator} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import Profile from './Profile';
@@ -16,11 +16,12 @@ export default class MainPage extends Component {
 		header: null,
 		gesturesEnabled: false,
 	}
+
 	constructor(props) {
 		super(props);
-		var user = this.props.navigation.getParam('user', 'user');
 		this.state = {
 	  		//calendar is the default content page
+	  		isLoading: true,
 	  		title: 'Calendar',
 	  		buttonColor: {
 	  			calendar: '#66a3ff',
@@ -28,21 +29,39 @@ export default class MainPage extends Component {
 	  			profile: '#000000',
 	  			search: '#000000',
 	  		},
-	  		user,
 		};
-
 		this._onSignOut = this._onSignOut.bind(this);
+		this._onSessionOut = this._onSessionOut.bind(this);
+		this._switchContent = this._switchContent.bind(this);
 	}
 
-	componentDidMount() {
-		
+	async componentDidMount() {
+		let id_token = await AsyncStorage.getItem('id_token');
+		let profile = await AsyncStorage.getItem('profile')
+			.then((res) => JSON.parse(res));
+
+		this.setState ({
+			profile: profile,
+			id_token: id_token,
+			isLoading: false,
+		});
 	}
+
 	//this function is invoked on switch button press
 	_switchContent = (_name) => {
 		this.setState(this._getButtonColorState(_name));
 	}
 
 	render() {
+		let {isLoading} = this.state;
+		if (isLoading) {
+			return (
+				<View style = {cs.container}>
+					<ActivityIndicator size = 'large'/>
+				</View>
+			);
+		}
+
 		return (
 			<View style = {cs.container}>		
 				{/*Title*/}
@@ -145,15 +164,16 @@ export default class MainPage extends Component {
 				return(<Search/>);
 			case 'Profile' :
 				return(<Profile 
-					user = {this.state.user}
-					onSignOut = {this._onSignOut}
-				/>);
+					onSignOut = {() => this._onSignOut()}
+					onSessionOut = {() => this._onSessionOut()}
+					/>);
 		}
 	}
 
 	_onSignOut = async () => {
+		let signInByGoogle = await AsyncStorage.getItem('signInByGoogle');
 		 //we need to sign out google account
-		if(this.props.navigation.state.params.signInByGoogle) {
+		if(signInByGoogle === 'true') {
 			try {
     			await GoogleSignin.revokeAccess();
     			await GoogleSignin.signOut();
@@ -162,7 +182,16 @@ export default class MainPage extends Component {
     			Alert.alert('Something Bad Happened During Signing Out');
   			}
 		}
+		//clean up async storage
+		await AsyncStorage.removeItem('id_token');
+		await AsyncStorage.removeItem('profile');
+		await AsyncStorage.removeItem('signInByGoogle');
 		this.props.navigation.popToTop();
+	}
+
+	_onSessionOut = async () => {
+		await this._onSignOut();
+		Alert.alert('You have Expired the Session Time!');
 	}
 }
 
