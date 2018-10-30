@@ -109,9 +109,3 @@ export default StyleSheet.create({
 		color: '#ffffff',
 	},
 });
-
-export const color = {
-	blue: '#66a3ff',
-	black: '#000000',
-	white: '#ffffff',
-}

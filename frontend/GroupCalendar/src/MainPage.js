@@ -41,8 +41,8 @@ export default class MainPage extends Component {
 			.then((res) => JSON.parse(res));
 
 		this.setState ({
-			profile: profile,
-			idToken: idToken,
+			profile,
+			idToken,
 			isLoading: false,
 		});
 	}
@@ -172,7 +172,6 @@ export default class MainPage extends Component {
 
 	_onSignOut = async () => {
 		let signInByGoogle = await AsyncStorage.getItem('signInByGoogle');
-		 //we need to sign out google account
 		if(signInByGoogle === 'true') {
 			try {
 				await GoogleSignin.revokeAccess();
