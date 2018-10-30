@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button, Alert,
 		ScrollView, RefreshControl, AsyncStorage, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
-import Network from './common/GCNetwork'
+import Network from './common/GCNetwork';
 
 export default class Profile extends Component {
 	constructor(props) {
@@ -23,7 +23,7 @@ export default class Profile extends Component {
 	}
 
 	async componentDidMount() {
-		let id_token = await AsyncStorage.getItem('id_token');
+		let id_token = await AsyncStorage.getItem('idToken');
 
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
@@ -31,17 +31,17 @@ export default class Profile extends Component {
 
 		this.setState ({
 			profile: profile,
-			id_token: id_token,
+			idToken: id_token,
 			isLoading: false,
 		});
 	}
 
 	//callback function for refreshing
 	_onRefresh = async () => {
-		let {profile, id_token} = this.state;
+		let {profile, idToken} = this.state;
 
 		this.setState({isRefreshing: true});
-		let res = await Network.fetchProfile(profile.user_id, id_token);
+		let res = await Network.fetchProfile(profile.userId, idToken);
 		switch(res.status) {
 			case 200: this.setState({profile: res.profile});
 			break;
@@ -60,7 +60,7 @@ export default class Profile extends Component {
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large'/>
+					<ActivityIndicator size = 'large' animating = {false}/>
 				</View>
 			);
 		}
@@ -79,10 +79,10 @@ export default class Profile extends Component {
 					{/*Username and email*/}
 					<View style = {[cs.container, s.userNameContainer]}>
 						<Text style = {cs.h2}>
-						{profile.user_lastname} {profile.user_firstname}
+						{profile.userLastname} {profile.userFirstname}
 						</Text>
 						<Text style = {cs.h5}
-							selectable = {true}>{profile.user_email}</Text>
+							selectable = {true}>{profile.userEmail}</Text>
 					</View>
 					{/*gender*/}
 					{/*log out button*/}

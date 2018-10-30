@@ -20,15 +20,15 @@ export default class MainPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-	  		//calendar is the default content page
-	  		isLoading: true,
-	  		title: 'Calendar',
-	  		buttonColor: {
-	  			calendar: '#66a3ff',
-	  			project: '#000000',
-	  			profile: '#000000',
-	  			search: '#000000',
-	  		},
+			//calendar is the default content page
+			isLoading: true,
+			title: 'Calendar',
+			buttonColor: {
+				calendar: cs.blue,
+				project: cs.black,
+				profile: cs.black,
+				search: cs.black,
+			},
 		};
 		this._onSignOut = this._onSignOut.bind(this);
 		this._onSessionOut = this._onSessionOut.bind(this);
@@ -36,13 +36,13 @@ export default class MainPage extends Component {
 	}
 
 	async componentDidMount() {
-		let id_token = await AsyncStorage.getItem('id_token');
+		let idToken = await AsyncStorage.getItem('idToken');
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
 
 		this.setState ({
 			profile: profile,
-			id_token: id_token,
+			idToken: idToken,
 			isLoading: false,
 		});
 	}
@@ -53,7 +53,7 @@ export default class MainPage extends Component {
 	}
 
 	render() {
-		let {isLoading} = this.state;
+		let {isLoading, buttonColor} = this.state;
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
@@ -80,7 +80,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Calendar')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.calendar}}>
+						<Text style = {buttonColor.calendar}>
 						Calendar</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -88,7 +88,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Project')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.project}}>
+						<Text style = {buttonColor.project}>
 						Project</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -96,7 +96,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Search')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.search}}>
+						<Text style = {buttonColor.search}>
 						Search</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -104,7 +104,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Profile')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.profile}}>
+						<Text style = {buttonColor.profile}>
 						Me</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -121,31 +121,31 @@ export default class MainPage extends Component {
 				ret = {
 					title: 'Calendar',
 					buttonColor: {
-						calendar: '#66a3ff',
-			  			project: '#000000',
-			  			profile: '#000000',
-			  			search: '#000000',
+						calendar: cs.blue,
+						project: cs.black,
+						profile: cs.black,
+						search: cs.black,
 					}
 				};
 			case 'Calendar' :
 				ret = {
 					title: 'Calendar',
-					buttonColor: {calendar: '#66a3ff'}};
+					buttonColor: {calendar: cs.blue}};
 			break;
 			case 'Project' : 
 				ret = {
 					title: 'Project',
-					buttonColor: {project: '#66a3ff'}};
+					buttonColor: {project: cs.blue}};
 			break;
 			case 'Search' : 
 				ret = {
 					title: 'Search',
-					buttonColor: {search: '#66a3ff'}};
+					buttonColor: {search: cs.blue}};
 			break;
 			case 'Profile' : 
 				ret = {
 					title: 'Profile',
-					buttonColor: {profile: '#66a3ff'}};
+					buttonColor: {profile: cs.blue}};
 			break;
 			
 		}
@@ -175,15 +175,15 @@ export default class MainPage extends Component {
 		 //we need to sign out google account
 		if(signInByGoogle === 'true') {
 			try {
-    			await GoogleSignin.revokeAccess();
-    			await GoogleSignin.signOut();
-    			//Alert.alert('Signed out');
-  			} catch (error) {
-    			Alert.alert('Something Bad Happened During Signing Out');
-  			}
+				await GoogleSignin.revokeAccess();
+				await GoogleSignin.signOut();
+				//Alert.alert('Signed out');
+			} catch (error) {
+				Alert.alert('Something Bad Happened During Signing Out');
+			}
 		}
 		//clean up async storage
-		await AsyncStorage.removeItem('id_token');
+		await AsyncStorage.removeItem('idToken');
 		await AsyncStorage.removeItem('profile');
 		await AsyncStorage.removeItem('signInByGoogle');
 		this.props.navigation.popToTop();
@@ -230,6 +230,8 @@ const s = StyleSheet.create({
 	bottomBar: {
 		flex: 1,
 		flexDirection: 'row',
+		alignItems: 'flex-start',
+		paddingBottom: 15,
 		justifyContent: 'space-between',
 		width: '100%',
 		borderTopWidth: 1,
