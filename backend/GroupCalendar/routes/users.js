@@ -20,7 +20,7 @@ router.get('/',
 		user_controller.userInfoGet(req.param('userEmail'), res);
 	});
 
-router.put('/', (req,res)=>{
+router.put('/', (req,res) => {
 	/*
 	if (req.body.has('user_id'))
 		check('user_id').isNumeric();
