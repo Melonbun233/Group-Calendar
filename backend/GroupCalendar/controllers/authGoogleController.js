@@ -65,15 +65,17 @@ console.log('Successful Verification');
 
 
   User.getInfo(email, function(getErr, userRes){
-    if(getErr) 
+    if(getErr){ 
       throw getErr;
+    }
     console.log('Finding user google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var userId;
     if(userRes === null){
       User.createUser(email, function(createErr, dbRes){
-        if(createErr) 
+        if(createErr){ 
           throw createErr;
+        }
         console.log('creating new user...');
         //   auth_res.status(400).send('Server fails to create a new account.');
         userId = dbRes.userId;
@@ -81,15 +83,17 @@ console.log('Successful Verification');
 
       var setcmd = "userFirstname='" + userFirstname + "'";
       User.updateProfile(setcmd, userId, function(updateErr, dbRes){
-        if(updateErr)
+        if(updateErr){
           throw updateErr;
+        }
       });
 
       if(userLastname !== null && userLastname !== 'undefined'){
         var setcmd = "userLastname='" + userLastname + "'";
         User.updateProfile(setcmd, userId, function(updateErr, dbRes){
-          if(updateErr)
+          if(updateErr){
             throw updateErr;
+          }
         });
       }
 
@@ -98,15 +102,17 @@ console.log('Successful Verification');
       console.log('Found user from DB');
       var setcmd = "userFirstname='" + userFirstname + "'";
       User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
-        if(updateErr)
+        if(updateErr){
           throw updateErr;
+        }
       });
 
       if(userLastname !== null && userLastname !== 'undefined'){
         var setcmd = "userLastname='" + userLastname + "'";
         User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
-          if(updateErr)
+          if(updateErr){
             throw updateErr;
+          }
         });
       }
     }
@@ -114,8 +120,9 @@ console.log('Successful Verification');
   });
 
   User.getProfileById(userId, function(getNewErr, dbRes){
-      if(getNewErr)
+      if(getNewErr){
         throw getNewErr;
+      }
       console.log('New account has been setup');
 
       var profile = dbRes;
