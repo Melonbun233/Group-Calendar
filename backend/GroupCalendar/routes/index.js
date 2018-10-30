@@ -5,7 +5,7 @@ console.log("npm installed!");
 
 /* GET home page. */
 router.get('/', function(req, res) {
-	res.send("***in index.js***");
+	res.send('***in index.js***');
 });
 
 module.exports = router;
