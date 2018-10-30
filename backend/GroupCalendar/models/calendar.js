@@ -17,7 +17,7 @@ exports.createCalen = function(userId, res){
 			if (err) 
 				res(err, null);
 			else{
-				calenId = sql_res.insertId;
+				calenId = sqlRes.insertId;
 				res(null, calenId);
 			}
 		});

@@ -3,7 +3,7 @@ var router = express.Router();
 
 
 // require controller modules
-var auth_controller = require('../controllers/authGoogleController');
+var authController = require('../controllers/authGoogleController');
 
 /* GET users listing. */
 router.post('/google', function(req, res){
@@ -13,7 +13,7 @@ router.post('/google', function(req, res){
 		return console('Err: no request')
 	}
 
- 	auth_controller.auth_google(req.body, res);
+ 	authController.authGoogle(req.body, res);
  	
 });
 

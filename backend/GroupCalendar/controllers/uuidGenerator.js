@@ -13,7 +13,7 @@ const uuidv4 = require('uuid/v4');
 //uuid with namespace
 const uuidv5 = require('uuid/v5');
 
-exports.uuid_create = function(user_email, uuid){
+exports.uuidCreate = function(userEmail, uuid){
 	var key = uuidv4();
-	uuid = uuidv5(user_email. key);
+	uuid = uuidv5(userEmail. key);
 };
