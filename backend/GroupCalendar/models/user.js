@@ -34,8 +34,8 @@ exports.update_info = function(info_json, res){
 	res(null, info_json);
 };
 
-exports.get_info_byId = function(user_id, res){
-	var query = "SELECT * FROM Users WHERE user_id = '" + user_id + "'";
+exports.get_profile_byId = function(user_id, res){
+	var query = "SELECT * FROM Profiles WHERE user_id = '" + user_id + "'";
 	db.query(query,
 		function (err, sql_res){
 			if (err) 
@@ -62,6 +62,7 @@ exports.get_info_byId = function(user_id, res){
 // return the new user_id
 exports.create_user = function(email, res){
 	var user_id;
+	// create a new user record
 	var query = "INSERT INTO Users (user_email) VALUES ('" + email + "')";
 	db.query(query,
 		function (err, sql_res){
@@ -70,18 +71,40 @@ exports.create_user = function(email, res){
 
 			user_id = sql_res.insertId;
 		});
+
+	// create a calen for a user
 	var calen_id;
 	calen.create_calen(user_id, function(err, calen_res){
 		calen_id = calen_res.calen_id;
 	});
 	var setCmd = "calendar_id = '" + calen_id + "'";
 	this.update_user(setCmd, user_id);
+
+	//create a new user profile
+	var query2 = "INSERT INTO Profiles (user_email, user_id) VALUES ('" + email + "','" + user_id + "')";
+	db.query(query,
+		function (err, sql_res){
+			if (err) 
+				res(err, null);
+		});
+
 	res(null, user_id);
 };
 
 // update user record with setCmd
 // format of setCmd:
 // "column1 = val1, column2 = val2, ..."
+exports.update_profile = function(setCmd, user_id, res){
+	var query = "UPDATE Profiles SET " + setCmd + " WHERE user_id=" + user_id;
+	db.query(query,
+		function (err,sql_res){
+			if (err) 
+				res(err, null);
+			else
+				res(null, sql_res);
+		});
+};
+
 exports.update_user = function(setCmd, user_id, res){
 	var query = "UPDATE Users SET " + setCmd + " WHERE user_id=" + user_id;
 	db.query(query,
