@@ -13,14 +13,14 @@ var UidG = require('./uuidGenerator.js');
 
 // var url = require('url');
 const {OAuth2Client} = require('google-auth-library');
-var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
+var CLIENTID = '948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com';
 // var is_varified = 0;
 
 async function verify(_idToken) {
-  const client = new OAuth2Client(CLIENT_ID);
+  const client = new OAuth2Client(CLIENTID);
   const ticket = await client.verifyIdToken({
     idToken: _idToken,
-    audience: CLIENT_ID, 
+    audience: CLIENTID, 
   });
   //const payload = ticket.getPayload();
   //const userid = payload['sub'];
@@ -28,21 +28,21 @@ async function verify(_idToken) {
   //const domain = payload['hd'];
 }
 
-exports.auth_google = async function(req, res){
+exports.authGoogle = async function(req, res){
 
-  let id_token = req.id_token;
-  let email = req.user_email;
-  let user_lastname = req.user_lastname;
-  let user_firstname = req.user_firstname;
+  let idToken = req.idToken;
+  let email = req.userEmail;
+  let userLastname = req.userLastname;
+  let userFirstname = req.userFirstname;
 
-  if(id_token === 'undefined' || email === 'undefined'  || 
-    user_firstname === 'undefined'){
+  if(idToken === 'undefined' || email === 'undefined'  || 
+    userFirstname === 'undefined'){
     console.log('Err: empty post body');
     res.status(400).send('Can\'t find your google id token or profile information');
 
 }
 
-await verify(id_token)
+await verify(idToken)
 .catch((error) => {
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
@@ -64,64 +64,64 @@ console.log('Successful Verification');
   // });
 
 
-  User.get_info(email, function(get_err, user_res){
-    if(get_err) 
-      throw get_err;
+  User.getInfo(email, function(getErr, userRes){
+    if(getErr) 
+      throw getErr;
     console.log('Finding user google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
-    var user_id;
-    if(user_res === null){
-      User.create_user(email, function(create_err, db_res){
-        if(create_err) 
-          throw create_err;
+    var userId;
+    if(userRes === null){
+      User.createUser(email, function(createErr, dbRes){
+        if(createErr) 
+          throw createErr;
         console.log('creating new user...');
         //   auth_res.status(400).send('Server fails to create a new account.');
-        user_id = db_res.user_id;
+        userId = dbRes.userId;
       });
 
-      var setcmd = "user_firstname='" + user_firstname + "'";
-      User.update_profile(setcmd, user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
+      var setcmd = "userFirstname='" + userFirstname + "'";
+      User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+        if(updateErr)
+          throw updateErr;
       });
 
-      if(user_lastname !== null && user_lastname !== 'undefined'){
-        var setcmd = "user_lastname='" + user_lastname + "'";
-        User.update_profile(setcmd, user_id, function(update_err, db_res){
-          if(update_err)
-            throw update_err;
+      if(userLastname !== null && userLastname !== 'undefined'){
+        var setcmd = "userLastname='" + userLastname + "'";
+        User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+          if(updateErr)
+            throw updateErr;
         });
       }
 
     } else {
       // found the exisiting record
       console.log('Found user from DB');
-      var setcmd = "user_firstname='" + user_firstname + "'";
-      User.update_profile(setcmd, user_res.user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
+      var setcmd = "userFirstname='" + userFirstname + "'";
+      User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+        if(updateErr)
+          throw updateErr;
       });
 
-      if(user_lastname !== null && user_lastname !== 'undefined'){
-        var setcmd = "user_lastname='" + user_lastname + "'";
-        User.update_profile(setcmd, user_res.user_id, function(update_err, db_res){
-          if(update_err)
-            throw update_err;
+      if(userLastname !== null && userLastname !== 'undefined'){
+        var setcmd = "userLastname='" + userLastname + "'";
+        User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+          if(updateErr)
+            throw updateErr;
         });
       }
     }
 
   });
 
-  User.get_profile_byId(user_id, function(get_new_err, db_res){
-      if(get_new_err)
-        throw get_new_err;
+  User.getProfileById(userId, function(getNewErr, dbRes){
+      if(getNewErr)
+        throw getNewErr;
       console.log('New account has been setup');
 
-      var profile = db_res;
+      var profile = dbRes;
     });
 
-    var uuid = UidG.uuid_create(email);
+    var uuid = UidG.uuidCreate(email);
     res.status(200).json({uuid, profile});
 
 

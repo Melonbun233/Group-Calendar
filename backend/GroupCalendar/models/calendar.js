@@ -9,16 +9,16 @@ var db = require('../databases/CalendarDB.js');
 // 			info(null, res);
 // 		});
 // };
-exports.create_calen = function(user_id, res){
-	var calen_id;
-	var query = "INSERT INTO Calendars (user_id) VALUES ('" + user_id + "')";
+exports.createCalen = function(userId, res){
+	var calenId;
+	var query = "INSERT INTO Calendars (user_id) VALUES ('" + userId + "')";
 	db.query(query,
-		function (err, sql_res){
+		function (err, sqlRes){
 			if (err) 
 				res(err, null);
 			else{
-				calen_id = sql_res.insertId;
-				res(null, calen_id);
+				calenId = sql_res.insertId;
+				res(null, calenId);
 			}
 		});
 };
