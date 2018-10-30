@@ -18,20 +18,20 @@ export default class Profile extends Component {
 			isRefreshing: false, 
 			isLoading: true,
 			profile: {},
-		}
+		};
 		this._onRefresh = this._onRefresh.bind(this);
 	}
 
 	async componentDidMount() {
-		let id_token = await AsyncStorage.getItem('idToken');
+		let idToken = await AsyncStorage.getItem('idToken');
 
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
 		//Alert.alert(id_token);
 
 		this.setState ({
-			profile: profile,
-			idToken: id_token,
+			profile,
+			idToken,
 			isLoading: false,
 		});
 	}

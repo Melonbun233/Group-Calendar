@@ -29,4 +29,4 @@ export const signUpConstraints = {
 			tooShort: 'minimum legth is 6',
 		},
 	},
-}
+};

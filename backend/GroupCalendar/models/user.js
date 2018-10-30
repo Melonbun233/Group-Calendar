@@ -2,9 +2,10 @@ var db = require('../databases/UserDB.js');
 var calen = require('./calendar.js');
 
 
-exports.get_info = function(email, res){
-	var query = "SELECT * FROM Users WHERE user_email = '" + email + "'";
+exports.getInfo = function(email, res){
+	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'";
 	db.query(query,
+<<<<<<< HEAD
 		function (err, sql_res){
 			console.log(email);
 			console.log(sql_res[0]);
@@ -15,31 +16,45 @@ exports.get_info = function(email, res){
 			}
 			else {
 				res(null, sql_res[0]);
+=======
+		function (err, sqlRes){
+			if(err) {
+				res(err, null);
+			}
+			else if (sqlRes.length == 0){
+				res(null, null);
+			}
+			else {
+				res(null, sqlRes[0]);
+>>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 			}
 		});
 };
 
-exports.update_info = function(info_json, res){
+exports.updateInfo = function(infoJson, res){
 	//var queries = '';
-	for (var x in info_json){
-		var query = "UPDATE Users SET " + x + " = '" + info_json.x + "' WHERE user_id = '" + info_json.user_id + "'";
+	for (var x in infoJson){
+		var query = "UPDATE Users SET " + x + " = '" + infoJson.x + "' WHERE user_id = '" + infoJson.userId + "'";
 		db.query(query,
+<<<<<<< HEAD
 			function (err, sql_res){
 				console.log(sql_res[0]);
+=======
+			function (err, sqlRes){
+				console.log(sqlRes[0]);
+>>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 				if(err) {
 					res(err, null);
 				}
 		});
-		console.log(x);
-		console.log(info_json.x);
-		console.log(info_json.user_id);
 	}
-	res(null, info_json);
+	res(null, infoJson);
 };
 
-exports.get_profile_byId = function(user_id, res){
-	var query = "SELECT * FROM Profiles WHERE user_id = '" + user_id + "'";
+exports.getProfileById = function(userId, res){
+	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
 	db.query(query,
+<<<<<<< HEAD
 		function (err, sql_res){
 			if (err) {
 				res(err, null);
@@ -49,6 +64,17 @@ exports.get_profile_byId = function(user_id, res){
 			}
 			else {
 				res(null, sql_res);
+=======
+		function (err, sqlRes){
+			if (err) {
+				res(err, null);
+			}
+			else if (sqlRes.length == 0){
+				res(null, null);
+			}
+			else {
+				res(null, sqlRes);
+>>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 			}
 		});
 };
@@ -66,64 +92,65 @@ exports.get_profile_byId = function(user_id, res){
 
 // create a new record in Users table and initialize a new calendar record
 // return the new user_id
-exports.create_user = function(email, res){
-	var user_id;
+exports.createUser = function(email, res){
+	var userId;
 	// create a new user record
 	var query = "INSERT INTO Users (user_email) VALUES ('" + email + "')";
 	db.query(query,
-		function (err, sql_res){
+		function (err, sqlRes){
+
 			if (err) {
 				res(err, null);
 			}
 
-			user_id = sql_res.insertId;
+			userId = sqlRes.insertId;
 		});
 
 	// create a calen for a user
-	var calen_id;
-	calen.create_calen(user_id, function(err, calen_res){
-		calen_id = calen_res.calen_id;
+	var calenId;
+	calen.create_calen(userId, function(err, calenRes){
+		calenId = calenRes.calenId;
 	});
-	var setCmd = "calendar_id = '" + calen_id + "'";
-	this.update_user(setCmd, user_id);
+	var setCmd = "calendarId = '" + calenId + "'";
+	this.updateUser(setCmd, userId);
 
 	//create a new user profile
-	var query2 = "INSERT INTO Profiles (user_email, user_id) VALUES ('" + email + "','" + user_id + "')";
+	var query2 = "INSERT INTO Profiles (userEmail, userId) VALUES ('" + email + "','" + userId + "')";
 	db.query(query,
-		function (err, sql_res){
-			if (err) {
+		function (err, sqlRes){
+			if (err){ 
 				res(err, null);
 			}
 		});
 
-	res(null, user_id);
+	res(null, userId);
 };
 
 // update user record with setCmd
 // format of setCmd:
 // "column1 = val1, column2 = val2, ..."
-exports.update_profile = function(setCmd, user_id, res){
-	var query = "UPDATE Profiles SET " + setCmd + " WHERE user_id=" + user_id;
+exports.updateProfile = function(setCmd, userId, res){
+	var query = "UPDATE Profiles SET " + setCmd + " WHERE userId=" + userId;
 	db.query(query,
-		function (err,sql_res){
+		function (err,sqlRes){
 			if (err) {
 				res(err, null);
 			}
 			else{
-				res(null, sql_res);
+				res(null, sqlRes);
 			}
 		});
 };
 
-exports.update_user = function(setCmd, user_id, res){
-	var query = "UPDATE Users SET " + setCmd + " WHERE user_id=" + user_id;
+exports.updateUser = function(setCmd, userId, res){
+	var query = "UPDATE Users SET " + setCmd + " WHERE userId=" + userId;
 	db.query(query,
-		function (err,sql_res){
+		function (err,sqlRes){
 			if (err) {
 				res(err, null);
 			}
 			else{
-				res(null, sql_res);
+				res(null, sqlRes);
 			}
 		});
 };

@@ -85,17 +85,6 @@ export default class SignUpPage extends Component {
 		}
 		//correct info, create a new user
 		this.setState({isLoading: true});
-		Alert.alert(JSON.stringify({
-					user: {
-						userEmail,
-						userPwd,
-					},
-					profile: {
-						userEmail,
-						userFirstname,
-						userLastname,
-					}
-				}));
 		let res = await Network.createUser(
 				{
 					user: {
@@ -271,4 +260,4 @@ const s = StyleSheet.create({
 		color: '#ffffff',
 		fontSize: 18,
 	},
-})
+});
