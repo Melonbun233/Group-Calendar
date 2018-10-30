@@ -126,7 +126,7 @@ export default class SignInPage extends Component {
 						password: 'incorrect email or password',
 					}});
 			break;
-			default: Alert.alert("Internet Error", JSON.stringify(res.error));
+			default: Alert.alert('Internet Error', JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
