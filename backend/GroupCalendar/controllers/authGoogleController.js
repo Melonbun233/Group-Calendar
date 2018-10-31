@@ -129,7 +129,8 @@ console.log('Successful Verification');
     });
 
     var uuid = UidG.uuidCreate(email);
-    res.status(200).json({uuid, profile});
+    req.session.uuid = uuid;
+    res.status(200).json(profile);
 
 
 };

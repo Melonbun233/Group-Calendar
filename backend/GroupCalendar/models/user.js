@@ -5,18 +5,6 @@ var calen = require('./calendar.js');
 exports.getInfo = function(email, res){
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'";
 	db.query(query,
-<<<<<<< HEAD
-		function (err, sql_res){
-			console.log(email);
-			console.log(sql_res[0]);
-			if(err){ 
-				res(err, null);
-			} else if (sql_res.length == 0){
-				res(null, null);
-			}
-			else {
-				res(null, sql_res[0]);
-=======
 		function (err, sqlRes){
 			if(err) {
 				res(err, null);
@@ -26,7 +14,6 @@ exports.getInfo = function(email, res){
 			}
 			else {
 				res(null, sqlRes[0]);
->>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 			}
 		});
 };
@@ -36,13 +23,8 @@ exports.updateInfo = function(infoJson, res){
 	for (var x in infoJson){
 		var query = "UPDATE Users SET " + x + " = '" + infoJson.x + "' WHERE user_id = '" + infoJson.userId + "'";
 		db.query(query,
-<<<<<<< HEAD
-			function (err, sql_res){
-				console.log(sql_res[0]);
-=======
 			function (err, sqlRes){
 				console.log(sqlRes[0]);
->>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 				if(err) {
 					res(err, null);
 				}
@@ -54,17 +36,6 @@ exports.updateInfo = function(infoJson, res){
 exports.getProfileById = function(userId, res){
 	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
 	db.query(query,
-<<<<<<< HEAD
-		function (err, sql_res){
-			if (err) {
-				res(err, null);
-			}
-			else if (sql_res.length == 0){
-				res(null, null);
-			}
-			else {
-				res(null, sql_res);
-=======
 		function (err, sqlRes){
 			if (err) {
 				res(err, null);
@@ -74,7 +45,6 @@ exports.getProfileById = function(userId, res){
 			}
 			else {
 				res(null, sqlRes);
->>>>>>> 340a61a2f9b4adface0495287f2f9175e5b58f15
 			}
 		});
 };
