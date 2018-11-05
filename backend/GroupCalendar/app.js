@@ -8,6 +8,7 @@ var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
 var sqlinjection = require('sql-injection');
+var session = require('client-sessions');
 
 /*----require routers-----------*/
 var indexRouter = require('./routes/index');
@@ -20,6 +21,15 @@ var app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(sqlinjection);
+
+app.use(session({
+	cookieName: 'session',
+	secret: 'secret key',
+	//duration: how long the session will live in milliseconds
+	duration: 2 * 7 * 24 * 60 * 60 * 1000,
+	//activeDuration: allows users to lengthen their session by interacting with server
+	activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
