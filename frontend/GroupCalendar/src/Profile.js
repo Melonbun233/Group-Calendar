@@ -23,7 +23,7 @@ export default class Profile extends Component {
 	}
 
 	async componentDidMount() {
-		let idToken = await AsyncStorage.getItem('idToken');
+		let cookie = await AsyncStorage.getItem('cookie');
 
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
@@ -31,17 +31,17 @@ export default class Profile extends Component {
 
 		this.setState ({
 			profile,
-			idToken,
+			cookie,
 			isLoading: false,
 		});
 	}
 
 	//callback function for refreshing
 	_onRefresh = async () => {
-		let {profile, idToken} = this.state;
+		let {profile, cookie} = this.state;
 
 		this.setState({isRefreshing: true});
-		let res = await Network.fetchProfile(profile.userId, idToken);
+		let res = await Network.fetchProfile(profile.userId, cookie);
 		switch(res.status) {
 			case 200: this.setState({profile: res.profile});
 			break;
@@ -50,7 +50,7 @@ export default class Profile extends Component {
 			case 400:
 			case 404: this.props.onSessionOut();
 			break;
-			default: Alert.alert("HTTP ERROR", JSON.stringify(res.error));
+			default: Alert.alert('HTTP ERROR', JSON.stringify(res.error));
 		}
 		this.setState({isRefreshing: false});
 	}

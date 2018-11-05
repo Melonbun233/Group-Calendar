@@ -23,17 +23,19 @@ export default class GCNetwork extends Component {
 		//     let response = await fetch( url, 
 		//     {	
 		//     	method: 'POST', 
-		//     	headers: {"Content-Type": "application/json"},
+		//     	headers: {
+				// 	'Content-Type' : 'application/json',
+				// },
 		//     	body: JSON.stringify({
-		//     		"userEmail":_userEmail,
-		//     		"userPwd":_userPwd,
+		//     		'userEmail':_userEmail,
+		//     		'userPwd':_userPwd,
 		//     	})
 		// 	});
 		//     let responseJson = await response.json();
 		//     return {
 		//     	status: response.status,
 		//     	profile: responseJson.profile,
-		//     	id_token: responseJson.uuid,
+		//     	cookie: response.headers.get('set-cookie'),
 		//     }
 		// } catch (_error) {
 		// 	return {
@@ -45,7 +47,7 @@ export default class GCNetwork extends Component {
 		//this is for test
 		return {
 			status: 200,
-			idToken: 'this is idToken',
+			cookie: 'this is cookie',
 			profile: {
 				userEmail: 'admin@mail.com',
 				userId: '0',
@@ -65,15 +67,17 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static async fetchProfile(_userId, _idToken){
+	static async fetchProfile(_userId, _cookie){
 		// let url = config.server.concat('/users/profile');
 		// try {
 		// 	let response = await fetch(url, {
 		// 		method: 'GET',
-		// 		headers: {"Content-Type": "application/json"},
+		// 		headers: {
+				// 	"Content-Type" : "application/json",
+				// 	"cookie" : _cookie,
+				// },
 		// 		body: JSON.stringify({
 		// 			userId: _userId,
-		// 			uuid: _idToken,
 		// 		})
 		// 	});
 		// 	let responseJson = await response.json();
@@ -115,7 +119,7 @@ export default class GCNetwork extends Component {
 		// 	let responseJson = await response.json();
 		// 	return {
 		// 		status: response.status,
-		// 		idToken: responseJson.uuid,
+		// 		cookie: response.headers.get("set-cookie"),
 		// 		profile: responseJson.profile,
 		// 	}
 		// } catch (_error) {
@@ -128,7 +132,7 @@ export default class GCNetwork extends Component {
 		//this is only used for test
 		return {
 			status: 200,
-			idToken: 'this is idToken',
+			cookie: 'this is cookie',
 			profile: userInfo.profile,
 		};
 	}
@@ -145,7 +149,7 @@ export default class GCNetwork extends Component {
 		// 	let responseJson = await response.json();
 		// 	return {
 		// 		status: response.status,
-		// 		id_token: responseJson.uuid,
+		// 		cookie: response.headers.get("set-cookie"),
 		// 		profile: responseJson.profile,
 		// 	}
 		// } catch (_error) {
@@ -157,7 +161,7 @@ export default class GCNetwork extends Component {
 		//this is for test
 		return {
 			status: 200,
-			idToken: 'this is id_token',
+			cookie: 'this is cookie',
 			profile: {
 				userEmail: userInfo.user.email,
 				userId: userInfo.user.id,

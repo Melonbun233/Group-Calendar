@@ -58,18 +58,20 @@ export default class SignInPage extends Component {
 	async checkUserSignedIn(){
 		let {isChecking} = this.state;
 		try {
-			let idToken = await AsyncStorage.getItem('idToken');
+			let cookie = await AsyncStorage.getItem('cookie');
 			let profile = await AsyncStorage.getItem('profile');
-			if (idToken === null || profile === null){
+			if (cookie === null || profile === null){
 				//user hasn't signed in
 				this.setState({isChecking: false});
 			} else {
-				//we already have id_token, we use it to sign in
+				//we already have cookie, we use it to sign in
 				this.setState({isChecking: false});
 				this.props.navigation.navigate('Main');
 			}
 		} catch (error) {
 			Alert.alert('Something Bad Happened');
+			//user hasn't signed in
+			this.setState({isChecking: false});
 		}
 	}
 
@@ -108,9 +110,9 @@ export default class SignInPage extends Component {
 			//correct user_email and user_pwd
 			//we save the user info to async storage and jump to main pages
 			case 200: {
-				//on success, user profile and id_token are returned
+				//on success, user profile and cookie are returned
 				//store id_token and profile for other screens to use
-				await AsyncStorage.setItem('idToken', res.idToken);
+				await AsyncStorage.setItem('cookie', res.cookie);
 				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
 				await AsyncStorage.setItem('signInByGoogle', 'false');
 
@@ -132,8 +134,8 @@ export default class SignInPage extends Component {
 	}
 
 	//sign in by google
-	//on successful signin, we send the google id_token to server and get 
-	//	our id_token
+	//on successful signin, we send the google id token to server and get 
+	//our cookie
 	_onGoogleSignInPressed = async () => {
 		this.setState({isSigning: true});
 		await GoogleSignin.hasPlayServices();
@@ -144,7 +146,7 @@ export default class SignInPage extends Component {
 				switch (res.status) {
 					case 200: {
 						//store id_token and profile for other screens to use
-						await AsyncStorage.setItem('idToken', res.idToken);
+						await AsyncStorage.setItem('cookie', res.cookie);
 						await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
 						await AsyncStorage.setItem('signInByGoogle', 'true');
 						this.setState({isSigning: false});
