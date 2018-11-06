@@ -101,7 +101,7 @@ export default class SignUpPage extends Component {
 		switch (res.status) {
 			case 200: {
 				this.setState({isLoading: false});
-				await AsyncStorage.setItem('idToken', res.idToken);
+				await AsyncStorage.setItem('cookie', res.cookie);
 				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
 				await AsyncStorage.setItem('signInByGoogle', 'true');
 				this.props.navigation.navigate('Main');

@@ -36,13 +36,13 @@ export default class MainPage extends Component {
 	}
 
 	async componentDidMount() {
-		let idToken = await AsyncStorage.getItem('idToken');
+		let cookie = await AsyncStorage.getItem('cookie');
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
 
 		this.setState ({
 			profile,
-			idToken,
+			cookie,
 			isLoading: false,
 		});
 	}
@@ -182,7 +182,7 @@ export default class MainPage extends Component {
 			}
 		}
 		//clean up async storage
-		await AsyncStorage.removeItem('idToken');
+		await AsyncStorage.removeItem('cookie');
 		await AsyncStorage.removeItem('profile');
 		await AsyncStorage.removeItem('signInByGoogle');
 		this.props.navigation.popToTop();

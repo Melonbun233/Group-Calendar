@@ -2,38 +2,101 @@ var db = require('../databases/UserDB.js');
 var calen = require('./calendar.js');
 
 
-exports.getInfo = function(email, res){
+async function getInfo (email) {
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'";
-	db.query(query,
-		function (err, sqlRes){
-			if(err) {
-				res(err, null);
-			}
-			else if (sqlRes.length == 0){
-				res(null, null);
-			}
-			else {
-				res(null, sqlRes[0]);
-			}
-		});
+	
+	await db.query(query)
+	.then ( (result) => {
+		if ( result.length == 0)
+			throw "User name does not refer to any entry.";
+		return result[0];
+	})
+	.catch( (err) => {
+		throw err;
+	})
 };
 
-exports.updateInfo = function(infoJson, res){
-	//var queries = '';
-	for (var x in infoJson){
-		var query = "UPDATE Users SET " + x + " = '" + infoJson.x + "' WHERE user_id = '" + infoJson.userId + "'";
-		db.query(query,
-			function (err, sqlRes){
-				console.log(sqlRes[0]);
-				if(err) {
-					res(err, null);
-				}
-		});
+async function updateInfo (info) {
+	for (var x in info){
+		if (x !== 'userId' && x !== 'uuid'){
+			var query = "UPDATE Users SET " + x + " = '" + info[x] + "' WHERE userId = '" + info.userId + "'";
+			
+			await db.query(query)
+			.then( (result) => {
+				if (!result.affectedRows)
+					throw "No such userId";
+			})
+			.catch( (err) => {
+				throw err;
+			})
+		}
 	}
-	res(null, infoJson);
 };
 
-exports.getProfileById = function(userId, res){
+async function createUser (user) {
+	var columns = Object.keys(user);
+	var values = Object.values(user);
+	values = addQuotation(values);
+
+	var query = "INSERT INTO Users (" + columns + ") VALUES (" + values + ");";
+
+	await db.query(query)
+	.catch ( err => {
+		throw err;
+	})
+
+}
+
+async function createProfile (profile) {
+	var columns = Object.keys(profile);
+	var values = Object.values(profile);
+	values = addQuotation(values);
+
+	var query = "INSERT INTO Profiles (" + columns + ") VALUES (" + values + ");";
+
+	await db.query(query)
+	.catch ( err => {
+		throw err;
+	})
+}
+
+function addQuotation (values){
+	var length = values.length;
+	var withQuotation = "";
+
+	for (var i = 0; i < length-1; i++){
+		withQuotation += "'" + values[i] + "',";
+	}
+
+	withQuotation += "'" + values[length-1] + "'";
+	return withQuotation;
+}
+
+async function getProfileById (userId, res) {
+	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
+	await db.query(query)
+	.then ( result => {
+		if (!result.length)
+			throw "No such userId";
+		return result[0];
+	})
+	.catch ( err => {
+		throw err;
+	})
+}
+
+module.exports = {
+	createProfile,
+	createUser,
+	updateInfo,
+	getProfileById
+}
+
+//------the above function has been modified to async functions----
+//-----------------------------------------------------------------
+
+/* 
+async function getProfileById (userId, res) {
 	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
 	db.query(query,
 		function (err, sqlRes){
@@ -48,6 +111,7 @@ exports.getProfileById = function(userId, res){
 			}
 		});
 };
+*/
 // exports.get_info_bySub = function(user_sub, res){
 // 	var query = "SELECT * FROM Users WHERE user_sub = '" + user_sub + "'";
 // 	db.query(query,
@@ -62,6 +126,7 @@ exports.getProfileById = function(userId, res){
 
 // create a new record in Users table and initialize a new calendar record
 // return the new user_id
+/*
 exports.createUser = function(email, res){
 	var userId;
 	// create a new user record
@@ -124,3 +189,4 @@ exports.updateUser = function(setCmd, userId, res){
 			}
 		});
 };
+*/
