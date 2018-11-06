@@ -1,9 +1,9 @@
 const {check, param} = require('express-validator/check');
 
 exports.checkParams = [
-	param('userEmail').isEmail()
+	param('user_email').isEmail()
 ]
 
 exports.check = [
-	check('userEmail').isEmail()
+	check('user_email').isEmail()
 ]
