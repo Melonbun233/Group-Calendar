@@ -31,6 +31,6 @@ router.post('/',
 	validator.checkParams,
 	userController.userCreate);
 
-router.delete('/', userController.userDelete);
+//router.delete('/', userController.userDelete);
 
 module.exports = router;
