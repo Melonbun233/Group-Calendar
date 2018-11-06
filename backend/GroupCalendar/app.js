@@ -7,8 +7,9 @@ var UserDB = require('./databases/UserDB');
 var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
-var sqlinjection = require('sql-injection');
+//var sqlinjection = require('sql-injection');
 var session = require('client-sessions');
+var Promise = require('promise');
 
 /*----require routers-----------*/
 var indexRouter = require('./routes/index');
