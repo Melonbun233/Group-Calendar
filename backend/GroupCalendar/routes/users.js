@@ -1,12 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var parser = require('body-parser');
-var user_controller = require('../controllers/userController');
+var userController = require('../controllers/userController');
 const url = require('url');  
-const querystring = require('querystring');
-
-const {check, validationResult} = require('express-validator/check');
-
+var validator = require('../middlewares/validation');
+/*
 router.get('/', 
 	check('userEmail').isEmail(),
 	function(req, res){
@@ -17,6 +15,7 @@ router.get('/',
 		}
 		user_controller.userInfoGet(req.param('userEmail'), res);
 	});
+*/
 
 router.put('/', 
 	validator.check,
