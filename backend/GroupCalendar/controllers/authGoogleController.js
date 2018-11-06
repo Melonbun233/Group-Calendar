@@ -8,19 +8,19 @@
 // });
 
 // the req is the idToken of user
-var express = require('express');
-var auth = express();
 var User = require('../models/user.js');
+var UidG = require('./uuidGenerator.js');
+
 // var url = require('url');
 const {OAuth2Client} = require('google-auth-library');
-var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com";
+var CLIENTID = '948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com';
 // var is_varified = 0;
 
- async function verify(_idToken) {
-  const client = new OAuth2Client(CLIENT_ID);
+async function verify(_idToken) {
+  const client = new OAuth2Client(CLIENTID);
   const ticket = await client.verifyIdToken({
     idToken: _idToken,
-    audience: CLIENT_ID, 
+    audience: CLIENTID, 
   });
   //const payload = ticket.getPayload();
   //const userid = payload['sub'];
@@ -28,24 +28,27 @@ var CLIENT_ID = "948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleuserco
   //const domain = payload['hd'];
 }
 
-exports.auth_google = (req, res) => {
+exports.authGoogle = async function(req, res){
 
-  let id_token = req.param('id_token');
-  let email = req.param('user_email');
-  let user_name = req.param('user_name');
+  let idToken = req.idToken;
+  let email = req.userEmail;
+  let userLastname = req.userLastname;
+  let userFirstname = req.userFirstname;
 
-  if(id_token === 'undefined' || email === 'undefined'  || user_name === 'undefined' ){
-    res.status(400).send('Can\'t find your google id token');
-    return console.log('Err: empty id_token');
-  }
+  if(idToken === 'undefined' || email === 'undefined'  || 
+    userFirstname === 'undefined'){
+    console.log('Err: empty post body');
+    res.status(400).send('Can\'t find your google id token or profile information');
 
-  verify(id_token)
-  .catch((error) => {
+}
+
+await verify(idToken)
+.catch((error) => {
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
   });
-  console.log('Successful Verification...');
+console.log('Successful Verification');
   // auth_res.send('post test');
   
   // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
@@ -61,89 +64,74 @@ exports.auth_google = (req, res) => {
   // });
 
 
-  User.get_info(email, function(get_err, user_res){
-    if(get_err) 
-      throw get_err;
-    console.log('Finding your google email from our Database...');
+  User.getInfo(email, function(getErr, userRes){
+    if(getErr){ 
+      throw getErr;
+    }
+    console.log('Finding user google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
-    var user_id;
-    if(user_res === null){
-      User.create_user(email, function(create_err, db_res){
-        if(create_err) 
-          throw create_err;
-        console.log('Welcome new user');
+    var userId;
+    if(userRes === null){
+      User.createUser(email, function(createErr, dbRes){
+        if(createErr){ 
+          throw createErr;
+        }
+        console.log('creating new user...');
         //   auth_res.status(400).send('Server fails to create a new account.');
-        user_id = db_res.user_id;
+        userId = dbRes.userId;
       });
 
-      var setcmd = "user_name='" + user_name + "'";
-      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
+      var setcmd = "userFirstname='" + userFirstname + "'";
+      User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+        if(updateErr){
+          throw updateErr;
+        }
       });
-      
-      User.get_info_byId(user_id, function(get_new_err, db_res){
-        if(get_new_err)
-          throw get_new_err;
-        console.log('New account has been setup');
-        //   auth_res.status(400).send('Server fails to find the new user.');
-        // successfully create a new user and return the user info
-        res.status(200).json(db_res);
-      });
+
+      if(userLastname !== null && userLastname !== 'undefined'){
+        var setcmd = "userLastname='" + userLastname + "'";
+        User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+          if(updateErr){
+            throw updateErr;
+          }
+        });
+      }
+
     } else {
       // found the exisiting record
-      console.log('Welcome Back');
-      var setcmd = "user_name='" + user_name + "'";
-      User.update_user(setcmd, user_res.user_id, function(update_err, db_res){
-        if(update_err)
-          throw update_err;
+      console.log('Found user from DB');
+      var setcmd = "userFirstname='" + userFirstname + "'";
+      User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+        if(updateErr){
+          throw updateErr;
+        }
       });
-      console.log(user_name);
 
-      res.status(200).json(user_res);
-
+      if(userLastname !== null && userLastname !== 'undefined'){
+        var setcmd = "userLastname='" + userLastname + "'";
+        User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+          if(updateErr){
+            throw updateErr;
+          }
+        });
+      }
     }
 
   });
 
-}
-  	// con_userDB.query("SELECT * FROM Users WHERE user_email = google_res.email", 
-  	// 	function(user_err, user_result){
-  	// 	// if user could not be found in the DB, we should create a new account for the user
-  	// 	if(user_err){
-  	// 		con_userDB.query("INSERT INTO Users (user_email) VALUES (google_res.email)",
-  	// 			function(user_err2, user_new){
-  	// 				if(user_err2) throw user_err2;
-  	// 			// user_new contains the user_id and we need to give new user a calendar id 
-  	// 			con_calenDB.query("INSERT INTO Calendars (user_id) VALUES (user_new.user_id)", 
-  	// 				function(calen_err, calen_result){
-  	// 					if(calen_err) throw calen_err;
-  	// 				});
-  	// 			// set user id in new calendar entry
-  	// 			con_calenDB.query("SELECT calendar_id From Calendars WHERE user_id = user_new.user_id", 
-  	// 				function(calen_err, calen_id){
-  	// 					if(calen_err) throw calen_err;
-  	// 					// set calendar id in new user entry
-  	// 					con_userDB.query("UPDATE Users SET calendar_id = calen_id WHERE user_id = user_new.user_id",
-  	// 						function(user_err3, user_result3){
-  	// 							if(user_err3) throw user_err3;
-  	// 						});
-  	// 				});
-  	// 		});
-  	// 		// new user entry should be here
-  	// 		con_userDB.query("SELECT * FROM Users WHERE user_email = google_req.email", 
-  	// 			function(user_err4, user_result4){
-  	// 				if(user_err4) {
-  	// 					res.status(404);
-  	// 					res.json(null);
-  	// 					throw user_err4;
-  	// 				}
+  User.getProfileById(userId, function(getNewErr, dbRes){
+      if(getNewErr){
+        throw getNewErr;
+      }
+      console.log('New account has been setup');
 
-  	// 				res.json(user_result4);
-  	// 			});
+      var profile = dbRes;
+    });
 
-  	// 	} else {
-  	// 		// the user has an account before
-  	// 		res.json(user_result);
-  	// 	}
+    var uuid = UidG.uuidCreate(email);
+    req.session.uuid = uuid;
+    res.status(200).json(profile);
 
+
+};
+  	

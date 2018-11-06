@@ -1,7 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, 
-	Alert, Button, TouchableWithoutFeedback} 
+import {Text, TextInput, View, StyleSheet, AsyncStorage,
+	Alert, Button, TouchableWithoutFeedback, ActivityIndicator} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import Profile from './Profile';
@@ -16,33 +16,52 @@ export default class MainPage extends Component {
 		header: null,
 		gesturesEnabled: false,
 	}
+
 	constructor(props) {
 		super(props);
-		var user = this.props.navigation.getParam('user', 'user');
 		this.state = {
-	  		//calendar is the default content page
-	  		title: 'Calendar',
-	  		buttonColor: {
-	  			calendar: '#66a3ff',
-	  			project: '#000000',
-	  			profile: '#000000',
-	  			search: '#000000',
-	  		},
-	  		user,
+			//calendar is the default content page
+			isLoading: true,
+			title: 'Calendar',
+			buttonColor: {
+				calendar: cs.blue,
+				project: cs.black,
+				profile: cs.black,
+				search: cs.black,
+			},
 		};
-
 		this._onSignOut = this._onSignOut.bind(this);
+		this._onSessionOut = this._onSessionOut.bind(this);
+		this._switchContent = this._switchContent.bind(this);
 	}
 
-	componentDidMount() {
-		
+	async componentDidMount() {
+		let cookie = await AsyncStorage.getItem('cookie');
+		let profile = await AsyncStorage.getItem('profile')
+			.then((res) => JSON.parse(res));
+
+		this.setState ({
+			profile,
+			cookie,
+			isLoading: false,
+		});
 	}
+
 	//this function is invoked on switch button press
 	_switchContent = (_name) => {
 		this.setState(this._getButtonColorState(_name));
 	}
 
 	render() {
+		let {isLoading, buttonColor} = this.state;
+		if (isLoading) {
+			return (
+				<View style = {cs.container}>
+					<ActivityIndicator size = 'large'/>
+				</View>
+			);
+		}
+
 		return (
 			<View style = {cs.container}>		
 				{/*Title*/}
@@ -61,7 +80,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Calendar')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.calendar}}>
+						<Text style = {buttonColor.calendar}>
 						Calendar</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -69,7 +88,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Project')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.project}}>
+						<Text style = {buttonColor.project}>
 						Project</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -77,7 +96,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Search')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.search}}>
+						<Text style = {buttonColor.search}>
 						Search</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -85,7 +104,7 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Profile')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {{color: this.state.buttonColor.profile}}>
+						<Text style = {buttonColor.profile}>
 						Me</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -102,31 +121,31 @@ export default class MainPage extends Component {
 				ret = {
 					title: 'Calendar',
 					buttonColor: {
-						calendar: '#66a3ff',
-			  			project: '#000000',
-			  			profile: '#000000',
-			  			search: '#000000',
+						calendar: cs.blue,
+						project: cs.black,
+						profile: cs.black,
+						search: cs.black,
 					}
 				};
 			case 'Calendar' :
 				ret = {
 					title: 'Calendar',
-					buttonColor: {calendar: '#66a3ff'}};
+					buttonColor: {calendar: cs.blue}};
 			break;
 			case 'Project' : 
 				ret = {
 					title: 'Project',
-					buttonColor: {project: '#66a3ff'}};
+					buttonColor: {project: cs.blue}};
 			break;
 			case 'Search' : 
 				ret = {
 					title: 'Search',
-					buttonColor: {search: '#66a3ff'}};
+					buttonColor: {search: cs.blue}};
 			break;
 			case 'Profile' : 
 				ret = {
 					title: 'Profile',
-					buttonColor: {profile: '#66a3ff'}};
+					buttonColor: {profile: cs.blue}};
 			break;
 			
 		}
@@ -145,24 +164,33 @@ export default class MainPage extends Component {
 				return(<Search/>);
 			case 'Profile' :
 				return(<Profile 
-					user = {this.state.user}
-					onSignOut = {this._onSignOut}
-				/>);
+					onSignOut = {() => this._onSignOut()}
+					onSessionOut = {() => this._onSessionOut()}
+					/>);
 		}
 	}
 
 	_onSignOut = async () => {
-		 //we need to sign out google account
-		if(this.props.navigation.state.params.signInByGoogle) {
+		let signInByGoogle = await AsyncStorage.getItem('signInByGoogle');
+		if(signInByGoogle === 'true') {
 			try {
-    			await GoogleSignin.revokeAccess();
-    			await GoogleSignin.signOut();
-    			//Alert.alert('Signed out');
-  			} catch (error) {
-    			Alert.alert('Something Bad Happened During Signing Out');
-  			}
+				await GoogleSignin.revokeAccess();
+				await GoogleSignin.signOut();
+				//Alert.alert('Signed out');
+			} catch (error) {
+				Alert.alert('Something Bad Happened During Signing Out');
+			}
 		}
+		//clean up async storage
+		await AsyncStorage.removeItem('cookie');
+		await AsyncStorage.removeItem('profile');
+		await AsyncStorage.removeItem('signInByGoogle');
 		this.props.navigation.popToTop();
+	}
+
+	_onSessionOut = async () => {
+		await this._onSignOut();
+		Alert.alert('You have Expired the Session Time!');
 	}
 }
 
@@ -201,6 +229,8 @@ const s = StyleSheet.create({
 	bottomBar: {
 		flex: 1,
 		flexDirection: 'row',
+		alignItems: 'flex-start',
+		paddingBottom: 15,
 		justifyContent: 'space-between',
 		width: '100%',
 		borderTopWidth: 1,

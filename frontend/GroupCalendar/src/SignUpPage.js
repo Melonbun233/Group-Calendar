@@ -1,14 +1,14 @@
 //this page is used for sign up
 //this should be navigated from introPage
 import React, {Component} from 'react';
-import {StyleSheet, TextInput, Text, View, 
+import {StyleSheet, TextInput, Text, View, AsyncStorage,
 		Button, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import Ripple from 'react-native-material-ripple';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
 import validate from 'validate.js';
-import {constraint} from './common/validation';
+import {signUpConstraints} from './common/validation';
 
 export default class SignUpPage extends Component {
 	static navigationOptions = {
@@ -18,11 +18,10 @@ export default class SignUpPage extends Component {
 		super(props);
 	
 		this.state = {
-			user_email: '',
-			user_lastname: '',
-			user_firstname: '',
-			user_name: '',
-			user_pwd: '',
+			userEmail: '',
+			userLastname: '',
+			userFirstname: '',
+			userPwd: '',
 			isLoading: false,
 			errors: {},
 		};
@@ -36,13 +35,11 @@ export default class SignUpPage extends Component {
 		this._onSubmitEmail = this._onSubmitEmail.bind(this);
 		this._onSubmitLastname = this._onSubmitLastname.bind(this);
 		this._onSubmitFirstname = this._onSubmitFirstname.bind(this);
-		this._onSubmitUsername = this._onSubmitUsername.bind(this);
 		this._onSubmitPassword = this._onSubmitPassword.bind(this);
 
 		//seting up references
 		this.firstnameRef = this._updateRef.bind(this, 'firstname');
 		this.lastnameRef = this._updateRef.bind(this, 'lastname');
-		this.usernameRef = this._updateRef.bind(this, 'username');
 		this.passwordRef = this._updateRef.bind(this, 'password');
 		this.emailRef = this._updateRef.bind(this, 'email');
 	}
@@ -65,18 +62,17 @@ export default class SignUpPage extends Component {
 
 	//check error
 	_onSubmit = async () => {
-		let {user_email, user_lastname, user_firstname, 
-			user_name, user_pwd, errors} = this.state;
+		let {userEmail, userLastname, userFirstname, 
+			userPwd, errors} = this.state;
 		this.setState({isLoading: true});
 		//validate user input here
 		let invalid = validate({
 			//attributes
-			email: user_email, 
-			lastname: user_lastname,
-			firstname: user_firstname,
-			username: user_name,
-			password: user_pwd,
-			}, constraint, {fullMessages: false});
+			email: userEmail, 
+			lastname: userLastname,
+			firstname: userFirstname,
+			password: userPwd,
+			}, signUpConstraints, {fullMessages: false});
 		//some error occured
 		if (invalid) {
 			for (let key in invalid) {
@@ -91,23 +87,29 @@ export default class SignUpPage extends Component {
 		this.setState({isLoading: true});
 		let res = await Network.createUser(
 				{
-					user_email,
-					user_lastname,
-					user_firstname,
-					user_name,
-					user_pwd,
+					user: {
+						userEmail,
+						userPwd,
+					},
+					profile: {
+						userEmail,
+						userFirstname,
+						userLastname,
+					}
 				});
 		//Alert.alert(JSON.stringify(res.body));
 		switch (res.status) {
 			case 200: {
 				this.setState({isLoading: false});
-				this.props.navigation.navigate('Main',
-					{user: res.body, signInByGoogle: false});
+				await AsyncStorage.setItem('cookie', res.cookie);
+				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
+				await AsyncStorage.setItem('signInByGoogle', 'true');
+				this.props.navigation.navigate('Main');
 			}
 			break;
 			case 400: Alert.alert('Invalid Inputs');
 			break;
-			default: Alert.alert("Internet Error", JSON.stringify(res.error));
+			default: Alert.alert('Internet Error', JSON.stringify(res.error));
 		}
 		this.setState({isLoading: false});
 	}
@@ -121,9 +123,6 @@ export default class SignUpPage extends Component {
 	}
 
 	_onSubmitLastname = () => {
-		this.username.focus();
-	}
-	_onSubmitUsername = () => {
 		this.password.focus();
 	}
 
@@ -132,8 +131,8 @@ export default class SignUpPage extends Component {
 	}
 
 	render() {
-		let {user_email, user_lastname, user_firstname, 
-			user_name, user_pwd, errors, isLoading} = 
+		let {userEmail, userLastname, userFirstname, 
+			userPwd, errors, isLoading} = 
 			this.state;
 		return (
 			<KeyboardAvoidingView 
@@ -153,12 +152,12 @@ export default class SignUpPage extends Component {
 					<TextField
 						ref = {this.emailRef}
 						label = 'Email'
-						value = {user_email}
+						value = {userEmail}
 						autoCorrect = {false}
 						returnKeyType = 'next'
 						autoCapitalize = 'none'
 						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_email: text})}
+						onChangeText = {(text) => this.setState({userEmail: text})}
 						onSubmitEditing = {this._onSubmitEmail}
 						onFocus = {this._onFocus}
 						error = {errors.email}
@@ -169,12 +168,12 @@ export default class SignUpPage extends Component {
 					<TextField
 						ref = {this.firstnameRef}
 						label = 'First Name'
-						value = {user_firstname}
+						value = {userFirstname}
 						autoCorrect = {false}
 						autoCapitalize = 'words'
 						returnKeyType = 'next'
 						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_firstname: text})}
+						onChangeText = {(text) => this.setState({userFirstname: text})}
 						onSubmitEditing = {this._onSubmitFirstname}
 						onFocus = {this._onFocus}
 						error = {errors.firstname}
@@ -183,42 +182,26 @@ export default class SignUpPage extends Component {
 					<TextField
 						ref = {this.lastnameRef}
 						label = 'Last Name'
-						value = {user_lastname}
+						value = {userLastname}
 						autoCorrect = {false}
 						autoCapitalize = 'words'
 						returnKeyType = 'next'
 						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_lastname: text})}
+						onChangeText = {(text) => this.setState({userLastname: text})}
 						onSubmitEditing = {this._onSubmitLastname}
 						onFocus = {this._onFocus}
 						error = {errors.lastname}
-					/>
-				
-				{/*Username*/}
-					<TextField
-						ref = {this.usernameRef}
-						label = 'Username'
-						value = {user_name}
-						autoCorrect = {false}
-						autoCapitalize = 'none'
-						returnKeyType = 'next'
-						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_name: text})}
-						onSubmitEditing = {this._onSubmitUsername}
-						onFocus = {this._onFocus}
-						error = {errors.username}
-						title = 'length should be between 6 and 14 inclusively'
 					/>
 				{/*Password*/}
 					<TextField
 						ref = {this.passwordRef}
 						label = 'Password'
-						value = {user_pwd}
+						value = {userPwd}
 						autoCorrect = {false}
 						autoCapitalize = 'none'
 						returnKeyType = 'done'
 						labelHeight = {24}
-						onChangeText = {(text) => this.setState({user_pwd: text})}
+						onChangeText = {(text) => this.setState({userPwd: text})}
 						onSubmitEditing = {this._onSubmitPassword}
 						onFocus = {this._onFocus}
 						error = {errors.password}
@@ -277,4 +260,4 @@ const s = StyleSheet.create({
 		color: '#ffffff',
 		fontSize: 18,
 	},
-})
+});

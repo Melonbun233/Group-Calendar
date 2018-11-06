@@ -9,15 +9,23 @@ var db = mysql.createConnection({
 });
 
 db.connect(function(err) {
-  if (err) throw err;
+  if (err){ 
+    throw err
+  }
   console.log('You are now connected to UserDB...');
 });
 
-exports.query = function(query, result){ 
-	db.query(query, function(err, res){
-		if (err) 
-      result(err, null);
-		else 
-      result(null, res);
-	});
-};
+function query(req){
+  return new Promise ( (resolve, reject) => {
+    db.query(req, (err, result) => {
+      if (err){
+        reject(err);
+      }
+      resolve(result);
+    })
+  });
+}
+
+module.exports = {
+  query
+}

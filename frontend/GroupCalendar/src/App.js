@@ -1,5 +1,5 @@
 'use strict';
-/**
+/*
  * This is the main file for this application
  * This is only responsible for user login status change
  * This file manages all navigation stacks
@@ -15,7 +15,6 @@ import {createStackNavigator} from 'react-navigation';
 
 type Props = {};
 export default class App extends Component<Props> {
-
 	render() {
 			return (
 				<IntroStack

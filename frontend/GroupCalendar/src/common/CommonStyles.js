@@ -99,4 +99,13 @@ export default StyleSheet.create({
 	focus2: {
 		backgroundColor: '#00ff00',
 	},
-})
+	blue: {
+		color: '#66a3ff',
+	},
+	black: {
+		color: '#000000',
+	},
+	white: {
+		color: '#ffffff',
+	},
+});

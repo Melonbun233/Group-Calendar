@@ -17,35 +17,47 @@ export default class GCNetwork extends Component {
 	//		404: cannot find 
 	//	Note that user name should be validated 
 	//
-	static async fetchUser(_user_email) {
-		let url = config.server.concat('/users?user_email=').concat(_user_email);
-		//let url = 'https://facebook.github.io/react-native/movies.json';
-		try {
-		    let response = await fetch( url, 
-		    {	
-		    	method: 'GET', 
-			});
-		    let responseJson = await response.json();
-		    return {
-		    	status: response.status,
-		    	body: responseJson,
-		    }
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
-		}
-		//this is for test
-		// return {
-		// 	status: 200,
-		// 	user: {
-		// 		user_name: 'Admin',
-		// 		user_pwd: 'qwer',
-		// 		user_email: 'admin@mail.com',
-		// 		user_id: '0',
+	static async verifyUser(_userEmail, _userPwd) {
+		// let url = config.server.concat('/auth/app');
+		// try {
+		//     let response = await fetch( url, 
+		//     {	
+		//     	method: 'POST', 
+		//     	headers: {
+				// 	'Content-Type' : 'application/json',
+				// },
+		//     	body: JSON.stringify({
+		//     		'userEmail':_userEmail,
+		//     		'userPwd':_userPwd,
+		//     	})
+		// 	});
+		//     let responseJson = await response.json();
+		//     return {
+		//     	status: response.status,
+		//     	profile: responseJson.profile,
+		//     	cookie: response.headers.get('set-cookie'),
+		//     }
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
 		// 	}
-		// };
+		// }
+
+		//this is for test
+		return {
+			status: 200,
+			cookie: 'this is cookie',
+			profile: {
+				userEmail: 'admin@mail.com',
+				userId: '0',
+				userDescription: 'my name is henry',
+				userRegion: 'Canada',
+				userLastname: 'Zeng',
+				userFirstname: 'Zhuohang',
+				isAdmin: 1,
+			}
+		};
 	}
 
 	//	Function used to fetch user profile
@@ -55,46 +67,60 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static async fetchProfile(_user_id){
-		let url = config.server.concat('/users/profile?user_id=').concat(_user_id);
-		try {
-			let response = await fetch(url, {
-				method: 'GET'
-			});
-			let responseJson = await response.json();
-			return {
-				status: response.status,
-				body: responseJson,
-			}
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
-		}
-		//this is only used for test
-		// return {
-		// 	status: 200,
-		// 	profile: {
-		// 		user_region: 'Canada',
-		// 		user_descript: 'my name is Henry',
-		// 		user_birth: '1997-05-03',
-		// 		user_gender: 'male',
-		// 	}
-		// }
-	}
-
-	//we will assume user information is checked
-	static async createUser(userInfo) {
-		// url = await this._getUrl(config.server.concat('/users?'), userInfo);
+	static async fetchProfile(_userId, _cookie){
+		// let url = config.server.concat('/users/profile');
 		// try {
 		// 	let response = await fetch(url, {
-		// 		method: 'POST'
+		// 		method: 'GET',
+		// 		headers: {
+				// 	"Content-Type" : "application/json",
+				// 	"cookie" : _cookie,
+				// },
+		// 		body: JSON.stringify({
+		// 			userId: _userId,
+		// 		})
 		// 	});
 		// 	let responseJson = await response.json();
 		// 	return {
 		// 		status: response.status,
-		// 		body: responseJson,
+		// 		profile: responseJson,
+		// 	}
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
+		// 	}
+		// }
+		
+		//this is only used for test
+		return {
+			status: 200,
+			profile: {
+				userEmail: 'test@fetch.com',
+				userId: '0',
+				userDescription: 'my name is henry',
+				userRegion: 'Canada',
+				userLastname: 'Zeng',
+				userFirstname: 'Zhuohang',
+				isAdmin: 1,
+			}
+		};
+	}
+
+	//we will assume user information is checked
+	static async createUser(userInfo) {
+		// let url = config.server.concat('/users');
+		// try {
+		// 	let response = await fetch(url, {
+		// 		method: 'POST',
+		// 		headers: {"Content-Type": "application/json"},
+		// 		body: JSON.stringify(userInfo),
+		// 	});
+		// 	let responseJson = await response.json();
+		// 	return {
+		// 		status: response.status,
+		// 		cookie: response.headers.get("set-cookie"),
+		// 		profile: responseJson.profile,
 		// 	}
 		// } catch (_error) {
 		// 	return {
@@ -106,52 +132,46 @@ export default class GCNetwork extends Component {
 		//this is only used for test
 		return {
 			status: 200,
-			body:userInfo,
-		}
+			cookie: 'this is cookie',
+			profile: userInfo.profile,
+		};
 	}
 
-	static _getUrl = async (url, info) => {
-		//Alert.alert(JSON.stringify(info));
-		for (let key in info) {
-			url = url + '&' + key + '=' + info[key];
-		}
-		return url;
-	}
-	//we currently use url to pass parameter because some inevitable bugs
-	static async fetchUserWithGoogle(userInfo){
-		var url = await config.server.concat('/auth/google?id_token=')
-			.concat(userInfo.idToken)
-			.concat('&user_email=').concat(userInfo.user.email)
-			.concat('&user_name=').concat(userInfo.user.name);
-		//Alert.alert(url);
-		try {
-			let response = await fetch(url, {
-				method: 'POST',
-				// headers: JSON.stringify({"Content-Type": "application/json"}),
-				// body: JSON.stringify({"tes": "tests"}),
-			})
-			let responseJson = await response.json();
-			return {
-				status: response.status,
-				body: responseJson,
-			}
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
-		}
 
-		// return {
-		// 	status: 200,
-		// 	user: {
-		// 		id_token: idToken,
-		// 		user_name: 'Zhuohang Zeng',
-		// 		user_pwd: '',
-		// 		user_email: 'zzhuohang@gmail.com',
-		// 		user_id: '0',
+	static async verifyUserByGoogle(userInfo){
+		// var url = config.server.concat('/auth/google');
+		// try {
+		// 	let response = await fetch(url, {
+		// 		method: 'POST',
+		// 		headers: {"Content-Type": "application/json"},
+		// 		body: JSON.stringify(userInfo),
+		// 	})
+		// 	let responseJson = await response.json();
+		// 	return {
+		// 		status: response.status,
+		// 		cookie: response.headers.get("set-cookie"),
+		// 		profile: responseJson.profile,
+		// 	}
+		// } catch (_error) {
+		// 	return {
+		// 		status: 0,
+		// 		error: _error,
 		// 	}
 		// }
+		//this is for test
+		return {
+			status: 200,
+			cookie: 'this is cookie',
+			profile: {
+				userEmail: userInfo.user.email,
+				userId: userInfo.user.id,
+				userDescription: 'my name is henry',
+				userRegion: 'Canada',
+				userLastname: userInfo.user.familyName,
+				userFirstname: userInfo.user.givenName,
+				isAdmin: 1,
+			}
+		};
 	}
 
 }
