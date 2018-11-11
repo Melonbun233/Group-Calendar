@@ -110,7 +110,7 @@ export default class GCNetwork extends Component {
 
 			return {
 				status: response.status,
-				profile: responseJSON.profile,
+				profile: responseJson.profile,
 			};
 		} catch (error) {
 			return {

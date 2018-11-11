@@ -23,7 +23,12 @@ const configMap = {
 			label: 'What\'s Up',
 			autoCapitalize: 'sentences',
 			secureTextEntry: false,
-		}
+		},
+		userRegion: {
+			label: 'Region',
+			autoCapitalize: 'words',
+			secureTextEntry: false,
+		},
 };
 
 export default class EditProfile extends Component {
