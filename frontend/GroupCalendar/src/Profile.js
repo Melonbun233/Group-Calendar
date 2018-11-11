@@ -186,9 +186,9 @@ export default class Profile extends Component {
 						</Text>
 					</View>
 				{/*gender*/}
-				{/*<TouchableWithoutFeedback 
+				<TouchableWithoutFeedback 
 					onPress = {() => this._onEditProfile('userGender')}
-				>*/}
+				>
 					<View style = {[cs.container, s.infoContainer]}>
 						<Text style = {cs.normalText}>
 						Gender
@@ -197,7 +197,7 @@ export default class Profile extends Component {
 						{userGender === 1 ? 'Male' : 'Female'}
 						</Text>
 					</View>
-				{/*</TouchableWithoutFeedback>*/}
+				</TouchableWithoutFeedback>
 				{/*birth day*/}
 				<TouchableWithoutFeedback 
 					onPress = {() => this._onEditProfile('userBirth')}

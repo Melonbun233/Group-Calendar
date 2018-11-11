@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, Alert, Button, ScrollView, DatePickerIOS,
-	FlatList, ActivityIndicator} from 'react-native';
+	FlatList, ActivityIndicator, Picker} from 'react-native';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
 import {TextField} from 'react-native-material-textfield';
@@ -41,9 +41,11 @@ export default class EditProfile extends Component {
 
 		this.state = {
 			isLoading : true,
+			pickerFlag : false,
 		};
 		this._onChangeDate = this._onChangeDate.bind(this);
 		this._onChangeText = this._onChangeText.bind(this);
+		this._onPickGender = this._onPickGender.bind(this);
 	}
 
 	componentDidMount() {
@@ -53,12 +55,14 @@ export default class EditProfile extends Component {
 		var items = [];
 		if (editInfo && cookie) {
 			//get all keys
+			var i = 0;
 			for (key in editInfo) {
 				if (!editInfo.hasOwnProperty(key)) {
 					continue;
 				}
 				var info = editInfo[key];
-				items.push({key: key, info: info});
+				items.push({key: i.toString(), [key]: info});
+				i = i + 1;
 			}
 
 			this.setState({
@@ -73,27 +77,52 @@ export default class EditProfile extends Component {
 		}
 	}
 	_renderItem = ({item}) => {
-		switch (item.key) {
+		var name;
+		//last one is what we want
+		for (object in item) {
+			name = object;
+		}
+		switch (name) {
 			case 'userBirth' : {
-				let date = new Date(item.info);
+				let date = new Date(item[name]);
+				let curr = new Date();
+				let mini = new Date();
+				mini.setFullYear(1900);
 				return (
 					<View style = {s.contentContainer}>
 					<DatePickerIOS
 						date = {date}
 						onDateChange = {this._onChangeDate}
 						mode = 'date'
+						maximumDate = {curr}
+						minimumDate = {mini}
 					/>
 					</View>
 				);
 			}
+			case 'userGender' : {
+				let gender = item[name];
+				return (
+					<View style = {s.contentContainer}>
+					<Picker 
+						selectedValue = {gender}
+						onValueChange = {this._onPickGender}
+					>
+					<Picker.Item label = 'Male' value = {1}/>
+					<Picker.Item label = 'Femail' value = {0}/>
+					</Picker>
+					</View>
+				)
+			}
 			default: {
-				let config = configMap[item.key];
+				let config = configMap[name];
 				return (
 					<View style = {[s.contentContainer]}>
 					<TextField
 						label = {config.label}
-						value = {item.info}
-						onChangeText = {(text) => this._onChangeText(item.key, text)}
+						value = {item[name]}
+						onChangeText = {(text) => 
+							this._onChangeText(item.key, name, text)}
 						autoCorrect = {false}
 						autoCapitalize = {config.autoCapitalize}
 						secureTextEntry = {config.secureTextEntry}
@@ -105,28 +134,41 @@ export default class EditProfile extends Component {
 		}
 	}
 
-	_onChangeDate(date) {
+	_onPickGender = (value) => {
+		let{data, pickerFlag} = this.state;
+		data[0].userGender = value;
+		this.setState({
+			data,
+			pickerFlag: !pickerFlag
+		});
+	} 
+
+	_onChangeDate = (date) => {
 		let {data} = this.state;
-		data['userBirth'] = date.toJSON;
+		data[0].userBirth = date;
 		this.setState({data});
 	}
 
-	_onChangeText = (key, text) => {
+	_onChangeText = (_key, _name, _text) => {
 		let {data} = this.state;
-		for (key in data) {
-			if (key === key) {
-				data[key] = text;
-				break;
-			}
-		}
+		data[_key][_name] = _text;
 		this.setState({data});
 	}
 
 	_onSubmit = async () => {
 		let {data, cookie} = this.state;
+		let update = {};
 
+		for (object in data) {
+			let key = parseInt(object);
+			for (name in data[key]) {
+				if (name !== 'key') {
+					update[name] = data[key][name];
+				}
+			}
+		}
 		this.setState({isUpdating: true});
-		let res = await Network.updateProfile(data[0], cookie);
+		let res = await Network.updateProfile(update, cookie);
 		switch(res.status) {
 			case 200: {
 				Alert.alert('Success!');
@@ -161,6 +203,7 @@ export default class EditProfile extends Component {
 				<FlatList 
 					data = {data}
 					renderItem = {this._renderItem}
+					extraData = {this.state.pickerFlag}
 				/>
 				<Button
 					disabled = {isLoading}
