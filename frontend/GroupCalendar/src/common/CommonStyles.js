@@ -73,7 +73,7 @@ export default StyleSheet.create({
 	h4: {
 		fontSize: 24,
 		fontWeight: 'bold',
-		color: '#e6e6e6',
+		color: '#000000',
 	},
 	h5: {
 		fontSize: 18,
@@ -82,7 +82,7 @@ export default StyleSheet.create({
 	},
 	//normal text
 	normalText: {
-		fontSize: 24,
+		fontSize: 18,
 		fontWeight: 'normal',
 		color: '#000000',
 	},

@@ -1,8 +1,8 @@
 'use strict';
 //This file contains all HTTP requests for Group Calendar project
 import React, {Component} from 'react';
-import {Alert} from 'react-native';
-import * as config from './../../config.json';
+import {Alert, AsyncStorage} from 'react-native';
+import * as config from '../../config.json';
 
 
 export default class GCNetwork extends Component {
@@ -18,46 +18,35 @@ export default class GCNetwork extends Component {
 	//	Note that user name should be validated 
 	//
 	static async verifyUser(_userEmail, _userPwd) {
-		// let url = config.server.concat('/auth/app');
-		// try {
-		//     let response = await fetch( url, 
-		//     {	
-		//     	method: 'POST', 
-		//     	headers: {
-				// 	'Content-Type' : 'application/json',
-				// },
-		//     	body: JSON.stringify({
-		//     		'userEmail':_userEmail,
-		//     		'userPwd':_userPwd,
-		//     	})
-		// 	});
-		//     let responseJson = await response.json();
-		//     return {
-		//     	status: response.status,
-		//     	profile: responseJson.profile,
-		//     	cookie: response.headers.get('set-cookie'),
-		//     }
-		// } catch (_error) {
-		// 	return {
-		// 		status: 0,
-		// 		error: _error,
-		// 	}
-		// }
+		let url = config.server.concat('/auth/app');
+		try {
+			let response = await fetch( url, 
+			{	
+				method: 'POST', 
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				body: JSON.stringify({
+					'userEmail':_userEmail,
+					'userPwd':_userPwd,
+				})
+			});
+			let responseJson = await response.json();
 
-		//this is for test
-		return {
-			status: 200,
-			cookie: 'this is cookie',
-			profile: {
-				userEmail: 'admin@mail.com',
-				userId: '0',
-				userDescription: 'my name is henry',
-				userRegion: 'Canada',
-				userLastname: 'Zeng',
-				userFirstname: 'Zhuohang',
-				isAdmin: 1,
+			await AsyncStorage.setItem('cookie', 
+				JSON.stringify(res.headers.get('set-cookie')));
+			await AsyncStorage.setItem('profile', 
+				JSON.stringify(responseJson.profile));
+
+			return {
+				status: response.status,
 			}
-		};
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
+			}
+		}
 	}
 
 	//	Function used to fetch user profile
@@ -68,110 +57,128 @@ export default class GCNetwork extends Component {
 	//		400: invalid user id
 	//		404: cannot find user id
 	static async fetchProfile(_userId, _cookie){
-		// let url = config.server.concat('/users/profile');
-		// try {
-		// 	let response = await fetch(url, {
-		// 		method: 'GET',
-		// 		headers: {
-				// 	"Content-Type" : "application/json",
-				// 	"cookie" : _cookie,
-				// },
-		// 		body: JSON.stringify({
-		// 			userId: _userId,
-		// 		})
-		// 	});
-		// 	let responseJson = await response.json();
-		// 	return {
-		// 		status: response.status,
-		// 		profile: responseJson,
-		// 	}
-		// } catch (_error) {
-		// 	return {
-		// 		status: 0,
-		// 		error: _error,
-		// 	}
-		// }
-		
-		//this is only used for test
-		return {
-			status: 200,
-			profile: {
-				userEmail: 'test@fetch.com',
-				userId: '0',
-				userDescription: 'my name is henry',
-				userRegion: 'Canada',
-				userLastname: 'Zeng',
-				userFirstname: 'Zhuohang',
-				isAdmin: 1,
+		let url = config.server.concat('/users/profile');
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					"Content-Type" : "application/json",
+					"cookie" : _cookie,
+				},
+				body: JSON.stringify({
+					userId: _userId,
+				})
+			});
+			let responseJson = await response.json();
+
+			await AsyncStorage.setItem('cookie', 
+		    	JSON.stringify(res.headers.get('set-cookie')));
+		    await AsyncStorage.setItem('profile', 
+		    	JSON.stringify(responseJson.profile));
+
+			return {
+				status: response.status,
+				profile: responseJson.profile,
+			};
+		} catch (_error) {
+			return {
+				status: 0,
+				error,
 			}
-		};
+		}
 	}
 
-	//we will assume user information is checked
+	static async updateProfile(_profile, _cookie) {
+		let url = config.server.concat('/users/profile');
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: {
+					"Content-Type" : "application/json",
+					"cookie" : _cookie,
+				},
+				body: JSON.stringify({
+					profile: _profile,
+				})
+			});
+			let responseJson = await response.json();
+
+			await AsyncStorage.setItem('cookie',
+				JSON.stringify(res.headers.get('set-cookie')));
+			await AsyncStorage.setItem('profile',
+				JSON.stringify(responseJson.profile));
+
+			return {
+				status: response.status,
+				profile: responseJSON.profile,
+			};
+		} catch (error) {
+			return {
+				status: 0,
+				error,
+			}
+		}
+	}
+
+	//	Function used to post a newly created user
+	//	Arguments: 
+	//		userInfo: an json object that containes a user profile
+	//	Returns status:
+	//		200: all correct user infomation
+	//		400: invalid user information
 	static async createUser(userInfo) {
-		// let url = config.server.concat('/users');
-		// try {
-		// 	let response = await fetch(url, {
-		// 		method: 'POST',
-		// 		headers: {"Content-Type": "application/json"},
-		// 		body: JSON.stringify(userInfo),
-		// 	});
-		// 	let responseJson = await response.json();
-		// 	return {
-		// 		status: response.status,
-		// 		cookie: response.headers.get("set-cookie"),
-		// 		profile: responseJson.profile,
-		// 	}
-		// } catch (_error) {
-		// 	return {
-		// 		status: 0,
-		// 		error: _error,
-		// 	}
-		// }
+		let url = config.server.concat('/users');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(userInfo),
+			});
+			let responseJson = await response.json();
 
-		//this is only used for test
-		return {
-			status: 200,
-			cookie: 'this is cookie',
-			profile: userInfo.profile,
-		};
-	}
+			await AsyncStorage.setItem('cookie', 
+		    	JSON.stringify(res.headers.get('set-cookie')));
 
-
-	static async verifyUserByGoogle(userInfo){
-		// var url = config.server.concat('/auth/google');
-		// try {
-		// 	let response = await fetch(url, {
-		// 		method: 'POST',
-		// 		headers: {"Content-Type": "application/json"},
-		// 		body: JSON.stringify(userInfo),
-		// 	})
-		// 	let responseJson = await response.json();
-		// 	return {
-		// 		status: response.status,
-		// 		cookie: response.headers.get("set-cookie"),
-		// 		profile: responseJson.profile,
-		// 	}
-		// } catch (_error) {
-		// 	return {
-		// 		status: 0,
-		// 		error: _error,
-		// 	}
-		// }
-		//this is for test
-		return {
-			status: 200,
-			cookie: 'this is cookie',
-			profile: {
-				userEmail: userInfo.user.email,
-				userId: userInfo.user.id,
-				userDescription: 'my name is henry',
-				userRegion: 'Canada',
-				userLastname: userInfo.user.familyName,
-				userFirstname: userInfo.user.givenName,
-				isAdmin: 1,
+			return {
+				status: response.status,
 			}
-		};
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
+			}
+		}
 	}
 
+	//	Function used to verify a user by google authentication
+	//	Arguments:
+	//		uesrInfo: an json object that directly returns from Google API
+	//	Returns status:
+	//		200: Google id_token is successfully verified
+	//		400: Invalid Google id_token
+	static async verifyUserByGoogle(userInfo){
+		var url = config.server.concat('/auth/google');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify(userInfo),
+			})
+			let responseJson = await response.json();
+
+			await AsyncStorage.setItem('cookie', 
+		    	JSON.stringify(res.headers.get('set-cookie')));
+		    await AsyncStorage.setItem('profile', 
+		    	JSON.stringify(responseJson.profile));
+
+			return {
+				status: response.status,
+			}
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
+			}
+		}
+	}
 }

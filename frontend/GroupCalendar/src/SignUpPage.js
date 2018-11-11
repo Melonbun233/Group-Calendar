@@ -1,7 +1,7 @@
 //this page is used for sign up
 //this should be navigated from introPage
 import React, {Component} from 'react';
-import {StyleSheet, TextInput, Text, View, AsyncStorage,
+import {StyleSheet, Text, View, AsyncStorage,
 		Button, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import Ripple from 'react-native-material-ripple';
@@ -101,9 +101,12 @@ export default class SignUpPage extends Component {
 		switch (res.status) {
 			case 200: {
 				this.setState({isLoading: false});
-				await AsyncStorage.setItem('cookie', res.cookie);
-				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
-				await AsyncStorage.setItem('signInByGoogle', 'true');
+				await AsyncStorage.setItem('profile', JSON.stringify({
+					userEmail,
+					userLastname,
+					userFirstname,
+				}));
+				await AsyncStorage.setItem('signInByGoogle', 'false');
 				this.props.navigation.navigate('Main');
 			}
 			break;

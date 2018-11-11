@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
 		Alert, Button, ActivityIndicator, ScrollView, AsyncStorage} 
 		from 'react-native';
-import { GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
+import { GoogleSignin, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
 import Ripple from 'react-native-material-ripple';
 import Network from './common/GCNetwork';
@@ -110,12 +110,7 @@ export default class SignInPage extends Component {
 			//correct user_email and user_pwd
 			//we save the user info to async storage and jump to main pages
 			case 200: {
-				//on success, user profile and cookie are returned
-				//store id_token and profile for other screens to use
-				await AsyncStorage.setItem('cookie', res.cookie);
-				await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
 				await AsyncStorage.setItem('signInByGoogle', 'false');
-
 				this.setState({isLoading: false});
 				//jump to main page
 				this.props.navigation.navigate('Main');
@@ -145,9 +140,6 @@ export default class SignInPage extends Component {
 				let res = await Network.verifyUserByGoogle(userInfo);
 				switch (res.status) {
 					case 200: {
-						//store id_token and profile for other screens to use
-						await AsyncStorage.setItem('cookie', res.cookie);
-						await AsyncStorage.setItem('profile', JSON.stringify(res.profile));
 						await AsyncStorage.setItem('signInByGoogle', 'true');
 						this.setState({isSigning: false});
 						this.props.navigation.navigate('Main');
@@ -199,6 +191,7 @@ export default class SignInPage extends Component {
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
 					<Button 
+						id = 'SignUpButton'
 						title = 'Sign up'
 						color = '#66a3ff'
 						onPress = {() => this.props.navigation.push('SignUp')}
@@ -213,6 +206,7 @@ export default class SignInPage extends Component {
 				{/*user email and password*/}
 				<View style = {[s.contentContainer]}>
 					<TextField
+						id = 'UserEmail'
 						ref = {this.emailRef}
 						label = 'Email'
 						fontSize = {18}
@@ -228,6 +222,7 @@ export default class SignInPage extends Component {
 						onFocus = {this._onFocus}
 					/>
 					<TextField
+						id = 'UserPwd'
 						ref = {this.passwordRef}
 						fontSize = {18}
 						labelHeight = {24}
@@ -248,6 +243,7 @@ export default class SignInPage extends Component {
 			{/*sign in buttons*/}
 				
 				<Ripple
+					testID = 'AppSignInButton'
 					disabled = {isLoading}
 					onPress = {this._onSignInButtonPressed}
 					style = {[cs.container, s.buttonContainer]}
@@ -258,6 +254,7 @@ export default class SignInPage extends Component {
 				</Ripple>
 
 				<Ripple
+					testID = 'GoogleSignInButton'
 					onPress = {this._onGoogleSignInPressed}
 					disabled = {isSigning} 
 					style = {[cs.container, s.buttonContainer]}

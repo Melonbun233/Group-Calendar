@@ -67,7 +67,7 @@ export default class MainPage extends Component {
 				{/*Title*/}
 				<View style = {[cs.container, s.topBar]}>
 					<View style = {s.title}>
-						<Text style = {cs.h3}>{this.state.title}</Text>
+						<Text style = {cs.h4}>{this.state.title}</Text>
 					</View>
 				</View>
 				{/*Calendar Display*/}
@@ -166,6 +166,7 @@ export default class MainPage extends Component {
 				return(<Profile 
 					onSignOut = {() => this._onSignOut()}
 					onSessionOut = {() => this._onSessionOut()}
+					navigation = {this.props.navigation}
 					/>);
 		}
 	}
@@ -214,8 +215,6 @@ const s = StyleSheet.create({
 	topBar: {
 		marginTop: 20,
 		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
 		width: '100%',
 		borderBottomWidth: 1,
 		borderBottomColor: '#e6e6e6',
