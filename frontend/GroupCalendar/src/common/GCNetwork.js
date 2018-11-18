@@ -80,7 +80,7 @@ export default class GCNetwork extends Component {
 				status: response.status,
 				profile: responseJson.profile,
 			};
-		} catch (_error) {
+		} catch (error) {
 			return {
 				status: 0,
 				error,

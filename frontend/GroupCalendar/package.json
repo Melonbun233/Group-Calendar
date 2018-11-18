@@ -27,15 +27,17 @@
     "jsdom": "^13.0.0",
     "metro-react-native-babel-preset": "^0.48.1",
     "react-addons-test-utils": "^15.6.2",
-    "react-dom": "^16.6.0",
+    "react-dom": "^16.6.3",
     "react-native-mock": "^0.3.1",
     "react-native-mock-render": "^0.1.2",
-    "react-test-renderer": "^16.6.0-alpha.8af6728"
+    "react-test-renderer": "^16.6.0-alpha.8af6728",
+    "sinon": "^7.1.1"
   },
   "jest": {
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ],
+    "setupTestFrameworkScriptFile": "<rootDir>/__test__/configure.js",
     "preset": "react-native",
     "collectCoverage": true,
     "transform": {

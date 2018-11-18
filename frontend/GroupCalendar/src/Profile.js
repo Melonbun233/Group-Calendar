@@ -125,16 +125,16 @@ export default class Profile extends Component {
 				<View style = {[cs.container, s.infoContainer]}>
 					<View style = {[cs.container, s.nameContainer]}>
 						<Text style = {cs.h3}>
-						{userLastname}
+						{userFirstname}
 						</Text>
 						<Text style = {cs.h3}>
-						{userFirstname}
+						{userLastname}
 						</Text>
 					</View>
 					<View style = {[cs.container, s.avatarContainer]}>
 						<UserAvatar 
 							size = '80' 
-							name = {userLastname + ' ' + userFirstname}
+							name = {userFirstname+ ' ' + userLastname}
 						/>
 					</View>
 				</View>
@@ -156,7 +156,7 @@ export default class Profile extends Component {
 						<Text style = {cs.normalText}>
 						What's up
 						</Text>
-						<View style = {cs.container, s.descriptionContainer}>
+						<View style = {[cs.container, s.descriptionContainer]}>
 							<Text style = {cs.h5}>
 							{userDescription}
 							</Text>

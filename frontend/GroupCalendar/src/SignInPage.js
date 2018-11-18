@@ -75,7 +75,7 @@ export default class SignInPage extends Component {
 		}
 	}
 
-	_onFocus = () => {
+	_onFocus(){
 		let {errors} = this.state;
 		for (let key in errors) {
 			let ref = this[key];
@@ -86,22 +86,22 @@ export default class SignInPage extends Component {
 		this.setState({errors});
 	}
 
-	_updateRef = (name, ref) => {
+	_updateRef(name, ref){
 		this[name] = ref;
 	}
 
-	_onSubmitEmail = () => {
+	_onSubmitEmail(){
 		this.password.focus();
 	}
 
-	_onSubmitPassword = () => {
+	_onSubmitPassword(){
 		this.password.blur();
 		this._onSignInButtonPressed();
 	}
 
 	//Function handles sign in button press
 	// we will send email and password to 
-	_onSignInButtonPressed = async () => {
+	async _onSignInButtonPressed(){
 		let {userEmail, userPwd} = this.state;
 		//we first get the user info by the username
 		this.setState({isLoading: true});
@@ -131,7 +131,7 @@ export default class SignInPage extends Component {
 	//sign in by google
 	//on successful signin, we send the google id token to server and get 
 	//our cookie
-	_onGoogleSignInPressed = async () => {
+	async _onGoogleSignInPressed(){
 		this.setState({isSigning: true});
 		await GoogleSignin.hasPlayServices();
 		await GoogleSignin.signIn()
@@ -174,7 +174,8 @@ export default class SignInPage extends Component {
 		let {isSigning, isLoading, isChecking, errors} = this.state;
 		if (isChecking) {
 			return (
-				<View></View>
+				<View>
+				</View>
 			);
 		}
 		//let {errors} = this.state;
@@ -191,7 +192,7 @@ export default class SignInPage extends Component {
 				{/*sign up button*/}
 				<View style = {[cs.container, s.signUpContainer]}>
 					<Button 
-						id = 'SignUpButton'
+						testID = 'SignUpButton'
 						title = 'Sign up'
 						color = '#66a3ff'
 						onPress = {() => this.props.navigation.push('SignUp')}
@@ -206,7 +207,7 @@ export default class SignInPage extends Component {
 				{/*user email and password*/}
 				<View style = {[s.contentContainer]}>
 					<TextField
-						id = 'UserEmail'
+						testID = 'UserEmail'
 						ref = {this.emailRef}
 						label = 'Email'
 						fontSize = {18}
@@ -222,7 +223,7 @@ export default class SignInPage extends Component {
 						onFocus = {this._onFocus}
 					/>
 					<TextField
-						id = 'UserPwd'
+						testID = 'UserPwd'
 						ref = {this.passwordRef}
 						fontSize = {18}
 						labelHeight = {24}

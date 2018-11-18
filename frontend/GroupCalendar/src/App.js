@@ -11,12 +11,9 @@ import MainPage from './MainPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
-import cs from './common/CommonStyles';
 import {createStackNavigator} from 'react-navigation';
 
-type Props = {};
-
-export default class App extends Component<Props> {
+export default class App extends Component {
 	//this is only for test
 	async componentDidMount() {
 		let date = new Date(1997, 4, 3);
