@@ -11,6 +11,7 @@ import MainPage from './MainPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
+import CreateProject from './CreateProject';
 import {createStackNavigator} from 'react-navigation';
 
 export default class App extends Component {
@@ -20,14 +21,15 @@ export default class App extends Component {
 		await AsyncStorage.setItem('cookie', 'this is test cookie');
 		await AsyncStorage.setItem('profile', 
 						JSON.stringify({
+							userId: '1',
 							userFirstname: 'Zhuohang',
 							userLastname: 'Zeng',
 							userEmail: 'zeng_zh@foxmail.com',
-							userGender: 1,
+							userGender: '0',
 							userBirth: date.toJSON(),
 							userDescription: 'hello this is henry',
 							userRegion: 'Canada',
-							isAdmin: 1,
+							isAdmin: '1',
 						}));
 	}
 
@@ -45,6 +47,7 @@ const IntroStack = createStackNavigator(
 		SignUp: SignUpPage,
 		Main: MainPage,
 		EditProfile: EditProfile,
+		CreateProject: CreateProject,
 	},
 	{
 		initialRouteName: 'Main',

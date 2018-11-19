@@ -36,13 +36,11 @@ export default class MainPage extends Component {
 	}
 
 	async componentDidMount() {
-		let cookie = await AsyncStorage.getItem('cookie');
 		let profile = await AsyncStorage.getItem('profile')
 			.then((res) => JSON.parse(res));
 
 		this.setState ({
 			profile,
-			cookie,
 			isLoading: false,
 		});
 	}
@@ -77,6 +75,7 @@ export default class MainPage extends Component {
 				{/*Content Selection*/}
 				<View style = {[cs.container, s.bottomBar]}>
 					<TouchableWithoutFeedback 
+						testID = 'calendarButton'
 						onPress = {() => this._switchContent('Calendar')}
 					>
 						<View style = {s.switchButton}>
@@ -85,6 +84,7 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
+						testID = 'projectButton'
 						onPress = {() => this._switchContent('Project')}
 					>
 						<View style = {s.switchButton}>
@@ -93,6 +93,7 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
+						testID = 'searchButton'
 						onPress = {() => this._switchContent('Search')}
 					>
 						<View style = {s.switchButton}>
@@ -101,6 +102,7 @@ export default class MainPage extends Component {
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
+						testID = 'profileButton'
 						onPress = {() => this._switchContent('Profile')}
 					>
 						<View style = {s.switchButton}>
@@ -158,16 +160,17 @@ export default class MainPage extends Component {
 			case 'Calendar' :
 				return(<Calendar/>);
 			case 'Project' :
-				return(<Project/>);
+				return(<Project
+					navigation = {this.props.navigation}
+				/>);
 			case 'Search' :
-				//need to change this later
 				return(<Search/>);
 			case 'Profile' :
 				return(<Profile 
 					onSignOut = {() => this._onSignOut()}
 					onSessionOut = {() => this._onSessionOut()}
 					navigation = {this.props.navigation}
-					/>);
+				/>);
 		}
 	}
 

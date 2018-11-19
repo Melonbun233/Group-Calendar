@@ -46,14 +46,16 @@ export default class EditProfile extends Component {
 		this._onChangeDate = this._onChangeDate.bind(this);
 		this._onChangeText = this._onChangeText.bind(this);
 		this._onPickGender = this._onPickGender.bind(this);
+		this._onSubmit = this._onSubmit.bind(this);
+		this._renderItem = this._renderItem.bind(this);
 	}
 
 	componentDidMount() {
 		let {navigation} = this.props;
 		const editInfo = navigation.getParam('editInfo', null);
-		const cookie = navigation.getParam('cookie', null);
+		const userId = navigation.getParam('userId', null);
 		var items = [];
-		if (editInfo && cookie) {
+		if (editInfo && userId) {
 			//get all keys
 			var i = 0;
 			for (key in editInfo) {
@@ -69,14 +71,14 @@ export default class EditProfile extends Component {
 				isLoading : false,
 				isUpdating: false,
 				data: items,
-				cookie,
+				userId,
 			});
 		} else {
 			Alert.alert('Something Bad Happened');
 			navigation.goBack();
 		}
 	}
-	_renderItem = ({item}) => {
+	_renderItem({item}){
 		var name;
 		//last one is what we want
 		for (object in item) {
@@ -108,8 +110,8 @@ export default class EditProfile extends Component {
 						selectedValue = {gender}
 						onValueChange = {this._onPickGender}
 					>
-					<Picker.Item label = 'Male' value = {1}/>
-					<Picker.Item label = 'Femail' value = {0}/>
+					<Picker.Item label = 'Male' value = '1'/>
+					<Picker.Item label = 'Female' value = '0'/>
 					</Picker>
 					</View>
 				)
@@ -134,7 +136,7 @@ export default class EditProfile extends Component {
 		}
 	}
 
-	_onPickGender = (value) => {
+	_onPickGender(value){
 		let{data, pickerFlag} = this.state;
 		data[0].userGender = value;
 		this.setState({
@@ -143,20 +145,20 @@ export default class EditProfile extends Component {
 		});
 	} 
 
-	_onChangeDate = (date) => {
+	_onChangeDate(date){
 		let {data} = this.state;
 		data[0].userBirth = date;
 		this.setState({data});
 	}
 
-	_onChangeText = (_key, _name, _text) => {
+	_onChangeText(_key, _name, _text){
 		let {data} = this.state;
 		data[_key][_name] = _text;
 		this.setState({data});
 	}
 
-	_onSubmit = async () => {
-		let {data, cookie} = this.state;
+	async _onSubmit(){
+		let {data} = this.state;
 		let update = {};
 
 		for (object in data) {
@@ -168,19 +170,23 @@ export default class EditProfile extends Component {
 			}
 		}
 		this.setState({isUpdating: true});
-		let res = await Network.updateProfile(update, cookie);
-		switch(res.status) {
-			case 200: {
-				Alert.alert('Success!');
-				this.props.navigation.goBack();
+		try {
+			let res = await Network.updateProfile(update, userId);
+			switch(res.status) {
+				case 200: {
+					Alert.alert('Success!');
+					this.props.navigation.goBack();
+				}
+				break;
+				case 400: 
+				case 404: {
+					Alert.alert('Invalid User Info');
+				}
+				break;
+				default: Alert.alert('HTTP ERROR', JSON.stringify(res.error));
 			}
-			break;
-			case 400: 
-			case 404: {
-				Alert.alert('Invalid User Info');
-			}
-			break;
-			default: Alert.alert('HTTP ERROR', JSON.stringify(res.error));
+		} catch (error) {
+			Alert.alert(JSON.stringify(error));
 		}
 		this.setState({isUpdating: false});
 	}

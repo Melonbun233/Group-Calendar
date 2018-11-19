@@ -56,15 +56,12 @@ export default class SignInPage extends Component {
 
 	//check whether user has signed in
 	async checkUserSignedIn(){
-		let {isChecking} = this.state;
 		try {
-			let cookie = await AsyncStorage.getItem('cookie');
 			let profile = await AsyncStorage.getItem('profile');
-			if (cookie === null || profile === null){
+			if (profile === null){
 				//user hasn't signed in
 				this.setState({isChecking: false});
 			} else {
-				//we already have cookie, we use it to sign in
 				this.setState({isChecking: false});
 				this.props.navigation.navigate('Main');
 			}

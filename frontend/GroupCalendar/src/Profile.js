@@ -25,8 +25,6 @@ export default class Profile extends Component {
 
 	async componentDidMount() {
 		try {
-			let cookie = await AsyncStorage.getItem('cookie')
-			//	.then((res) => JSON.parse(res));
 			let profile = await AsyncStorage.getItem('profile')
 				.then((res) => JSON.parse(res));
 			//calculate age
@@ -38,7 +36,6 @@ export default class Profile extends Component {
 				userBirth,
 				age,
 				profile,
-				cookie,
 				isLoading: false,
 			});
 		} catch (error) {
@@ -51,7 +48,7 @@ export default class Profile extends Component {
 		let {profile, cookie} = this.state;
 
 		this.setState({isRefreshing: true});
-		let res = await Network.fetchProfile(profile.userId, cookie);
+		let res = await Network.fetchProfile(profile.userId);
 		switch(res.status) {
 			case 200: this.setState({profile: res.profile});
 			break;
@@ -67,15 +64,15 @@ export default class Profile extends Component {
 
 	//push a new editing page
 	_onEditProfile = (_editInfo) => {
-		let {userLastname, userFirstname} = this.state.profile;
+		let {userLastname, userFirstname, userId} = this.state.profile;
 		let {cookie} = this.state;
 		switch(_editInfo){
 			case 'username' : {
-				this.props.navigation.navigate('EditProfile', {
+				this.props.navigation.push('EditProfile', {
 					editInfo: {
 						userLastname,
 						userFirstname
-					}, cookie
+					}, userId
 				});
 			}
 			break;
@@ -86,8 +83,8 @@ export default class Profile extends Component {
 				var info = this.state.profile[_editInfo];
 				var editInfo = {};
 				editInfo[_editInfo] = info;
-				this.props.navigation.navigate('EditProfile', {
-					editInfo, cookie,
+				this.props.navigation.push('EditProfile', {
+					editInfo, userId
 				});
 			}
 			break;
@@ -120,6 +117,7 @@ export default class Profile extends Component {
 				>
 				{/*Username*/}
 				<TouchableWithoutFeedback 
+					testID = 'editUserName'
 					onPress = {() => this._onEditProfile('username')}
 				>
 				<View style = {[cs.container, s.infoContainer]}>
@@ -140,6 +138,9 @@ export default class Profile extends Component {
 				</View>
 				</TouchableWithoutFeedback>	
 				{/*User Email*/}
+				<TouchableWithoutFeedback
+					testID = 'editUserEmail'
+				>
 					<View style = {[cs.container, s.infoContainer]}>
 						<Text style = {cs.normalText}>
 						Email
@@ -148,8 +149,10 @@ export default class Profile extends Component {
 						{userEmail}
 						</Text>
 					</View>
+				</TouchableWithoutFeedback>
 				{/*User Description*/}
 				<TouchableWithoutFeedback 
+					testID = 'editUserDescription'
 					onPress = {() => this._onEditProfile('userDescription')}
 				>
 					<View style = {[cs.container, s.generalContainer]}>
@@ -165,6 +168,7 @@ export default class Profile extends Component {
 				</TouchableWithoutFeedback>
 				{/*Region*/}
 				<TouchableWithoutFeedback 
+					testID = 'editUserRegion'
 					onPress = {() => this._onEditProfile('userRegion')}
 				>
 					<View style = {[cs.container, s.infoContainer]}>
@@ -177,6 +181,9 @@ export default class Profile extends Component {
 					</View>
 				</TouchableWithoutFeedback>
 				{/*age*/}
+				<TouchableWithoutFeedback
+					testID = 'editUserAge'
+				>
 					<View style = {[cs.container, s.infoContainer]}>
 						<Text style = {cs.normalText}>
 						Age
@@ -185,8 +192,10 @@ export default class Profile extends Component {
 						{age}
 						</Text>
 					</View>
+				</TouchableWithoutFeedback>
 				{/*gender*/}
 				<TouchableWithoutFeedback 
+					testID = 'editUserGender'
 					onPress = {() => this._onEditProfile('userGender')}
 				>
 					<View style = {[cs.container, s.infoContainer]}>
@@ -194,12 +203,13 @@ export default class Profile extends Component {
 						Gender
 						</Text>
 						<Text style = {cs.h5}>
-						{userGender === 1 ? 'Male' : 'Female'}
+						{userGender === '1' ? 'Male' : 'Female'}
 						</Text>
 					</View>
 				</TouchableWithoutFeedback>
 				{/*birth day*/}
 				<TouchableWithoutFeedback 
+					testID = 'editUserBirth'
 					onPress = {() => this._onEditProfile('userBirth')}
 				>
 					<View style = {[cs.container, s.infoContainer]}>
@@ -215,6 +225,7 @@ export default class Profile extends Component {
 					<View style = {[cs.container, cs.flowLeft]}>
 						<View style = {[cs.container, s.buttonContainer]}>
 							<Button 
+								testID = 'signOutButton'
 								title = 'Sign out'
 								color = '#66a3ff'
 								onPress = {() => this.props.onSignOut()}

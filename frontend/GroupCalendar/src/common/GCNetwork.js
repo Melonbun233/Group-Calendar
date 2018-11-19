@@ -56,14 +56,15 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static async fetchProfile(_userId, _cookie){
+	static async fetchProfile(_userId){
 		let url = config.server.concat('/users/profile');
 		try {
+			let cookie = await AsyncStorage.getItem('cookie');
 			let response = await fetch(url, {
 				method: 'GET',
 				headers: {
-					"Content-Type" : "application/json",
-					"cookie" : _cookie,
+					'Content-Type' : 'application/json',
+					'cookie' : cookie,
 				},
 				body: JSON.stringify({
 					userId: _userId,
@@ -88,25 +89,44 @@ export default class GCNetwork extends Component {
 		}
 	}
 
-	static async updateProfile(_profile, _cookie) {
+	static async fetchProjectId(_userId) {
+		let url = config.server.concat('/users/project/');
+		try {
+			let cookie = await AsyncStorage.getItem('cookie');
+			let response = await fetch(url, {
+				method : 'GET',
+				headers: {
+					'Content-Type' : 'application/json',
+					'cookie' : cookie
+				},
+				body: JSON.stringify({
+					userId: _userId
+				})
+			})
+		} catch (error) {
+			return {
+				status: 0,
+				error,
+			}
+		}
+	}
+
+	static async updateProfile(_update, _userId) {
 		let url = config.server.concat('/users/profile');
 		try {
+			let cookie = await AsyncStorage.getItem('cookie');
 			let response = await fetch(url, {
 				method: 'PUT',
 				headers: {
 					"Content-Type" : "application/json",
-					"cookie" : _cookie,
+					"cookie" : cookie,
 				},
 				body: JSON.stringify({
-					profile: _profile,
+					update: _update,
+					userId: _userId,
 				})
 			});
 			let responseJson = await response.json();
-
-			await AsyncStorage.setItem('cookie',
-				JSON.stringify(res.headers.get('set-cookie')));
-			await AsyncStorage.setItem('profile',
-				JSON.stringify(responseJson.profile));
 
 			return {
 				status: response.status,
