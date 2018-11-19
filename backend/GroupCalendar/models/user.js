@@ -18,7 +18,7 @@ async function getInfo (email) {
 
 async function updateUser (user) {
 	for (var x in user){
-		if (x !== 'userId' && x !== 'uuid'){
+		if (x !== 'userId'){
 			var query = "UPDATE Users SET " + x + " = '" + user[x] + "' WHERE userId = '" + user.userId + "'";
 			
 			await db.query(query)
