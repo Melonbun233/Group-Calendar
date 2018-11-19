@@ -53,14 +53,14 @@ describe('SignInPage test', () => {
 		wrapper.find({testID: 'UserPwd'}).simulate('ChangeText', 'testPwd');
 		expect(wrapper.instance().state.userPwd).toBe('testPwd');
 	});
-	
+
 	test('focus text field', () => {
 		wrapper.find('TextField')
 			.forEach((child) => {
 				child.simulate('Focus');
 			})
 		expect(focusSpy.callCount).toBe(2);
-	})
+	});
 
 	test('submit editing email', () => {
 		wrapper.find({testID: 'UserEmail'}).simulate('SubmitEditing');
@@ -74,17 +74,17 @@ describe('SignInPage test', () => {
 	});
 
 	test('click App sign in buttons', () => {
-		wrapper.find({testID: 'AppSignInButton'}).simulate("Press");
+		wrapper.find({testID: 'AppSignInButton'}).simulate('Press');
 		expect(appSignInSpy.callCount).toBe(2);
 	});
 
 	test('click Google sign in buttons', () => {
-		wrapper.find({testID: 'GoogleSignInButton'}).simulate("Press");
+		wrapper.find({testID: 'GoogleSignInButton'}).simulate('Press');
 		expect(googleSignInSpy.callCount).toBe(1);
 	});
 
 	test('click sign up buttons', () => {
-		wrapper.find({testID: 'SignUpButton'}).simulate("Press");
+		wrapper.find({testID: 'SignUpButton'}).simulate('Press');
 		expect(navigation.push.callCount).toBe(1);
 	});
 });

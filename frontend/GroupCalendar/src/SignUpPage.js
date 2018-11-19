@@ -140,7 +140,7 @@ export default class SignUpPage extends Component {
 		return (
 			<KeyboardAvoidingView 
 				keyboardVerticalOffset = {0}
-				behavior = "padding" 
+				behavior = 'padding' 
 				style = {[cs.container, s.scrollContainer]}
 			>
 			<ScrollView
