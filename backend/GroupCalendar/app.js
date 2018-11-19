@@ -20,6 +20,33 @@ var authRouter = require('./routes/auth');
 
 var app = express();
 
+/*
+ * defined functions
+ */
+
+/**
+ * exclude path listed here
+ */
+function checkPath(path){
+  if(path === '/auth/google' || path === '/auth/app'){
+    return false;
+  } else {
+    return true;
+  }
+}
+/**
+ * uuid check would be more safer if server stores one copy in database
+ * it will be added in the future
+ */
+function uuidCheck(uuid){
+  if(uuid == null || uuid == 'undefined'){
+    return false;
+  } else {
+    return true;
+  }
+}
+
+
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 //app.use(sqlinjection);
@@ -33,8 +60,20 @@ app.use(session({
 	activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
 }));
 
-// exclude auth from the session check middleware
-// app.use(/\/((?!auth).)*/, uuidCheck);
+app.use(function(req, res, next){
+  // console.log('middleware');
+  if(checkPath(req.path)){
+    console.log('uuidCheck');
+    if (uuidCheck(req.session.uuid)){
+      next();
+    }else{
+      // console.log(req.session.uuid);
+      res.status(401).send("expired session");
+    } 
+  }else{
+    next();
+  }
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

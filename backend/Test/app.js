@@ -8,6 +8,22 @@ var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+function checkPath(path){
+  if(path === '/auth'){
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function uuidCheck(uuid){
+  if(uuid == null || uuid == 'undefined'){
+    return false;
+  } else {
+    return true;
+  }
+
+}
 
 app.use(session({
 	cookieName: 'session',
@@ -20,13 +36,16 @@ app.use(session({
 
 app.use(function(req, res, next){
   console.log('middleware');
-  if(req.path != '/auth'){
-    if (req.session.uuid == 'undefined'){
+  if(checkPath(req.path)){
+    console.log('uuidCheck');
+    if (uuidCheck(req.session.uuid)){
+      next();
+    }else{
       console.log(req.session.uuid);
       res.status(401).send("expired session");
-    } else {
-      next();
-    }
+    } 
+  }else{
+    next();
   }
 });
 
