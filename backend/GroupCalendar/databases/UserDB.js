@@ -26,6 +26,12 @@ function query(req){
   });
 }
 
+function end(){
+  db.end();
+}
+
+
 module.exports = {
-  query
+  query,
+  end
 }

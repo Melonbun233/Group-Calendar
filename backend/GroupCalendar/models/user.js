@@ -16,10 +16,10 @@ async function getInfo (email) {
 	})
 };
 
-async function updateInfo (info) {
-	for (var x in info){
+async function updateUser (user) {
+	for (var x in user){
 		if (x !== 'userId' && x !== 'uuid'){
-			var query = "UPDATE Users SET " + x + " = '" + info[x] + "' WHERE userId = '" + info.userId + "'";
+			var query = "UPDATE Users SET " + x + " = '" + user[x] + "' WHERE userId = '" + user.userId + "'";
 			
 			await db.query(query)
 			.then( (result) => {
@@ -33,32 +33,65 @@ async function updateInfo (info) {
 	}
 };
 
-async function createUser (user) {
-	var columns = Object.keys(user);
-	var values = Object.values(user);
-	values = addQuotation(values);
+async function createUser (user, profile) {
+	var userColumns = Object.keys(user);
+	var userValues = Object.values(user);
+	userValues = addQuotation(userValues);
+	var userQuery = "INSERT INTO Users (" + userColumns + ") VALUES (" + userValues + ");";
 
-	var query = "INSERT INTO Users (" + columns + ") VALUES (" + values + ");";
+	var profileColumns = Object.keys(profile);
+	var profileValues = Object.values(profile);
+	profileValues = addQuotation(profileValues);
+	var profileQuery = "INSERT INTO Profiles (" + profileColumns + ") VALUES (" + profileValues + ");";
 
-	await db.query(query)
-	.catch ( err => {
+	await db.query(userQuery)
+	.then ( async (result) => {
+		await db.query(profileQuery)
+	})
+	.catch ( (err) => {
 		throw err;
 	})
+ }
 
-}
-
-async function createProfile (profile) {
-	var columns = Object.keys(profile);
-	var values = Object.values(profile);
-	values = addQuotation(values);
-
-	var query = "INSERT INTO Profiles (" + columns + ") VALUES (" + values + ");";
-
-	await db.query(query)
-	.catch ( err => {
-		throw err;
+async function deleteUser (userId) {
+	var userQuery = "DELETE FROM Users WHERE userId = " + userId + ";";
+	var profileQuery = "DELETE FROM Profiles WHERE userId = " + userId + ";";
+	
+	await db.query(userQuery)
+	.then( async (result) => {
+		if (!result.affectedRows)
+		{
+			throw "The user has been deleted."
+		}
+		return await db.query(profileQuery)
 	})
+	.then( (result) => {
+		if (!result.affectedRows)
+		{
+			throw "The user's profile has been deleted."
+		}
+	})
+	.catch( (err) => {
+		throw err;
+	})	
 }
+
+async function getProfile (userId) {
+	var query = "SELECT * FROM Profiles WHERE userId = " + userId + ";";
+
+	var result = await db.query(query)
+						.catch( (err) => {
+							throw err;
+						})
+	
+	if (result.length == 0){
+		throw "The userId does not exist.";
+	}
+	return result[0];
+	
+}
+
+// async function updateProfile
 
 function addQuotation (values){
 	var length = values.length;
@@ -72,7 +105,7 @@ function addQuotation (values){
 	return withQuotation;
 }
 
-async function getProfileById (userId, res) {
+async function getProfileById (userId) {
 	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
 	await db.query(query)
 	.then ( result => {
@@ -86,9 +119,10 @@ async function getProfileById (userId, res) {
 }
 
 module.exports = {
-	createProfile,
+	updateUser,
 	createUser,
-	updateInfo,
+	deleteUser,
+	getProfile,
 	getProfileById
 }
 
