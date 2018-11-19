@@ -55,11 +55,11 @@ await verify(idToken)
   // successfully in server
 
   await User.getInfo(email)
-  .cath((error) => {
+  .catch((error) => {
     throw error;
     res.status(400).send('Err: getInfo');
   })
-  .then((result) =>{
+  .then(async (result) =>{
     console.log('Finding user google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var userId;
