@@ -17,8 +17,6 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 /*------------------------------*/
 
-/* middleware*/
-var uuidCheck = require('./middlewares/uuidCheck');
 
 var app = express();
 
@@ -36,7 +34,7 @@ app.use(session({
 }));
 
 // exclude auth from the session check middleware
-app.use(/\/((?!auth).)*/, uuidCheck);
+// app.use(/\/((?!auth).)*/, uuidCheck);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
