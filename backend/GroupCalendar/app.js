@@ -17,6 +17,9 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 /*------------------------------*/
 
+/* middleware*/
+var uuidCheck = require('./middlewares/uuidCheck');
+
 var app = express();
 
 app.use(express.urlencoded({extended: true}));
@@ -31,6 +34,9 @@ app.use(session({
 	//activeDuration: allows users to lengthen their session by interacting with server
 	activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
 }));
+
+// exclude auth from the session check middleware
+app.use(/\/((?!auth).)*/, uuidCheck);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
