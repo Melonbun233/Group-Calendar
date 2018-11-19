@@ -44,6 +44,7 @@ exports.authGoogle = async function(req, res){
 
 await verify(idToken)
 .catch((error) => {
+    throw error;
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
@@ -64,7 +65,7 @@ console.log('Successful Verification');
   // });
 
 
-  User.getInfo(email, function(getErr, userRes){
+  await User.getInfo(email, function(getErr, userRes){
     if(getErr){ 
       throw getErr;
     }
@@ -72,7 +73,7 @@ console.log('Successful Verification');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var userId;
     if(userRes === null){
-      User.createUser(email, function(createErr, dbRes){
+      await User.createUser(email, function(createErr, dbRes){
         if(createErr){ 
           throw createErr;
         }
@@ -82,7 +83,7 @@ console.log('Successful Verification');
       });
 
       var setcmd = "userFirstname='" + userFirstname + "'";
-      User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+      await User.updateProfile(setcmd, userId, function(updateErr, dbRes){
         if(updateErr){
           throw updateErr;
         }
@@ -90,7 +91,7 @@ console.log('Successful Verification');
 
       if(userLastname !== null && userLastname !== 'undefined'){
         var setcmd = "userLastname='" + userLastname + "'";
-        User.updateProfile(setcmd, userId, function(updateErr, dbRes){
+        await User.updateProfile(setcmd, userId, function(updateErr, dbRes){
           if(updateErr){
             throw updateErr;
           }
@@ -101,7 +102,7 @@ console.log('Successful Verification');
       // found the exisiting record
       console.log('Found user from DB');
       var setcmd = "userFirstname='" + userFirstname + "'";
-      User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+      await User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
         if(updateErr){
           throw updateErr;
         }
@@ -109,7 +110,7 @@ console.log('Successful Verification');
 
       if(userLastname !== null && userLastname !== 'undefined'){
         var setcmd = "userLastname='" + userLastname + "'";
-        User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
+        await User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
           if(updateErr){
             throw updateErr;
           }
@@ -119,7 +120,7 @@ console.log('Successful Verification');
 
   });
 
-  User.getProfileById(userId, function(getNewErr, dbRes){
+  await User.getProfileById(userId, function(getNewErr, dbRes){
       if(getNewErr){
         throw getNewErr;
       }

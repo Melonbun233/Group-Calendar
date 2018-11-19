@@ -4,22 +4,11 @@ var parser = require('body-parser');
 var userController = require('../controllers/userController');
 const url = require('url');  
 var validator = require('../middlewares/validation');
-/*
-router.get('/', 
-	check('userEmail').isEmail(),
-	function(req, res){
-		console.log(req.param('userEmail'));
-		const errors = validationResult(req);
-		if (!errors.isEmpty()){
-			return res.status(400).json({error: 'Invalid user name.'});
-		}
-		user_controller.userInfoGet(req.param('userEmail'), res);
-	});
-*/
 
 router.put('/', 
+	//jwt.verifyToken,
 	validator.check,
-	userController.userInfoPut);
+	userController.userUpdate);
 
 router.post('/',
 	(req, res, next) => { 
@@ -31,6 +20,14 @@ router.post('/',
 	validator.checkParams,
 	userController.userCreate);
 
-//router.delete('/', userController.userDelete);
+router.delete('/', 
+	userController.userDelete);
+
+router.get('/profile',
+	userController.profileGet);
+
+router.put('/profile',
+	userController.profileUpdate);
+
 
 module.exports = router;
