@@ -68,7 +68,7 @@ await verify(idToken)
         userEmail: email
       }
       var profile = {
-        userEmail: email
+        userEmail: email,
         userLastname: userLastname,
         userFirstname: userFirstname
       }
