@@ -146,6 +146,7 @@ async function authApp (req, res){
       res.status(400).send('Incorrect emial or password');
     }
     var userId = result;
+    console.log(userId);
 
     await User.getProfileById(userId)
     .catch ((error) => {
