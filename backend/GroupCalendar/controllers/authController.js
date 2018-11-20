@@ -31,9 +31,9 @@ async function verify(_idToken) {
 async function authGoogle (req, res){
 
   let idToken = req.body.idToken;
-  let email = req.body.userEmail;
-  let userLastname = req.body.familyName;
-  let userFirstname = req.body.givenName;
+  let email = req.body.user.userEmail;
+  let userLastname = req.body.user.familyName;
+  let userFirstname = req.body.user.givenName;
 
   console.log(userLastname);
   console.log(userFirstname);
@@ -90,6 +90,7 @@ await verify(idToken)
 
     console.log(userId = userInfo.userId);
 
+    if(userFirstname !== null || userFirstname !== 'undefined')
     var setcmd = "userFirstname='" + userFirstname + "'";
 
     await User.updateProfile(setcmd, userId)
@@ -98,7 +99,7 @@ await verify(idToken)
     });
 
 
-    if(userLastname !== null && userLastname !== 'undefined'){
+    if(userLastname !== null || userLastname !== 'undefined'){
       setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
