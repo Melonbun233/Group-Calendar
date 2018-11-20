@@ -141,7 +141,7 @@ async function authApp (req, res){
     throw error;
     res.status(400).send('Invalid email');
   })
-  .then(result =>{
+  .then(async (result) =>{
     if(result == 0 || result == -1){
       res.status(400).send('Incorrect emial or password');
     }
