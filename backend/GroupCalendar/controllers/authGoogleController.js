@@ -38,101 +38,92 @@ exports.authGoogle = async function(req, res){
   if(idToken === 'undefined' || email === 'undefined'  || 
     userFirstname === 'undefined'){
     console.log('Err: empty post body');
-    res.status(400).send('Can\'t find your google id token or profile information');
+  res.status(400).send('Can\'t find your google id token or profile information');
 
 }
 
 await verify(idToken)
 .catch((error) => {
-    throw error;
+  throw error;
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
-  });
-console.log('Successful Verification');
-  // auth_res.send('post test');
-  
-  // const endpoint_url = new URL('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + auth_req.id_token);
-  
-  // var endpoint_url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
-  // //console.log(endpoint_url);
+  })
+.then(async(result) => {
+  console.log('Successful Verification');
 
-  // auth.get(endpoint_url, function(google_req, google_res){
-  //   if(google_res === null){
-  //     return res.status(400).send('Can\'t connect to Google auth center.\n');
-  //   }
-  //   email = google_res.email;
-  // });
+  // successfully in server
 
-
-  await User.getInfo(email, function(getErr, userRes){
-    if(getErr){ 
-      throw getErr;
-    }
+  await User.getInfo(email)
+  .catch((error) => {
+    throw error;
+    res.status(400).send('Err: getInfo');
+  })
+  .then(async (result) =>{
     console.log('Finding user google email from our Database...');
     //   auth_res.status(400).send('Server fails to deal with your Google account.');
     var userId;
-    if(userRes === null){
-      await User.createUser(email, function(createErr, dbRes){
-        if(createErr){ 
-          throw createErr;
-        }
-        console.log('creating new user...');
-        //   auth_res.status(400).send('Server fails to create a new account.');
-        userId = dbRes.userId;
-      });
-
-      var setcmd = "userFirstname='" + userFirstname + "'";
-      await User.updateProfile(setcmd, userId, function(updateErr, dbRes){
-        if(updateErr){
-          throw updateErr;
-        }
-      });
-
-      if(userLastname !== null && userLastname !== 'undefined'){
-        var setcmd = "userLastname='" + userLastname + "'";
-        await User.updateProfile(setcmd, userId, function(updateErr, dbRes){
-          if(updateErr){
-            throw updateErr;
-          }
-        });
+    if(result === null){
+      var user = {
+        userEmail: email
       }
+      var profile = {
+        userEmail: email,
+        userLastname: userLastname,
+        userFirstname: userFirstname
+      }
+
+      await User.createUser(user, profile)
+      .catch((error) => {
+        throw error;
+        res.status(400).send('Err: createUser');
+      })
+      .then((result) => {
+        console.log('created new user');
+        userId = result.userId;
+      }) 
 
     } else {
       // found the exisiting record
       console.log('Found user from DB');
+      userId = result.userId;
       var setcmd = "userFirstname='" + userFirstname + "'";
-      await User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
-        if(updateErr){
-          throw updateErr;
-        }
-      });
+      
+      await User.updateProfile(setcmd, userId)
+      .catch ((error) => {
+        throw error;
+        res.status(400).send('Err: updateProfile');
+      })
+
 
       if(userLastname !== null && userLastname !== 'undefined'){
         var setcmd = "userLastname='" + userLastname + "'";
-        await User.updateProfile(setcmd, userRes.userId, function(updateErr, dbRes){
-          if(updateErr){
-            throw updateErr;
-          }
-        });
+        await User.updateProfile(setcmd, userId)
+        .catch ((error) => {
+          throw error;
+          res.status(400).send('Err: updateProfile');
+        })
       }
     }
 
-  });
+  })
 
-  await User.getProfileById(userId, function(getNewErr, dbRes){
-      if(getNewErr){
-        throw getNewErr;
-      }
-      console.log('New account has been setup');
+  await User.getProfileById(userId)
+  .catch ((error) => {
+    throw error;
+    res.status(400).send('Err: getProfileById');
+  })
+  .then (result => {
+    console.log('got profile');
+    var profile = result;
+  })
 
-      var profile = dbRes;
-    });
+  var uuid = UidG.uuidCreate(email);
+  req.session.uuid = uuid;
+  res.status(200).json(profile);
 
-    var uuid = UidG.uuidCreate(email);
-    req.session.uuid = uuid;
-    res.status(200).json(profile);
+});
+
+}
 
 
-};
-  	

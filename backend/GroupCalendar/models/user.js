@@ -118,12 +118,43 @@ async function getProfileById (userId) {
 	})
 }
 
+// async function createUserByEmail (email) {
+// 	var userColumns = 'userEmail';
+// 	var userValues = email;
+// 	// userValues = addQuotation(userValues);
+// 	var userQuery = "INSERT INTO Users (" + userColumns + ") VALUES (" + userValues + ");";
+
+// 	var profileQuery = "INSERT INTO Profiles (" + userColumns + ") VALUES (" + userValues + ");";
+
+// 	await db.query(userQuery)
+// 	.then ( async (result) => {
+// 		await db.query(profileQuery)
+// 	})
+// 	.catch ( (err) => {
+// 		throw err;
+// 	})
+//  }
+
+async function updateProfile(userId, setCmd){
+	var query = "UPDATE Users SET " + setCmd + " WHERE userId=" + userId;
+	await db.query(query)
+	.then ((result) => {
+		return result[0];
+	})
+	.catch ((error) => {
+		throw error;
+	})
+		
+};
+
+
 module.exports = {
 	updateUser,
 	createUser,
 	deleteUser,
 	getProfile,
-	getProfileById
+	getProfileById,
+	updateProfile
 }
 
 //------the above function has been modified to async functions----
