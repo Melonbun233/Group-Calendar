@@ -14,7 +14,7 @@ router.post('/google', function(req, res){
 		return console('Err: no request');
 	}
 
- 	authController.authGoogle(req.body, res);
+ 	authController.authGoogle(req, res);
  	
 });
 
@@ -26,7 +26,7 @@ router.post('/app', function(req, res){
 		return console('Err: no request');
 	}
 
- 	authController.authApp(req.body, res);
+ 	authController.authApp(req, res);
 });
 
 module.exports = router;

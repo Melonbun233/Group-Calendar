@@ -30,10 +30,10 @@ async function verify(_idToken) {
 
 async function authGoogle (req, res){
 
-  let idToken = req.idToken;
-  let email = req.userEmail;
-  let userLastname = req.userLastname;
-  let userFirstname = req.userFirstname;
+  let idToken = req.body.idToken;
+  let email = req.body.userEmail;
+  let userLastname = req.body.userLastname;
+  let userFirstname = req.body.userFirstname;
 
   if(idToken === 'undefined' || email === 'undefined'  || 
     userFirstname === 'undefined'){
@@ -116,8 +116,8 @@ res.status(200).json(profile);
 
 async function authApp (req, res){
 
-  let email = req.userEmail;
-  let pwd = req.userPwd
+  let email = req.body.userEmail;
+  let pwd = req.body.userPwd
   
   if(email === 'undefined' || pwd === 'undefined'){
     console.log('Err: empty post body');
@@ -166,7 +166,7 @@ async function authApp (req, res){
 
   console.log(uuid);
 
-  // req.session.uuid = uuid;
+  req.session.uuid = uuid;
   res.status(200).json(profile);
 
 }
