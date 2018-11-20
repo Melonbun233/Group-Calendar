@@ -148,9 +148,9 @@ async function authApp (req, res){
   //   var userId = result;
   // })
   var userId = await User.login(email, pwd)
-  .catch(error) {
+  .catch(error => {
     res.status(400).send('Invalid email');
-  }
+  })
   
   console.log(userId);
 
