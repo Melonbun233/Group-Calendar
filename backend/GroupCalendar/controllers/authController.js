@@ -158,7 +158,7 @@ async function authApp (req, res){
   if(userId == null || undefined){
     res.status(400).send('Err: login');
   }
-  if(userId == 0 || result == -1){
+  if(userId == 0 || userId == -1){
     res.status(400).send('Incorrect emial or password');
   }
   
