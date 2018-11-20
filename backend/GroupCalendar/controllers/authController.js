@@ -44,7 +44,6 @@ async function authGoogle (req, res){
 
 await verify(idToken)
 .catch((error) => {
-  throw error;
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
@@ -56,7 +55,6 @@ await verify(idToken)
 
   var userInfo = await User.getInfo(email)
   .catch((error) => {
-    throw error;
     res.status(400).send('Err: getInfo');
   });
   
@@ -75,7 +73,6 @@ await verify(idToken)
 
     var newUser = await User.createUser(user, profile)
     .catch((error) => {
-      throw error;
       res.status(400).send('Err: createUser');
     });
 
@@ -91,7 +88,6 @@ await verify(idToken)
 
     await User.updateProfile(setcmd, userId)
     .catch ((error) => {
-      throw error;
       res.status(400).send('Err: updateProfile');
     });
 
@@ -100,7 +96,6 @@ await verify(idToken)
       var setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
-        throw error;
         res.status(400).send('Err: updateProfile');
       });
     }
@@ -110,7 +105,6 @@ await verify(idToken)
 
 var profile = await User.getProfileById(userId)
 .catch ((error) => {
-  throw error;
   res.status(400).send('Err: getProfileById');
 });
 
@@ -163,7 +157,6 @@ async function authApp (req, res){
   
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
-    throw error;
     res.status(400).send('Err: getProfileById');
   });
 

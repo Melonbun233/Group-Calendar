@@ -106,11 +106,15 @@ function addQuotation (values){
 }
 
 async function getProfileById (userId) {
-	var query = "SELECT * FROM Profiles WHERE userId=" + userId;
+	console.log('In: getProfileById');
+
+	var query = "SELECT * FROM Profiles WHERE userId = " + userId;
 	await db.query(query)
 	.then ( result => {
-		if (!result.length)
+		if (!result.length){
 			throw "No such userId";
+		}
+		console.log(result[0]);
 		return result[0];
 	})
 	.catch ( err => {
@@ -189,6 +193,7 @@ async function login(email, pwd){
 		console.log(userInfo.userId);
 
 		return userInfo.userId;
+
 	} else {
 		return -1;
 	}
