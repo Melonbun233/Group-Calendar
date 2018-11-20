@@ -155,7 +155,7 @@ async function authApp (req, res){
   
   console.log(userId);
 
-  if(userId == null || undefined){
+  if(userId == null || userId == undefined){
     res.status(400).send('Err: login');
   }
   if(userId == 0 || userId == -1){
@@ -169,6 +169,7 @@ async function authApp (req, res){
     throw error;
     res.status(400).send('Err: getProfileById');
   })
+
   console.log(profile);
 
   var uuid = UidG.uuidCreate(email);
