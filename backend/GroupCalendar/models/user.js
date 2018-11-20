@@ -147,14 +147,14 @@ async function updateProfile(userId, setCmd){
 		
 };
 
-async function login(userEmail, userPwd){
+async function login(email, pwd){
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
 	await db.query(query)
 	.then ( (result) => {
 		if (result.length == 0)
 			return 0;
 		var userInfo = result[0];
-		if(userInfo.userPwd === userPwd){
+		if(userInfo.userPwd === pwd){
 			return userInfo.userId;
 		} else {
 			return -1;
