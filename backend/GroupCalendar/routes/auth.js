@@ -8,10 +8,11 @@ var authAppController = require('../controllers/authAppController');
 
 /* GET users listing. */
 router.post('/google', function(req, res){
+	console.log(req.body);
 
 	if(req === null){
 		res.status(400).send('No request Found');
-		return console('Err: no request')
+		return console('Err: no request');
 	}
 
  	authGoogleController.authGoogle(req.body, res);
@@ -19,9 +20,11 @@ router.post('/google', function(req, res){
 });
 
 router.post('/app', function(req, res){
+	console.log(req.body);
+	
 	if(req === null){
 		res.status(400).send('No request Found');
-		return console('Err: no request')
+		return console('Err: no request');
 	}
 
  	authAppController.authApp(req.body, res);
