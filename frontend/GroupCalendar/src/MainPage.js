@@ -1,9 +1,9 @@
 'use strict';
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, AsyncStorage,
-	Alert, Button, TouchableWithoutFeedback, ActivityIndicator} 
-	from 'react-native';
+import {Text, TextInput, View, StyleSheet, Alert, TouchableWithoutFeedback, 
+	ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
+import Storage from './common/Storage';
 import Profile from './Profile';
 import Calendar from './Calendar';
 import Project from './Project';
@@ -36,13 +36,16 @@ export default class MainPage extends Component {
 	}
 
 	async componentDidMount() {
-		let profile = await AsyncStorage.getItem('profile')
-			.then((res) => JSON.parse(res));
-
-		this.setState ({
-			profile,
-			isLoading: false,
-		});
+		try {
+			let profile = await Storage.getProfile();
+			this.setState ({
+				profile,
+				isLoading: false,
+			});
+		} catch (error) {
+			Alert.alert('Something went wrong');
+			await Storage.deleteAll();
+		}
 	}
 
 	//this function is invoked on switch button press
@@ -158,37 +161,41 @@ export default class MainPage extends Component {
 	_getContent = () => {
 		switch(this.state.title) {
 			case 'Calendar' :
-				return(<Calendar/>);
+				return(<Calendar
+					onSignOut = {this._onSignOut}
+					onSessionOut = {this._onSessionOut}
+					navigation = {this.props.navigation}	
+				/>);
 			case 'Project' :
 				return(<Project
 					navigation = {this.props.navigation}
+					onSignOut = {this._onSignOut}
+					onSessionOut = {this._onSessionOut}
 				/>);
 			case 'Search' :
 				return(<Search/>);
 			case 'Profile' :
 				return(<Profile 
-					onSignOut = {() => this._onSignOut()}
-					onSessionOut = {() => this._onSessionOut()}
+					onSignOut = {this._onSignOut}
+					onSessionOut = {this._onSessionOut}
 					navigation = {this.props.navigation}
 				/>);
 		}
 	}
 
 	_onSignOut = async () => {
-		let signInByGoogle = await AsyncStorage.getItem('signInByGoogle');
-		if(signInByGoogle === 'true') {
-			try {
+		try {
+			let signInByGoogle = await Storage.getSignInByGoogle();
+			
+			if(signInByGoogle === 'true') {
 				await GoogleSignin.revokeAccess();
 				await GoogleSignin.signOut();
-				//Alert.alert('Signed out');
-			} catch (error) {
-				Alert.alert('Something Bad Happened During Signing Out');
-			}
+			}	
+		} catch (error) {
+			Alert.alert('Something went wrong when signing out');
 		}
 		//clean up async storage
-		await AsyncStorage.removeItem('cookie');
-		await AsyncStorage.removeItem('profile');
-		await AsyncStorage.removeItem('signInByGoogle');
+		await Storage.deleteAll();
 		this.props.navigation.popToTop();
 	}
 

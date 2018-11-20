@@ -3,14 +3,15 @@
 //We will also implement sign up here
 
 import React, {Component} from 'react';
-import {Text, TextInput, View, StyleSheet, KeyboardAvoidingView,
-		Alert, Button, ActivityIndicator, ScrollView, AsyncStorage} 
+import {Text, View, StyleSheet, KeyboardAvoidingView,
+		Alert, Button, ScrollView} 
 		from 'react-native';
 import { GoogleSignin, statusCodes} from 'react-native-google-signin';
 import {TextField} from 'react-native-material-textfield';
 import Ripple from 'react-native-material-ripple';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
+import Storage from './common/Storage';
 import * as config from './../config.json';
 
 export default class SignInPage extends Component {
@@ -44,6 +45,7 @@ export default class SignInPage extends Component {
 		this.emailRef = this._updateRef.bind(this, 'email');
 		this.passwordRef = this._updateRef.bind(this, 'password');
 		this._onSignInButtonPressed = this._onSignInButtonPressed.bind(this);
+		this._onGoogleSignInPressed = this._onGoogleSignInPressed.bind(this);
 	}
 
 	//only called once
@@ -57,8 +59,8 @@ export default class SignInPage extends Component {
 	//check whether user has signed in
 	async checkUserSignedIn(){
 		try {
-			let profile = await AsyncStorage.getItem('profile');
-			if (profile === null){
+			let profile = await Storage.getProfile();
+			if (profile == null){
 				//user hasn't signed in
 				this.setState({isChecking: false});
 			} else {
@@ -66,7 +68,7 @@ export default class SignInPage extends Component {
 				this.props.navigation.navigate('Main');
 			}
 		} catch (error) {
-			Alert.alert('Something Bad Happened');
+			Alert.alert('Something Went Wrong');
 			//user hasn't signed in
 			this.setState({isChecking: false});
 		}
@@ -102,25 +104,29 @@ export default class SignInPage extends Component {
 		let {userEmail, userPwd} = this.state;
 		//we first get the user info by the username
 		this.setState({isLoading: true});
-		let res = await Network.verifyUser(userEmail, userPwd);
-		switch (res.status) {
-			//correct user_email and user_pwd
-			//we save the user info to async storage and jump to main pages
-			case 200: {
-				await AsyncStorage.setItem('signInByGoogle', 'false');
-				this.setState({isLoading: false});
-				//jump to main page
-				this.props.navigation.navigate('Main');
+		try {
+			let status = await Network.verifyUser(userEmail, userPwd);
+			switch (status) {
+				//correct user_email and user_pwd
+				//we save the user info to async storage and jump to main pages
+				case 200: {
+					this.setState({isLoading: false});
+					Storage.setSignInByGoogle('false');
+					//jump to main page
+					this.props.navigation.navigate('Main');
+				}
+				break;
+				case 400:
+				case 404: this.setState(
+						{errors: {
+							email: 'incorrect email or password',
+							password: 'incorrect email or password',
+						}});
+				break;
+				default: Alert.alert('Internet Error', JSON.stringify(res.error));
 			}
-			break;
-			case 400:
-			case 404: this.setState(
-					{errors: {
-						email: 'incorrect email or password',
-						password: 'incorrect email or password',
-					}});
-			break;
-			default: Alert.alert('Internet Error', JSON.stringify(res.error));
+		} catch (error) {
+			Alert.alert('Something went wrong');
 		}
 		this.setState({isLoading: false});
 	}
@@ -137,8 +143,8 @@ export default class SignInPage extends Component {
 				let res = await Network.verifyUserByGoogle(userInfo);
 				switch (res.status) {
 					case 200: {
-						await AsyncStorage.setItem('signInByGoogle', 'true');
 						this.setState({isSigning: false});
+						Storage.setSignInByGoogle('true');
 						this.props.navigation.navigate('Main');
 					}
 					break;
@@ -171,8 +177,7 @@ export default class SignInPage extends Component {
 		let {isSigning, isLoading, isChecking, errors} = this.state;
 		if (isChecking) {
 			return (
-				<View>
-				</View>
+				<View></View>
 			);
 		}
 		//let {errors} = this.state;

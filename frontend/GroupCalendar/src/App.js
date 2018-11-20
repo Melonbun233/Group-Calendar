@@ -15,24 +15,6 @@ import CreateProject from './CreateProject';
 import {createStackNavigator} from 'react-navigation';
 
 export default class App extends Component {
-	//this is only for test
-	async componentDidMount() {
-		let date = new Date(1997, 4, 3);
-		await AsyncStorage.setItem('cookie', 'this is test cookie');
-		await AsyncStorage.setItem('profile', 
-						JSON.stringify({
-							userId: '1',
-							userFirstname: 'Zhuohang',
-							userLastname: 'Zeng',
-							userEmail: 'zeng_zh@foxmail.com',
-							userGender: '0',
-							userBirth: date.toJSON(),
-							userDescription: 'hello this is henry',
-							userRegion: 'Canada',
-							isAdmin: '1',
-						}));
-	}
-
 	render() {
 			return (
 				<IntroStack
@@ -50,7 +32,7 @@ const IntroStack = createStackNavigator(
 		CreateProject: CreateProject,
 	},
 	{
-		initialRouteName: 'Main',
+		initialRouteName: 'SignIn',
 	},
 );
 

@@ -20,6 +20,10 @@ export default class Calendar extends Component {
 		return(
 			<View style = {cs.container}>
 				<Text style = {cs.normal}>Calendar page is under construction.</Text>
+				<Button
+					title = 'Sign Out'
+					onPress = {this.props.onSignOut}
+				/>
 			</View> 
 		);
 	}

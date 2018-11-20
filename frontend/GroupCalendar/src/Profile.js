@@ -6,8 +6,9 @@
 import React, {Component} from 'react';
 import UserAvatar from 'react-native-user-avatar';
 import {Platform, StyleSheet, Text, View, Button, Alert, TouchableWithoutFeedback,
-		ScrollView, RefreshControl, AsyncStorage, ActivityIndicator} from 'react-native';
+		ScrollView, RefreshControl, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
+import Storage from './common/Storage';
 import Network from './common/GCNetwork';
 
 export default class Profile extends Component {
@@ -25,8 +26,7 @@ export default class Profile extends Component {
 
 	async componentDidMount() {
 		try {
-			let profile = await AsyncStorage.getItem('profile')
-				.then((res) => JSON.parse(res));
+			let profile = await Storage.getProfile();
 			//calculate age
 			let curr = new Date();
 			let userBirth = new Date(profile.userBirth);
@@ -48,9 +48,12 @@ export default class Profile extends Component {
 		let {profile, cookie} = this.state;
 
 		this.setState({isRefreshing: true});
-		let res = await Network.fetchProfile(profile.userId);
-		switch(res.status) {
-			case 200: this.setState({profile: res.profile});
+		let status = await Network.fetchProfile(profile.userId);
+		switch(status) {
+			case 200: {
+				profile = await Storage.getProfile();
+				this.setState({profile});
+			}
 			break;
 			//fetch failed, probably user has expired the session
 			//we will log out
@@ -97,7 +100,7 @@ export default class Profile extends Component {
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large' animating = {false}/>
+					<ActivityIndicator size = 'large'/>
 				</View>
 			);
 		}
