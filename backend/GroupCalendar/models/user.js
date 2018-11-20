@@ -150,6 +150,9 @@ async function updateProfile(userId, setCmd){
 async function login(email, pwd){
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
 	await db.query(query)
+	.catch( (error) => {
+		throw error;
+	})
 	.then ((result) => {
 
 		console.log(result);
@@ -165,9 +168,6 @@ async function login(email, pwd){
 		} else {
 			return -1;
 		}
-	})
-	.catch( (error) => {
-		throw error;
 	})
 }
 
