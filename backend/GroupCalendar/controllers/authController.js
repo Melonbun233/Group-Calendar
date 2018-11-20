@@ -137,37 +137,52 @@ async function authApp (req, res){
 
   }
 
-  await User.login(email, pwd)
-  .catch(error =>{
-    throw error;
+  // await User.login(email, pwd)
+  // .catch(error =>{
+  //   throw error;
+  //   res.status(400).send('Invalid email');
+  // })
+  // .then(result =>{
+  //   console.log(result);
+
+  //   if(result == null || undefined){
+  //     res.status(400).send('Err: login');
+  //   }
+  //   if(result == 0 || result == -1){
+  //     res.status(400).send('Incorrect emial or password');
+  //   }
+  //   var userId = result;
+  // })
+  try{
+    var userId = await User.login(email, pwd);
+  } catch(error) {
     res.status(400).send('Invalid email');
-  })
-  .then(result =>{
-    console.log(result);
-    
-    if(result == null || undefined){
-      res.status(400).send('Err: login');
-    }
-    if(result == 0 || result == -1){
-      res.status(400).send('Incorrect emial or password');
-    }
-    var userId = result;
-  })
+  }
+  
+  console.log(userId);
+
+  if(userId == null || undefined){
+    res.status(400).send('Err: login');
+  }
+  if(userId == 0 || result == -1){
+    res.status(400).send('Incorrect emial or password');
+  }
+  
 
 
-  await User.getProfileById(userId)
-  .catch ((error) => {
-    throw error;
-    res.status(400).send('Err: getProfileById');
-  })
-  .then (result => {
-    console.log('got profile');
-    var profile = result;
-  });
+await User.getProfileById(userId)
+.catch ((error) => {
+  throw error;
+  res.status(400).send('Err: getProfileById');
+})
+.then (result => {
+  console.log('got profile');
+  var profile = result;
+});
 
-  var uuid = UidG.uuidCreate(email);
-  req.session.uuid = uuid;
-  res.status(200).json(profile);
+var uuid = UidG.uuidCreate(email);
+req.session.uuid = uuid;
+res.status(200).json(profile);
 
 }
 
