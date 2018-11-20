@@ -48,7 +48,7 @@ await verify(idToken)
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
-  })
+  });
 .then(async(result) => {
   console.log('Successful Verification');
 
@@ -77,7 +77,7 @@ await verify(idToken)
     .catch((error) => {
       throw error;
       res.status(400).send('Err: createUser');
-    })
+    });
 
     console.log('created new user');
     userId = newUser.userId;
@@ -93,7 +93,7 @@ await verify(idToken)
     .catch ((error) => {
       throw error;
       res.status(400).send('Err: updateProfile');
-    })
+    });
 
 
     if(userLastname !== null && userLastname !== 'undefined'){
@@ -102,7 +102,7 @@ await verify(idToken)
       .catch ((error) => {
         throw error;
         res.status(400).send('Err: updateProfile');
-      })
+      });
     }
   }
 
@@ -112,7 +112,7 @@ var profile = await User.getProfileById(userId)
 .catch ((error) => {
   throw error;
   res.status(400).send('Err: getProfileById');
-})
+});
 
 var uuid = UidG.uuidCreate(email);
 req.session.uuid = uuid;
@@ -150,7 +150,7 @@ async function authApp (req, res){
   var userId = await User.login(email, pwd)
   .catch(error => {
     res.status(400).send('Invalid email');
-  })
+  });
   
   console.log(userId);
 
@@ -160,6 +160,8 @@ async function authApp (req, res){
   if(userId == 0 || userId == -1){
     res.status(400).send('Incorrect emial or password');
   }
+
+  console.log(userId);
   
 
 
@@ -167,7 +169,7 @@ async function authApp (req, res){
   .catch ((error) => {
     throw error;
     res.status(400).send('Err: getProfileById');
-  })
+  });
 
   console.log(profile);
 
