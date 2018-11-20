@@ -84,6 +84,9 @@ await verify(idToken)
     // found the exisiting record
     console.log('Found user from DB');
     userId = userInfo.userId;
+
+    console.log(userId = userInfo.userId);
+
     var setcmd = "userFirstname='" + userFirstname + "'";
 
     await User.updateProfile(setcmd, userId)
@@ -93,9 +96,10 @@ await verify(idToken)
 
 
     if(userLastname !== null && userLastname !== 'undefined'){
-      var setcmd = "userLastname='" + userLastname + "'";
+      setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
+        throw error;
         return res.status(400).send('Err: updateProfile');
       });
     }
