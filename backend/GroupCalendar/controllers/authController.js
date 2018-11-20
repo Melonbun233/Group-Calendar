@@ -32,8 +32,8 @@ async function authGoogle (req, res){
 
   let idToken = req.body.idToken;
   let email = req.body.userEmail;
-  let userLastname = req.body.userLastname;
-  let userFirstname = req.body.userFirstname;
+  let userLastname = req.body.familyName;
+  let userFirstname = req.body.givenName;
 
   if(idToken === 'undefined' || email === 'undefined'  || 
     userFirstname === 'undefined'){
