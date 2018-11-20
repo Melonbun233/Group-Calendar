@@ -110,6 +110,9 @@ var profile = await User.getProfileById(userId)
 
 var uuid = UidG.uuidCreate(email);
 req.session.uuid = uuid;
+
+console.log(req.session.uuid);
+
 res.status(200).json(profile);
 
 }
@@ -163,10 +166,10 @@ async function authApp (req, res){
   console.log(profile);
 
   var uuid = UidG.uuidCreate(email);
-
-  console.log(uuid);
-
   req.session.uuid = uuid;
+
+  console.log(req.session.uuid);
+
   res.status(200).json(profile);
 
 }
