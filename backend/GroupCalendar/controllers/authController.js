@@ -34,6 +34,7 @@ async function authGoogle (req, res){
   let email = req.body.user.userEmail;
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
+  let userId;
 
   console.log(userLastname);
   console.log(userFirstname);
@@ -63,7 +64,6 @@ await verify(idToken)
   
   console.log('Finding user google email from our Database...');
   //   auth_res.status(400).send('Server fails to deal with your Google account.');
-  var userId;
   if(userInfo === null){
     var user = {
       userEmail: email
