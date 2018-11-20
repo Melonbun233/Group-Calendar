@@ -162,10 +162,13 @@ async function authApp (req, res){
 
   console.log(profile);
 
-  var uuid = UidG.uuidCreate(email);
+  var uuid = await UidG.uuidCreate(email)
+  .catch(error => {
+    res.status(400).send('Err: uuidGenerator');
+  })
 
   console.log(uuid);
-  
+
   req.session.uuid = uuid;
   res.status(200).json(profile);
 

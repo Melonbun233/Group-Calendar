@@ -5,15 +5,13 @@ var calen = require('./calendar.js');
 async function getInfo (email) {
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'";
 	
-	await db.query(query)
-	.then ((result) => {
-		if (result.length == 0)
-			throw "User name does not refer to any entry.";
-		return result[0];
-	})
+	var result = await db.query(query)
 	.catch( (err) => {
 		throw err;
 	})
+	if (result.length == 0)
+		throw "User name does not refer to any entry.";
+	return result[0];
 };
 
 async function updateUser (user) {
