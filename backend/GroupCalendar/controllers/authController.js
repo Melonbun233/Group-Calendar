@@ -137,7 +137,7 @@ async function authApp (req, res){
 
   }
 
-  await User.login(email, password)
+  await User.login(email, pwd)
   .catch(error =>{
     throw error;
     res.status(400).send('Invalid email');
