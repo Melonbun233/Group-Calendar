@@ -140,8 +140,8 @@ export default class SignInPage extends Component {
 		await GoogleSignin.signIn()
 			.then(async (userInfo) => 
 			{
-				let res = await Network.verifyUserByGoogle(userInfo);
-				switch (res.status) {
+				let status = await Network.verifyUserByGoogle(userInfo);
+				switch (status) {
 					case 200: {
 						this.setState({isSigning: false});
 						Storage.setSignInByGoogle('true');

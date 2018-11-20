@@ -5,19 +5,27 @@ export const signUpConstraints = {
 	email: {
 		presence: true,
 		email: {
-			message: 'invalid email address',
+			message: 'Looks like an email address',
 		},
 	},
 	firstname: {
-		presence: {
-			allowEmpty: false,
-		},
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 25,
+			tooShort: 'At least something',
+			tooLong: 'This is really too long',
+		}
 	},
 	//first or last name
 	lastname: {
-		presence: {
-			allowEmpty: false,
-		},
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 25,
+			tooShort: 'At least something',
+			tooLong: 'This is really too long',
+		}
 	},
 	//check password
 	password: {

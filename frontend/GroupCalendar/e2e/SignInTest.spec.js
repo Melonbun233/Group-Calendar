@@ -22,7 +22,7 @@ describe('Test sign in', () => {
         await expect(element(by.id('searchButton'))).toBeNotVisible();
         await expect(element(by.id('profileButton'))).toBeNotVisible();
     });
-
+    
     test('should enter sign in by app', async() => {
         await element(by.id('UserEmail')).tap();
         await element(by.id('UserEmail')).typeText('test@mail.com');
