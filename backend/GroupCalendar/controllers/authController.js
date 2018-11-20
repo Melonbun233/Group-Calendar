@@ -169,6 +169,7 @@ async function authApp (req, res){
     throw error;
     res.status(400).send('Err: getProfileById');
   })
+  console.log(profile);
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
