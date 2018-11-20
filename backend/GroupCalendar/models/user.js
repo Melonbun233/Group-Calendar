@@ -5,15 +5,13 @@ var calen = require('./calendar.js');
 async function getInfo (email) {
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'";
 	
-	await db.query(query)
-	.then ( (result) => {
-		if ( result.length == 0)
-			throw "User name does not refer to any entry.";
-		return result[0];
-	})
+	var result = await db.query(query)
 	.catch( (err) => {
 		throw err;
 	})
+	if (result.length == 0)
+		throw "User name does not refer to any entry.";
+	return result[0];
 };
 
 async function updateUser (user) {
@@ -51,7 +49,7 @@ async function createUser (user, profile) {
 	.catch ( (err) => {
 		throw err;
 	})
- }
+}
 
 async function deleteUser (userId) {
 	var userQuery = "DELETE FROM Users WHERE userId = " + userId + ";";
@@ -80,9 +78,9 @@ async function getProfile (userId) {
 	var query = "SELECT * FROM Profiles WHERE userId = " + userId + ";";
 
 	var result = await db.query(query)
-						.catch( (err) => {
-							throw err;
-						})
+	.catch( (err) => {
+		throw err;
+	})
 	
 	if (result.length == 0){
 		throw "The userId does not exist.";
@@ -106,16 +104,20 @@ function addQuotation (values){
 }
 
 async function getProfileById (userId) {
-	var query = "SELECT * FROM Profiles WHERE userId = '" + userId + "'";
-	await db.query(query)
-	.then ( result => {
-		if (!result.length)
-			throw "No such userId";
-		return result[0];
-	})
+	console.log('In: getProfileById');
+
+	var query = "SELECT * FROM Profiles WHERE userId = " + userId;
+	var result = await db.query(query)
 	.catch ( err => {
 		throw err;
-	})
+	});
+
+	if (!result.length){
+		throw "No such userId";
+	}
+	console.log(result[0]);
+	return result[0];
+	
 }
 
 // async function createUserByEmail (email) {
@@ -135,8 +137,8 @@ async function getProfileById (userId) {
 // 	})
 //  }
 
-async function updateProfile(userId, setCmd){
-	var query = "UPDATE Users SET " + setCmd + " WHERE userId=" + userId;
+async function updateProfile(setCmd, userId){
+	var query = "UPDATE Profiles SET " + setCmd + " WHERE userId=" + userId;
 	await db.query(query)
 	.then ((result) => {
 		return result[0];
@@ -144,17 +146,68 @@ async function updateProfile(userId, setCmd){
 	.catch ((error) => {
 		throw error;
 	})
-		
+
 };
+
+// async function login(email, pwd){
+// 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
+// 	await db.query(query)
+// 	.catch( (error) => {
+// 		throw error;
+// 	})
+// 	.then ((result) => {
+
+// 		console.log(result);
+
+// 		if (result.length === 0)
+// 			return 0;
+// 		var userInfo = result[0];
+// 		if(userInfo.userPwd === pwd){
+
+// 			console.log(userInfo.userId);
+
+// 			return userInfo.userId;
+// 		} else {
+// 			return -1;
+// 		}
+// 	})
+// }
+
+async function login(email, pwd){
+	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
+	var result = await db.query(query)
+	.catch( (error) => {
+		throw error;
+	})
+
+	console.log(result);
+
+	if (result.length === 0){
+		return 0;
+	}
+	var userInfo = result[0];
+	if(userInfo.userPwd === pwd){
+
+		console.log(userInfo.userId);
+
+		return userInfo.userId;
+
+	} else {
+		return -1;
+	}
+	
+}
 
 
 module.exports = {
+	getInfo,
 	updateUser,
 	createUser,
 	deleteUser,
 	getProfile,
 	getProfileById,
-	updateProfile
+	updateProfile,
+	login
 }
 
 //------the above function has been modified to async functions----

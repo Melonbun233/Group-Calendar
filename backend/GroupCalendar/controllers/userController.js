@@ -1,4 +1,6 @@
 var User = require('../models/user.js');
+var UidG = require('./uuidGenerator.js');
+
 const {validationResult} = require('express-validator/check');
 
 /* /users */
@@ -46,6 +48,9 @@ async function userCreate (req, res) {
 		return res.status(400).json({ error });
 	}
 
+	var uuid = UidG.uuidCreate(email);
+	req.session.uuid = uuid;
+	
 	res.status(200).json();
 };
 
