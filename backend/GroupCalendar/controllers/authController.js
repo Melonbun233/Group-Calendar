@@ -140,9 +140,12 @@ async function authApp (req, res){
   await User.login(email, password)
   .catch(error =>{
     throw error;
-    res.status(400).send('Invalid email or password');
+    res.status(400).send('Invalid email');
   })
   .then(result =>{
+    if(result == 0 || result == -1){
+      res.status(400).send('Incorrect emial or password');
+    }
     var userId = result;
   })
 

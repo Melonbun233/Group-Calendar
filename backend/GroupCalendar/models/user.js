@@ -152,12 +152,12 @@ async function login(userEmail, userPwd){
 	await db.query(query)
 	.then ( (result) => {
 		if (result.length == 0)
-			throw "Invalid email";
+			return 0;
 		var userInfo = result[0];
 		if(userInfo.userPwd === userPwd){
 			return userInfo.userId;
 		} else {
-			throw "Incorrect password"
+			return -1;
 		}
 	})
 	.catch( (error) => {
