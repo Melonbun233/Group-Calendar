@@ -138,7 +138,7 @@ async function getProfileById (userId) {
 //  }
 
 async function updateProfile(setCmd, userId){
-	var query = "UPDATE Users SET " + setCmd + " WHERE userId=" + userId;
+	var query = "UPDATE Profiles SET " + setCmd + " WHERE userId=" + userId;
 	await db.query(query)
 	.then ((result) => {
 		return result[0];
