@@ -39,5 +39,8 @@
   "main": "app.js",
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "jest": {
+    "collectCoverage": true
+  }
 }
