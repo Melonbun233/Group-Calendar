@@ -137,7 +137,7 @@ async function getProfileById (userId) {
 // 	})
 //  }
 
-async function updateProfile(userId, setCmd){
+async function updateProfile(setCmd, userId){
 	var query = "UPDATE Users SET " + setCmd + " WHERE userId=" + userId;
 	await db.query(query)
 	.then ((result) => {
