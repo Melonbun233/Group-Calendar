@@ -160,8 +160,6 @@ async function authApp (req, res){
   if(userId == 0 || userId == -1){
     res.status(400).send('Incorrect emial or password');
   }
-
-  console.log(userId);
   
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
