@@ -173,7 +173,8 @@ module.exports = {
 	deleteUser,
 	getProfile,
 	getProfileById,
-	updateProfile
+	updateProfile,
+	login
 }
 
 //------the above function has been modified to async functions----
