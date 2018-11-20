@@ -17,28 +17,30 @@ export default class GCNetwork extends Component {
 	//	Note that user name should be validated 
 	//
 	static async verifyUser(_userEmail, _userPwd) {
-		let url = config.server.concat('/auth/app');
 		try {
-			let response = await fetch( url, 
-			{	
-				method: 'POST', 
-				headers: {
-					'Content-Type' : 'application/json',
-				},
-				body: JSON.stringify({
-					'userEmail':_userEmail,
-					'userPwd':_userPwd,
-				})
-			});
-			let responseJson = await response.json();
-
-			if (response.status == 200) {
-				await Storage.setProfile(responseJson);
-				await Storage.setCookie(res.headers.get('set-cookie'));
-			}
-			return response.status;
+            if (_userEmail === 'test@mail.com') {
+                let date = new Date(1997, 4, 3);
+                await Storage.setProfile({
+                    userId: '1',
+                    userFirstname: 'Zhuohang',
+                    userLastname: 'Zeng',
+                    userEmail: _userEmail,
+                    userGender: '0',
+                    userBirth: date.toJSON(),
+                    userDescription: 'hello this is henry',
+                    userRegion: 'Canada',
+                    isAdmin: '1',
+                });
+                await Storage.setCookie({test: 'this is our cookie'});
+                return 200;
+            } else {
+                return 400;
+            }
 		} catch (_error) {
-			return 0;
+			return {
+				status: 0,
+				error: _error,
+			}
 		}
 	}
 
@@ -65,7 +67,10 @@ export default class GCNetwork extends Component {
 				status: response.status
 			}
 		} catch (error) {
-			return 0;
+			return {
+				status: 0,
+				error
+			}
 		}
 	}
 	//	Function used to fetch user profile
@@ -96,9 +101,14 @@ export default class GCNetwork extends Component {
 				await Storage.setProfile(responseJson.profile);
 			}
 			
-			return response.status;
+			return {
+				status: response.status,
+			};
 		} catch (error) {
-			return 0;
+			return {
+				status: 0,
+				error,
+			}
 		}
 	}
 
@@ -124,7 +134,10 @@ export default class GCNetwork extends Component {
 				status: response.status,
 			}
 		} catch (error) {
-			return 0;
+			return {
+				status: 0,
+				error,
+			}
 		}
 	}
 
@@ -154,9 +167,14 @@ export default class GCNetwork extends Component {
 				})
 			});
 			await Storage.setCookie(res.headers.get('set-cookie'));
-			return response.status;
+			return {
+				status: response.status,
+			};
 		} catch (error) {
-			return 0;
+			return {
+				status: 0,
+				error,
+			}
 		}
 	}
 
@@ -169,18 +187,13 @@ export default class GCNetwork extends Component {
 	static async createUser(userInfo) {
 		let url = config.server.concat('/users');
 		try {
-			let response = await fetch(url, {
-				method: 'POST',
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(userInfo),
-			});
-			let responseJson = await response.json();
-
-			await Storage.setCookie(res.headers.get('set-cookie'));
-
-			return response.status;
-		} catch (error) {
-			return 0;
+            await Storage.setProfile(userInfo.profile);
+            return 200;
+		} catch (_error) {
+			return {
+				status: 0,
+				error: _error,
+			}
 		}
 	}
 
@@ -203,9 +216,14 @@ export default class GCNetwork extends Component {
 			await Storage.setCookie(res.headers.get('set-cookie'));
 			await Storage.setProfile(responseJson.profile);
 
-			return response.status;
+			return {
+				status: response.status,
+			}
 		} catch (_error) {
-			return 0;
+			return {
+				status: 0,
+				error: _error,
+			}
 		}
 	}
 }

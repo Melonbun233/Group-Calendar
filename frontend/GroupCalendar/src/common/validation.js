@@ -25,8 +25,8 @@ export const signUpConstraints = {
 		length: {
 			minimum: 6,
 			maximum: 14,
-			tooLong: 'maximum legth is 14',
-			tooShort: 'minimum legth is 6',
+			tooLong: 'maximum length is 14',
+			tooShort: 'minimum length is 6',
 		},
 	},
 };

@@ -171,8 +171,8 @@ export default class EditProfile extends Component {
 		}
 		this.setState({isUpdating: true});
 		try {
-			let res = await Network.updateProfile(update, userId);
-			switch(res.status) {
+			let status = await Network.updateProfile(update, userId);
+			switch(status) {
 				case 200: {
 					Alert.alert('Success!');
 					this.props.navigation.goBack();
@@ -183,7 +183,7 @@ export default class EditProfile extends Component {
 					Alert.alert('Invalid User Info');
 				}
 				break;
-				default: Alert.alert('HTTP ERROR', JSON.stringify(res.error));
+				default: Alert.alert('HTTP ERROR');
 			}
 		} catch (error) {
 			Alert.alert(JSON.stringify(error));

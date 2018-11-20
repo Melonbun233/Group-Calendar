@@ -4,10 +4,12 @@
  */
 
 import React, {Component} from 'react';
-import {TouchableWithoutFeedback, StyleSheet, Text, View, Button, Alert, RefreshControl,
-	AsyncStorage, ActivityIndicator, FlatList, ScrollView} from 'react-native';
+import {TouchableWithoutFeedback, StyleSheet, Text, View, Button, Alert, 
+	RefreshControl, AsyncStorage, ActivityIndicator, FlatList, ScrollView} 
+	from 'react-native';
 import cs from './common/CommonStyles';
 import UserAvatar from 'react-native-user-avatar';
+import Network from './common/GCNetwork';
 
 export default class Project extends Component {
 	constructor(props) {
@@ -41,6 +43,7 @@ export default class Project extends Component {
 		};
 		this._onRefresh = this._onRefresh.bind(this);
 		this._renderItem = this._renderItem.bind(this);
+		this._getProject = this._getProject.bind(this);
 	}
 
 	//fetch user's projects
@@ -85,10 +88,25 @@ export default class Project extends Component {
 		);
 	}
 
-	_onRefresh() {
+	async _onRefresh() {
+		let {profile} = this.state;
+		var projectId;
+		var project = [];
 		this.setState({isRefreshing: true});
+		try {
+			let res = await Network.fetchProjectId(profile.userId);
+		} catch (error) {
+			Alert.alert(error);
+		}
 		this.setState({isRefreshing: false});
 	}
+
+	async _getProject(projectId) {
+		for (var i = 0; i < projectId.length; i ++) {
+
+		}
+	}
+
 
 	render() {
 		let {isLoading, isRefreshing} = this.state;

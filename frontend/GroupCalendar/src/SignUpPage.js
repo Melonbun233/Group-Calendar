@@ -1,12 +1,13 @@
 //this page is used for sign up
 //this should be navigated from introPage
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, AsyncStorage,
-		Button, Alert, ScrollView, KeyboardAvoidingView} from 'react-native';
+import {StyleSheet, Text, View, Alert, ScrollView, 
+	KeyboardAvoidingView} from 'react-native';
 import {TextField} from 'react-native-material-textfield';
 import Ripple from 'react-native-material-ripple';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
+import Storage from './common/Storage';
 import validate from 'validate.js';
 import {signUpConstraints} from './common/validation';
 
@@ -85,7 +86,7 @@ export default class SignUpPage extends Component {
 		}
 		//correct info, create a new user
 		this.setState({isLoading: true});
-		let res = await Network.createUser(
+		let status = await Network.createUser(
 				{
 					user: {
 						userEmail,
@@ -98,15 +99,15 @@ export default class SignUpPage extends Component {
 					}
 				});
 		//Alert.alert(JSON.stringify(res.body));
-		switch (res.status) {
+		switch (status) {
 			case 200: {
 				this.setState({isLoading: false});
-				await AsyncStorage.setItem('profile', JSON.stringify({
+				await Storage.setProfile({
 					userEmail,
 					userLastname,
 					userFirstname,
-				}));
-				await AsyncStorage.setItem('signInByGoogle', 'false');
+				});
+				await Storage.setSignInByGoogle('false');
 				this.props.navigation.navigate('Main');
 			}
 			break;
@@ -153,6 +154,7 @@ export default class SignUpPage extends Component {
 				<View style = {[s.contentContainer]}>
 				{/*Email*/}
 					<TextField
+						testID = 'emailText'
 						ref = {this.emailRef}
 						label = 'Email'
 						value = {userEmail}
@@ -169,6 +171,7 @@ export default class SignUpPage extends Component {
 					/>
 				{/*Fist name*/}
 					<TextField
+						testID = 'firstnameText'
 						ref = {this.firstnameRef}
 						label = 'First Name'
 						value = {userFirstname}
@@ -183,6 +186,7 @@ export default class SignUpPage extends Component {
 					/>
 				{/*Last name*/}
 					<TextField
+						testID = 'lastnameText'
 						ref = {this.lastnameRef}
 						label = 'Last Name'
 						value = {userLastname}
@@ -197,6 +201,7 @@ export default class SignUpPage extends Component {
 					/>
 				{/*Password*/}
 					<TextField
+						testID = 'passwordText'
 						ref = {this.passwordRef}
 						label = 'Password'
 						value = {userPwd}
@@ -213,6 +218,7 @@ export default class SignUpPage extends Component {
 						title = 'length should be between 6 and 14 inclusively'
 					/>
 					<Ripple
+						testID = 'signUpButton'
 						disabled = {isLoading}
 						onPress = {this._onSubmit}
 						style = {[cs.container, s.signUpButton]}
