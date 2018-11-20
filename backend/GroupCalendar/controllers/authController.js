@@ -35,6 +35,9 @@ async function authGoogle (req, res){
   let userLastname = req.body.familyName;
   let userFirstname = req.body.givenName;
 
+  console.log(userLastname);
+  console.log(userFirstname);
+
   if(idToken === 'undefined' || email === 'undefined'  || 
     userFirstname === 'undefined'){
     console.log('Err: empty post body');
