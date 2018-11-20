@@ -147,6 +147,24 @@ async function updateProfile(userId, setCmd){
 		
 };
 
+async function login(userEmail, userPwd){
+	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
+	await db.query(query)
+	.then ( (result) => {
+		if (result.length == 0)
+			throw "Invalid email";
+		var userInfo = result[0];
+		if(userInfo.userPwd === userPwd){
+			return userInfo.userId;
+		} else {
+			throw "Incorrect password"
+		}
+	})
+	.catch( (err) => {
+		throw err;
+	})
+}
+
 
 module.exports = {
 	updateUser,
