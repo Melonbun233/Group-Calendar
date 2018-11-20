@@ -48,7 +48,7 @@ await verify(idToken)
     // is_varified = 0;
     res.status(400).send('Can\'t verify your google id token');
     return console.log(error);
-  });
+  })
 .then(async(result) => {
   console.log('Successful Verification');
 
@@ -163,8 +163,6 @@ async function authApp (req, res){
 
   console.log(userId);
   
-
-
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
     throw error;
