@@ -13,14 +13,11 @@ const uuidv4 = require('uuid/v4');
 //uuid with namespace
 const uuidv5 = require('uuid/v5');
 
-async function uuidCreate (userEmail){
+function uuidCreate (userEmail){
 	console.log('In: uuidCreate');
 	// var key = uuidv4();
 	// uuid = uuidv5('"' + userEmail. key + '"');
-	var uuid = await uuidv4()
-	.catch(error => {
-		throw error;
-	})
+	var uuid = uuidv4();
 	return uuid;
 }
 

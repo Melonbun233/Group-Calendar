@@ -10,6 +10,7 @@
 // the req is the idToken of user
 var User = require('../models/user.js');
 var UidG = require('./uuidGenerator.js');
+var session = require('client-sessions');
 
 // var url = require('url');
 const {OAuth2Client} = require('google-auth-library');
@@ -162,10 +163,7 @@ async function authApp (req, res){
 
   console.log(profile);
 
-  var uuid = await UidG.uuidCreate(email)
-  .catch(error => {
-    res.status(400).send('Err: uuidGenerator');
-  })
+  var uuid = UidG.uuidCreate(email);
 
   console.log(uuid);
 
