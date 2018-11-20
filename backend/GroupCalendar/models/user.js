@@ -109,17 +109,17 @@ async function getProfileById (userId) {
 	console.log('In: getProfileById');
 
 	var query = "SELECT * FROM Profiles WHERE userId = " + userId;
-	await db.query(query)
-	.then ( result => {
-		if (!result.length){
-			throw "No such userId";
-		}
-		console.log(result[0]);
-		return result[0];
-	})
+	var result = await db.query(query)
 	.catch ( err => {
 		throw err;
-	})
+	});
+
+	if (!result.length){
+		throw "No such userId";
+	}
+	console.log(result[0]);
+	return result[0];
+	
 }
 
 // async function createUserByEmail (email) {

@@ -14,6 +14,7 @@ const uuidv4 = require('uuid/v4');
 const uuidv5 = require('uuid/v5');
 
 function uuidCreate (userEmail){
+	console.log('In: uuidCreate');
 	// var key = uuidv4();
 	// uuid = uuidv5('"' + userEmail. key + '"');
 	var uuid = uuidv4();

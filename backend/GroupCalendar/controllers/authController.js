@@ -163,6 +163,9 @@ async function authApp (req, res){
   console.log(profile);
 
   var uuid = UidG.uuidCreate(email);
+
+  console.log(uuid);
+  
   req.session.uuid = uuid;
   res.status(200).json(profile);
 
