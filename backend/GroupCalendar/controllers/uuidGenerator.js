@@ -15,5 +15,5 @@ const uuidv5 = require('uuid/v5');
 
 exports.uuidCreate = function(userEmail, uuid){
 	var key = uuidv4();
-	uuid = uuidv5(userEmail. key);
+	uuid = uuidv5('"' + userEmail. key + '"');
 };
