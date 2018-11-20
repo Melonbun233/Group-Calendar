@@ -147,13 +147,37 @@ async function updateProfile(userId, setCmd){
 		
 };
 
+// async function login(email, pwd){
+// 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
+// 	await db.query(query)
+// 	.catch( (error) => {
+// 		throw error;
+// 	})
+// 	.then ((result) => {
+
+// 		console.log(result);
+
+// 		if (result.length === 0)
+// 			return 0;
+// 		var userInfo = result[0];
+// 		if(userInfo.userPwd === pwd){
+
+// 			console.log(userInfo.userId);
+
+// 			return userInfo.userId;
+// 		} else {
+// 			return -1;
+// 		}
+// 	})
+// }
+
 async function login(email, pwd){
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
-	await db.query(query)
+	var result = await db.query(query)
 	.catch( (error) => {
 		throw error;
 	})
-	.then ((result) => {
+	
 
 		console.log(result);
 
@@ -168,7 +192,7 @@ async function login(email, pwd){
 		} else {
 			return -1;
 		}
-	})
+	
 }
 
 
