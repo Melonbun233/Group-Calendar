@@ -160,8 +160,8 @@ async function login(userEmail, userPwd){
 			throw "Incorrect password"
 		}
 	})
-	.catch( (err) => {
-		throw err;
+	.catch( (error) => {
+		throw error;
 	})
 }
 
