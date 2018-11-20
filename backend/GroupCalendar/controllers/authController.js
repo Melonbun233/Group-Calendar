@@ -55,7 +55,7 @@ await verify(idToken)
 
   var userInfo = await User.getInfo(email)
   .catch((error) => {
-    res.status(400).send('Err: getInfo');
+    return res.status(400).send('Err: getInfo');
   });
   
   console.log('Finding user google email from our Database...');
@@ -73,7 +73,7 @@ await verify(idToken)
 
     var newUser = await User.createUser(user, profile)
     .catch((error) => {
-      res.status(400).send('Err: createUser');
+      return res.status(400).send('Err: createUser');
     });
 
     console.log('created new user');
@@ -88,7 +88,7 @@ await verify(idToken)
 
     await User.updateProfile(setcmd, userId)
     .catch ((error) => {
-      res.status(400).send('Err: updateProfile');
+      return res.status(400).send('Err: updateProfile');
     });
 
 
@@ -96,7 +96,7 @@ await verify(idToken)
       var setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
-        res.status(400).send('Err: updateProfile');
+        return res.status(400).send('Err: updateProfile');
       });
     }
   }
@@ -105,7 +105,7 @@ await verify(idToken)
 
 var profile = await User.getProfileById(userId)
 .catch ((error) => {
-  res.status(400).send('Err: getProfileById');
+  return res.status(400).send('Err: getProfileById');
 });
 
 var uuid = UidG.uuidCreate(email);
@@ -124,7 +124,7 @@ async function authApp (req, res){
   
   if(email === 'undefined' || pwd === 'undefined'){
     console.log('Err: empty post body');
-    res.status(400).send('Empty email or password');
+    return res.status(400).send('Empty email or password');
 
   }
 
@@ -152,15 +152,15 @@ async function authApp (req, res){
   console.log(userId);
 
   if(userId == null || userId == undefined){
-    res.status(400).send('Err: login');
+    return res.status(400).send('Err: login');
   }
   if(userId == 0 || userId == -1){
-    res.status(400).send('Incorrect emial or password');
+    return res.status(400).send('Incorrect emial or password');
   }
   
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
-    res.status(400).send('Err: getProfileById');
+    return res.status(400).send('Err: getProfileById');
   });
 
   console.log(profile);
