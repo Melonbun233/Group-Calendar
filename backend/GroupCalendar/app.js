@@ -12,7 +12,6 @@ var session = require('client-sessions');
 var Promise = require('promise'); // npm install promise...
 
 /*----require routers-----------*/
-var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 /*------------------------------*/
@@ -93,9 +92,6 @@ app.listen(8080, '0.0.0.0');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth',authRouter);
 

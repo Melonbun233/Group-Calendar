@@ -12,8 +12,6 @@ router.put('/',
 
 router.post('/',
 	(req, res, next) => { 
-		/* since the validator cannot find userEmail in body, we 
-		need to put all json into req.param for the validator to check*/
 		Object.assign(req.params, req.body.profile, req.body.user);
 		next();
 	}, 
