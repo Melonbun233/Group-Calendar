@@ -150,7 +150,7 @@ async function updateProfile(userId, setCmd){
 async function login(email, pwd){
 	var query = "SELECT * FROM Users WHERE userEmail = '" + email + "'"; 
 	await db.query(query)
-	.then ( (result) => {
+	.then ( async (result) => {
 
 		console.log(result);
 

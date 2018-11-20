@@ -143,6 +143,8 @@ async function authApp (req, res){
     res.status(400).send('Invalid email');
   })
   .then(result =>{
+    console.log(result);
+    
     if(result == null || undefined){
       res.status(400).send('Err: login');
     }
