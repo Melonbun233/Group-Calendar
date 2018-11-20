@@ -167,6 +167,7 @@ async function login(userEmail, userPwd){
 
 
 module.exports = {
+	getInfo,
 	updateUser,
 	createUser,
 	deleteUser,
