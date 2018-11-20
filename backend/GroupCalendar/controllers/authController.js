@@ -54,75 +54,69 @@ await verify(idToken)
 
   // successfully in server
 
-  await User.getInfo(email)
+  var userInfo = await User.getInfo(email)
   .catch((error) => {
     throw error;
     res.status(400).send('Err: getInfo');
-  })
-  .then(async (result) =>{
-    console.log('Finding user google email from our Database...');
-    //   auth_res.status(400).send('Server fails to deal with your Google account.');
-    var userId;
-    if(result === null){
-      var user = {
-        userEmail: email
-      }
-      var profile = {
-        userEmail: email,
-        userLastname: userLastname,
-        userFirstname: userFirstname
-      }
+  });
+  
+  console.log('Finding user google email from our Database...');
+  //   auth_res.status(400).send('Server fails to deal with your Google account.');
+  var userId;
+  if(userInfo === null){
+    var user = {
+      userEmail: email
+    }
+    var profile = {
+      userEmail: email,
+      userLastname: userLastname,
+      userFirstname: userFirstname
+    }
 
-      await User.createUser(user, profile)
-      .catch((error) => {
-        throw error;
-        res.status(400).send('Err: createUser');
-      })
-      .then((result) => {
-        console.log('created new user');
-        userId = result.userId;
-      }) 
+    var newUser = await User.createUser(user, profile)
+    .catch((error) => {
+      throw error;
+      res.status(400).send('Err: createUser');
+    })
 
-    } else {
-      // found the exisiting record
-      console.log('Found user from DB');
-      userId = result.userId;
-      var setcmd = "userFirstname='" + userFirstname + "'";
-      
+    console.log('created new user');
+    userId = newUser.userId;
+
+
+  } else {
+    // found the exisiting record
+    console.log('Found user from DB');
+    userId = userInfo.userId;
+    var setcmd = "userFirstname='" + userFirstname + "'";
+
+    await User.updateProfile(setcmd, userId)
+    .catch ((error) => {
+      throw error;
+      res.status(400).send('Err: updateProfile');
+    })
+
+
+    if(userLastname !== null && userLastname !== 'undefined'){
+      var setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
         throw error;
         res.status(400).send('Err: updateProfile');
       })
-
-
-      if(userLastname !== null && userLastname !== 'undefined'){
-        var setcmd = "userLastname='" + userLastname + "'";
-        await User.updateProfile(setcmd, userId)
-        .catch ((error) => {
-          throw error;
-          res.status(400).send('Err: updateProfile');
-        })
-      }
     }
+  }
 
-  })
+})
 
-  await User.getProfileById(userId)
-  .catch ((error) => {
-    throw error;
-    res.status(400).send('Err: getProfileById');
-  })
-  .then (result => {
-    console.log('got profile');
-    var profile = result;
-  })
+var profile = await User.getProfileById(userId)
+.catch ((error) => {
+  throw error;
+  res.status(400).send('Err: getProfileById');
+})
 
-  var uuid = UidG.uuidCreate(email);
-  req.session.uuid = uuid;
-  res.status(200).json(profile);
-
-});
+var uuid = UidG.uuidCreate(email);
+req.session.uuid = uuid;
+res.status(200).json(profile);
 
 }
 
@@ -170,19 +164,15 @@ async function authApp (req, res){
   
 
 
-await User.getProfileById(userId)
-.catch ((error) => {
-  throw error;
-  res.status(400).send('Err: getProfileById');
-})
-.then (result => {
-  console.log('got profile');
-  var profile = result;
-});
+  var profile = await User.getProfileById(userId)
+  .catch ((error) => {
+    throw error;
+    res.status(400).send('Err: getProfileById');
+  })
 
-var uuid = UidG.uuidCreate(email);
-req.session.uuid = uuid;
-res.status(200).json(profile);
+  var uuid = UidG.uuidCreate(email);
+  req.session.uuid = uuid;
+  res.status(200).json(profile);
 
 }
 

@@ -51,7 +51,7 @@ async function createUser (user, profile) {
 	.catch ( (err) => {
 		throw err;
 	})
- }
+}
 
 async function deleteUser (userId) {
 	var userQuery = "DELETE FROM Users WHERE userId = " + userId + ";";
@@ -80,9 +80,9 @@ async function getProfile (userId) {
 	var query = "SELECT * FROM Profiles WHERE userId = " + userId + ";";
 
 	var result = await db.query(query)
-						.catch( (err) => {
-							throw err;
-						})
+	.catch( (err) => {
+		throw err;
+	})
 	
 	if (result.length == 0){
 		throw "The userId does not exist.";
@@ -144,7 +144,7 @@ async function updateProfile(userId, setCmd){
 	.catch ((error) => {
 		throw error;
 	})
-		
+	
 };
 
 // async function login(email, pwd){
@@ -178,20 +178,19 @@ async function login(email, pwd){
 		throw error;
 	})
 	
+	console.log(result);
 
-		console.log(result);
+	if (result.length === 0)
+		return 0;
+	var userInfo = result[0];
+	if(userInfo.userPwd === pwd){
 
-		if (result.length === 0)
-			return 0;
-		var userInfo = result[0];
-		if(userInfo.userPwd === pwd){
+		console.log(userInfo.userId);
 
-			console.log(userInfo.userId);
-
-			return userInfo.userId;
-		} else {
-			return -1;
-		}
+		return userInfo.userId;
+	} else {
+		return -1;
+	}
 	
 }
 
