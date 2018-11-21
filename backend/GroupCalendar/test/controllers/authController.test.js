@@ -389,21 +389,17 @@ describe('Testing authApp', () => {
 
 describe('Testing verify', () => {
 
-	var getInfoSpy = jest.spyOn(authController, 'verify');
-
 	var idToken = 'abc123';
 
-	test('failure test only, return 400', async () => {
+	test('failure test only', async () => {
 
 		mockVerify.mockRestore();
 
-		await authController.verify(idToken);
-		expect(getInfoSpy).toHaveBeenCalled();
-		expect(res.statusCode).toBe(400);
+		await expect(authController.verify(idToken)).rejects.not.toBeUndefined();
 
 	})
 
-	test.only('Mock test, return 200', async () => {
+	test('Mock test, true', async () => {
 
 		mockVerify(true);
 
