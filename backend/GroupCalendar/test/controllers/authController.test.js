@@ -9,7 +9,6 @@ const User = require('../../models/user');
 
 /*-----------mocking verify---------*/
 const verifyMock = jest.spyOn(authController, 'verify');
-verifyMock = jest.fn();
 /*------------mocking user---------------*/
 jest.mock('../../models/user');
 
