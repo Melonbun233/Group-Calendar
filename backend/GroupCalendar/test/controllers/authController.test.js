@@ -218,7 +218,7 @@ describe('Testing authGoogle', () => {
 describe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
-	
+
 	describe('Testing by invalid req', () => {
 
 		var req = httpMocks.createRequest({
@@ -253,6 +253,11 @@ describe('Testing authGoogle', () => {
 		})
 
 	})
+})
+
+describe('Testing authGoogle', () => {
+
+	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
 	describe('Testing by valid req without familyName', () => {
 
