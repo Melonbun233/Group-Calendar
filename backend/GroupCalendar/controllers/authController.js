@@ -36,12 +36,12 @@ async function authGoogle (req, res){
   let userFirstname = req.body.user.givenName;
   let userId;
 
-  console.log(userLastname);
-  console.log(userFirstname);
+  // console.log(userLastname);
+  // console.log(userFirstname);
 
   if(idToken === 'undefined' || email === 'undefined' || 
     userFirstname === 'undefined'){
-    // console.log('Err: empty post body');
+    console.log('empty post body');
   res.status(400).send('Can\'t find your google id token or profile information');
 
 }
@@ -51,6 +51,7 @@ async function authGoogle (req, res){
   await verify(idToken)
   .catch((error) => {
     // is_varified = 0;
+    console.log('Verification Failure');
     return res.status(400).send('Can\'t verify your google id token');
   })
 
@@ -134,7 +135,7 @@ async function authApp (req, res){
   let pwd = req.body.userPwd
   
   if(email === 'undefined' || pwd === 'undefined'){
-    console.log('Err: empty post body');
+    console.log('empty post body');
     return res.status(400).send('Empty email or password');
 
   }
