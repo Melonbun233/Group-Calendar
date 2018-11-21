@@ -14,21 +14,16 @@ async function getInfo (email) {
 	return result[0];
 };
 
-async function updateUser (user) {
-	for (var x in user){
-		if (x !== 'userId'){
-			var query = "UPDATE Users SET " + x + " = '" + user[x] + "' WHERE userId = '" + user.userId + "'";
-			
-			await db.query(query)
-			.then( (result) => {
-				if (!result.affectedRows)
-					throw "No such userId";
-			})
-			.catch( (err) => {
-				throw err;
-			})
-		}
-	}
+async function updateUser (userId, userPwd) {
+	var query = "UPDATE Users SET userPwd = '" + userPwd + "' WHERE userId = '" + userId + "'";
+
+	var result = await db.query(query)
+	.catch( (err) => {
+		throw err;
+	});
+
+	if (!result.affectedRows)
+		throw "No such userId";
 };
 
 async function createUser (user, profile) {

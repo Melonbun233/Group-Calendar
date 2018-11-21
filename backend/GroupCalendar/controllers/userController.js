@@ -28,7 +28,7 @@ async function userUpdate (req, res){
 	}
 
 	try {
-		await User.updateUser(req.body);
+		await User.updateUser(req.body.userId, req.body.update.userPwd);
 	} catch (error) {
 		res.status(400).json({error});
 	}
