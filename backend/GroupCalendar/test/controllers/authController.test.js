@@ -318,7 +318,7 @@ describe('Testing authApp', () => {
 
 		describe('Testing without err', () => {
 
-			test('Success, return 200', async () => {
+			test.only('Success, return 200', async () => {
 
 				mockLogin(true, true);
 				mockGetProfileById(true);
@@ -395,8 +395,9 @@ describe('Testing verify', () => {
 
 	test('Mock test, true', async () => {
 
-		mockVerify(true);
+		var idToken = 'abc123';
 
+		mockVerify(true);
 		await expect(Gverify.verify(idToken)).resolves.toBe('Verifed');
 
 	})
