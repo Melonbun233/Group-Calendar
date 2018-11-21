@@ -44,6 +44,8 @@ describe('Testing authGoogle', () => {
 
 			test.only('Verified, no userInfo found, return 200', async () => {
 
+				console.log('mockVerify: true');
+				
 				mockVerify(true);
 				mockGetInfo(true, false);
 				mockCreateUser(true);
