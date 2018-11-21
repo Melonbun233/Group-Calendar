@@ -396,6 +396,8 @@ describe('Testing verify', () => {
 
 	test('failure test only', async () => {
 
+		authController.verify.mockRestored();
+
 		await expect(authController.verify(idToken)).rejects.not.toBeUndefined();
 
 	})
