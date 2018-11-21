@@ -2,8 +2,8 @@ var httpMocks = require('node-mocks-http');
 const authController = require('../../controllers/authController');
 const User = require('../../models/user');
 
-// /*------------mocking db.query---------------*/
-// jest.mock('../../databases/UserDB');
+/*------------mocking db.query---------------*/
+jest.mock('../../databases/UserDB');
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
 
