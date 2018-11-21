@@ -137,6 +137,22 @@ async function getProfileById (userId) {
 // 	})
 //  }
 
+
+async function modifyProfile (userId, profile){
+	for (var x in profile){
+		var query = "UPDATE Profiles SET " + x + " = '" + profile[x] + "' WHERE userId = '" + userId + "'";
+
+		await db.query(query)
+		.then( (result) => {
+			if (!result.affectedRows)
+				throw "No such userId";
+		})
+		.catch( (err) => {
+			throw err;
+		})
+	}
+}
+
 async function updateProfile(setCmd, userId){
 	var query = "UPDATE Profiles SET " + setCmd + " WHERE userId=" + userId;
 	await db.query(query)
@@ -207,7 +223,8 @@ module.exports = {
 	getProfile,
 	getProfileById,
 	updateProfile,
-	login
+	login,
+	modifyProfile
 }
 
 //------the above function has been modified to async functions----

@@ -80,7 +80,7 @@ async function profileGet (req, res) {
 
 async function profileUpdate (req, res) {
 	try {
-		await User.updateProfile(req.body);
+		await User.modifyProfile(req.body.userId, req.body.update);
 	} catch (error) {
 		return res.status(400).json({error});
 	}
