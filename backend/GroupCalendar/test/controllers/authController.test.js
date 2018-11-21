@@ -236,7 +236,7 @@ describe('Testing authGoogle', () => {
 
 		test('Unverifed; return 400', async () => {
 
-			Gverify.mockVerify(false);
+			mockVerify(false);
 
 			var res = httpMocks.createResponse();
 			await AuthController.authGoogle(req, res);
