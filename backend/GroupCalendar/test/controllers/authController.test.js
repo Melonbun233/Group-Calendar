@@ -429,6 +429,7 @@ describe('Testing verify', () => {
 function mockVerify(isVerified){
 	if (isVerified === true){
 		authController.verify.mockImplementationOnce(() => {
+			console.log('mockVerify: true');
 			return Promise.resolve({result: 'verified'});
 		});
 	} else {
