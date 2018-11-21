@@ -21,7 +21,7 @@ describe('Testing authGoogle', () => {
 
 		var req = httpMocks.createRequest({
 			body: {
-				{ idToken: 'abc123',
+				idToken: 'abc123',
 				accessToken: '123abc',
 				user: 
 				{ photo: 'https://example.com/photo.jpg',
@@ -211,7 +211,7 @@ describe('Testing authGoogle', () => {
 
 		var req = httpMocks.createRequest({
 			body: {
-				{ idToken: 'undefined',
+				idToken: 'undefined',
 				accessToken: '123abc',
 				user: 
 				{ photo: 'https://example.com/photo.jpg',
@@ -243,7 +243,7 @@ describe('Testing authGoogle', () => {
 
 		var req = httpMocks.createRequest({
 			body: {
-				{ idToken: 'abc123',
+				idToken: 'abc123',
 				accessToken: '123abc',
 				user: 
 				{ photo: 'https://example.com/photo.jpg',
@@ -384,7 +384,7 @@ describe('Testing verify', () => {
 
 	var req = httpMocks.createRequest({
 		body: {
-			{ idToken: 'abc123',
+			idToken: 'abc123',
 			accessToken: '123abc',
 			user: 
 			{ photo: 'https://example.com/photo.jpg',
