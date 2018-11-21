@@ -6,16 +6,14 @@ const url = require('url');
 var validator = require('../middlewares/validation');
 
 router.put('/', 
-	//jwt.verifyToken,
-	validator.check,
 	userController.userUpdate);
 
 router.post('/',
-	(req, res, next) => { 
-		Object.assign(req.params, req.body.profile, req.body.user);
-		next();
-	}, 
-	validator.checkParams,
+	// (req, res, next) => { 
+	// 	Object.assign(req.params, req.body.profile, req.body.user);
+	// 	next();
+	// }, 
+	// validator.checkParams,
 	userController.userCreate);
 
 router.delete('/', 
