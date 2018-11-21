@@ -49,7 +49,7 @@ async function userCreate (req, res) {
 		return res.status(400).json({ error });
 	}
 
-	var uuid = UidG.uuidCreate(email);
+	var uuid = UidG.uuidCreate(req.body.user.email);
 	req.session.uuid = uuid;
 	
 	res.status(200).json();
