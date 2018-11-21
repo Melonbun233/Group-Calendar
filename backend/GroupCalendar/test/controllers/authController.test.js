@@ -236,7 +236,7 @@ describe('Testing authGoogle', () => {
 
 		test('Unverifed; return 400', async () => {
 
-			verifyMock.mockRestore();
+			Gverify.mockVerify(false);
 
 			var res = httpMocks.createResponse();
 			await AuthController.authGoogle(req, res);
@@ -508,8 +508,7 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-// afterAll( () => {
-// 	db.mockReset();
-// 	User.mockRestore();
-// });
+afterEach( () => {
+	
+});
 
