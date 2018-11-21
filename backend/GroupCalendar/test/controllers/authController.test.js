@@ -391,33 +391,14 @@ describe('Testing verify', () => {
 
 	var getInfoSpy = jest.spyOn(authController, 'verify');
 
-
-	var req = httpMocks.createRequest({
-		body: {
-			session: {
-				uuid: null
-			},
-			idToken: 'abc123',
-			accessToken: '123abc',
-			user: 
-			{ photo: 'https://example.com/photo.jpg',
-			familyName: 'Smith',
-			name: 'Jackal Smith',
-			email: 'jsmith@gmail.com',
-			id: '12345',
-			givenName: 'Jackal' },
-			accessTokenExpirationDate: 3599.8298959732056,
-			serverAuthCode: null,
-			scopes: [] 
-		}
-	});
+	var idToken = 'abc123';
 
 	test('failure test only, return 400', async () => {
 
 		mockVerify.mockRestore();
 
 		var res = httpMocks.createResponse();
-		await authController.verify(req, res);
+		await authController.verify(idToken);
 		expect(getInfoSpy).toHaveBeenCalled();
 		expect(res.statusCode).toBe(400);
 
@@ -428,9 +409,7 @@ describe('Testing verify', () => {
 		mockVerify(true);
 
 		var res = httpMocks.createResponse();
-		await authController.verify(req, res);
-		expect(getInfoSpy).toHaveBeenCalled();
-		expect(res.statusCode).toBe(200);
+		expect(await authController.verify(idToken)).resolves.toBe("Verifed");
 
 	})
 
@@ -441,7 +420,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolves("Verifed");
 		});
 	} else {
 		console.log('mockVerify: false');
@@ -455,7 +434,7 @@ function mockGetInfo(isPassed, isFound){
 	if (isPassed){
 		if (isFound){
 			User.getInfo.mockImplementationOnce(() => {
-				return Promise.resolve({
+				return Promise.resolves({
 					userId: 1,
 					isAdmin: 0,
 					userEmail: 'jsmith@gmail.com',
@@ -464,7 +443,7 @@ function mockGetInfo(isPassed, isFound){
 			});
 		} else {
 			User.getInfo.mockImplementationOnce(() => {
-				return Promise.resolve(null);
+				return Promise.resolves(null);
 			});
 		}
 	} else {
@@ -477,7 +456,7 @@ function mockGetInfo(isPassed, isFound){
 function mockCreateUser(isPassed){
 	if (isPassed){
 		User.createUser.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolves();
 		});
 		
 	} else {
@@ -490,7 +469,7 @@ function mockCreateUser(isPassed){
 function mockUpdateProfile(isPassed){
 	if (isPassed){
 		User.updateProfile.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolves();
 		});
 		
 	} else {
@@ -503,7 +482,7 @@ function mockUpdateProfile(isPassed){
 function mockGetProfileById(isPassed){
 	if (isPassed){
 		User.getProfileById.mockImplementationOnce(() => {
-			return Promise.resolve({
+			return Promise.resolves({
 				userId: 1,
 				userGender: 1,
 				userBirth: null,
@@ -527,11 +506,11 @@ function mockLogin(isPassed, isValid){
 	if (isPassed){
 		if (isValid){
 			User.login.mockImplementationOnce(() => {
-				return Promise.resolve(1);
+				return Promise.resolves(1);
 			});
 		} else {
 			User.login.mockImplementationOnce(() => {
-				return Promise.resolve(-1);
+				return Promise.resolves(-1);
 			});
 		}
 	} else {
