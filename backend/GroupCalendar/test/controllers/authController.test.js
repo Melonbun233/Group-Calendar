@@ -397,7 +397,6 @@ describe('Testing verify', () => {
 
 		mockVerify.mockRestore();
 
-		var res = httpMocks.createResponse();
 		await authController.verify(idToken);
 		expect(getInfoSpy).toHaveBeenCalled();
 		expect(res.statusCode).toBe(400);
@@ -408,8 +407,7 @@ describe('Testing verify', () => {
 
 		mockVerify(true);
 
-		var res = httpMocks.createResponse();
-		expect(await authController.verify(idToken)).resolves.toBe("Verifed");
+		expect(await authController.verify(idToken)).resolves.toBe('Verifed');
 
 	})
 
@@ -420,7 +418,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolve("Verifed");
+			return Promise.resolve('Verifed');
 		});
 	} else {
 		console.log('mockVerify: false');
