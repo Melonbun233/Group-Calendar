@@ -22,10 +22,10 @@ async function userInfoGet (req, res) {
 };
 
 async function userUpdate (req, res){
-	const errors = validationResult(req);
-	if (!errors.isEmpty()){
-		return res.status(400).json({"error": "Invalid user info."});
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()){
+	// 	return res.status(400).json({"error": "Invalid user info."});
+	// }
 
 	try {
 		await User.updateUser(req.body.userId, req.body.update.userPwd);
@@ -37,10 +37,10 @@ async function userUpdate (req, res){
 };
 
 async function userCreate (req, res) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()){ 
-		return res.status(400).json({"error": "Invalid user info."});
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()){ 
+	// 	return res.status(400).json({"error": "Invalid user info."});
+	// }
 
 	try{
 		await User.createUser(req.body.user, req.body.profile);
