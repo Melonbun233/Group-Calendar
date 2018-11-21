@@ -439,7 +439,7 @@ function mockGetInfo(isPassed, isFound){
 		} else {
 			User.getInfo.mockImplementationOnce(() => {
 				return Promise.resolve(null);
-			}
+			});
 		}
 	} else {
 		User.getInfo.mockImplementationOnce(() => {
@@ -506,7 +506,7 @@ function mockLogin(isPassed, isValid){
 		} else {
 			User.login.mockImplementationOnce(() => {
 				return Promise.resolve(-1);
-			}
+			});
 		}
 	} else {
 		User.login.mockImplementationOnce(() => {
