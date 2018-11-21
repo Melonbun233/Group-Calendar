@@ -148,7 +148,7 @@ async function authGoogle (req, res){
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
-  res.status(200).json(profile);
+  return res.status(200).json(profile);
 
 }
 
@@ -186,7 +186,7 @@ async function authApp (req, res){
   });
 
   if(err){
-    res.status(500).end();
+    return res.status(500).end();
   }
   
   // console.log(userId);
@@ -212,7 +212,7 @@ async function authApp (req, res){
 
   // console.log(req.session.uuid);
 
-  res.status(200).json(profile);
+  return res.status(200).json(profile);
 
 }
 
