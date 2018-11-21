@@ -44,8 +44,6 @@ describe('Testing authGoogle', () => {
 
 			test.only('Verified, no userInfo found, return 200', async () => {
 
-				console.log('test');
-
 				mockVerify(true);
 				mockGetInfo(true, false);
 				mockCreateUser(true);
@@ -531,3 +529,8 @@ function mockLogin(isPassed, isValid){
 		});
 	}
 }
+
+afterEach( () => {
+	db.query.mockReset();
+});
+
