@@ -409,7 +409,7 @@ describe('Testing verify', () => {
 		mockVerify(true);
 
 		var res = httpMocks.createResponse();
-		expect(await authController.verify(idToken)).resolves.toBe("Verifed");
+		expect(await authController.verify(idToken)).resolve.toBe("Verifed");
 
 	})
 
@@ -420,7 +420,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolves("Verifed");
+			return Promise.resolve("Verifed");
 		});
 	} else {
 		console.log('mockVerify: false');
@@ -434,7 +434,7 @@ function mockGetInfo(isPassed, isFound){
 	if (isPassed){
 		if (isFound){
 			User.getInfo.mockImplementationOnce(() => {
-				return Promise.resolves({
+				return Promise.resolve({
 					userId: 1,
 					isAdmin: 0,
 					userEmail: 'jsmith@gmail.com',
@@ -443,7 +443,7 @@ function mockGetInfo(isPassed, isFound){
 			});
 		} else {
 			User.getInfo.mockImplementationOnce(() => {
-				return Promise.resolves(null);
+				return Promise.resolve(null);
 			});
 		}
 	} else {
@@ -456,7 +456,7 @@ function mockGetInfo(isPassed, isFound){
 function mockCreateUser(isPassed){
 	if (isPassed){
 		User.createUser.mockImplementationOnce(() => {
-			return Promise.resolves();
+			return Promise.resolve();
 		});
 		
 	} else {
@@ -469,7 +469,7 @@ function mockCreateUser(isPassed){
 function mockUpdateProfile(isPassed){
 	if (isPassed){
 		User.updateProfile.mockImplementationOnce(() => {
-			return Promise.resolves();
+			return Promise.resolve();
 		});
 		
 	} else {
@@ -482,7 +482,7 @@ function mockUpdateProfile(isPassed){
 function mockGetProfileById(isPassed){
 	if (isPassed){
 		User.getProfileById.mockImplementationOnce(() => {
-			return Promise.resolves({
+			return Promise.resolve({
 				userId: 1,
 				userGender: 1,
 				userBirth: null,
@@ -506,11 +506,11 @@ function mockLogin(isPassed, isValid){
 	if (isPassed){
 		if (isValid){
 			User.login.mockImplementationOnce(() => {
-				return Promise.resolves(1);
+				return Promise.resolve(1);
 			});
 		} else {
 			User.login.mockImplementationOnce(() => {
-				return Promise.resolves(-1);
+				return Promise.resolve(-1);
 			});
 		}
 	} else {
