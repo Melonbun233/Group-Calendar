@@ -1,6 +1,7 @@
 var httpMocks = require('node-mocks-http');
-const authController = require('../../controllers/authController');
+const AuthController = require('../../controllers/AuthController');
 const User = require('../../models/user');
+const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
 jest.mock('../../databases/UserDB');
@@ -8,15 +9,15 @@ const db = require('../../databases/UserDB');
 db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-// const verifyMock = jest.spyOn(authController, 'verify');
+// const verifyMock = jest.spyOn(AuthController, 'verify');
 // verifyMock = jest.fn();
-authController.verify = jest.fn();
+jest.mock('../../controllers/googleVerification');
 /*------------mocking user---------------*/
 jest.mock('../../models/user');
 
 describe('Testing authGoogle', () => {
 
-	var getInfoSpy = jest.spyOn(authController, 'authGoogle');
+	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
 	describe('Testing by valid req', () => {
 
@@ -51,7 +52,7 @@ describe('Testing authGoogle', () => {
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
@@ -66,7 +67,7 @@ describe('Testing authGoogle', () => {
 				mockGetProfileById(true);
 				
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
@@ -80,7 +81,7 @@ describe('Testing authGoogle', () => {
 				mockVerify(false);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(res.statusCode).toBe(400);
 				expect(getInfoSpy).toHaveBeenCalled();
 
@@ -95,7 +96,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -110,7 +111,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -125,7 +126,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -140,7 +141,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -155,7 +156,7 @@ describe('Testing authGoogle', () => {
 				mockGetProfileById(false);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -171,7 +172,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -186,7 +187,7 @@ describe('Testing authGoogle', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -201,7 +202,7 @@ describe('Testing authGoogle', () => {
 				mockGetProfileById(false);
 
 				var res = httpMocks.createResponse();
-				await authController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -238,7 +239,7 @@ describe('Testing authGoogle', () => {
 			verifyMock.mockRestore();
 
 			var res = httpMocks.createResponse();
-			await authController.authGoogle(req, res);
+			await AuthController.authGoogle(req, res);
 			expect(res.statusCode).toBe(400);
 			expect(getInfoSpy).toHaveBeenCalled();
 
@@ -276,7 +277,7 @@ describe('Testing authGoogle', () => {
 			mockGetProfileById(true);
 
 			var res = httpMocks.createResponse();
-			await authController.authGoogle(req, res);
+			await AuthController.authGoogle(req, res);
 			expect(getInfoSpy).toHaveBeenCalled();
 			expect(res.statusCode).toBe(200);
 
@@ -290,7 +291,7 @@ describe('Testing authGoogle', () => {
 			mockGetProfileById(false);
 
 			var res = httpMocks.createResponse();
-			await authController.authGoogle(req, res);
+			await AuthController.authGoogle(req, res);
 			expect(getInfoSpy).toHaveBeenCalled();
 			expect(res.statusCode).toBe(500);
 
@@ -301,7 +302,7 @@ describe('Testing authGoogle', () => {
 /* ---------- authApp ----------- */
 describe('Testing authApp', () => {
 
-	var getInfoSpy = jest.spyOn(authController, 'authApp');
+	var getInfoSpy = jest.spyOn(AuthController, 'authApp');
 
 	describe('Testing by valid req', () => {
 
@@ -323,7 +324,7 @@ describe('Testing authApp', () => {
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authApp(req, res);
+				await AuthController.authApp(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
@@ -334,7 +335,7 @@ describe('Testing authApp', () => {
 				mockLogin(true, false);
 
 				var res = httpMocks.createResponse();
-				await authController.authApp(req, res);
+				await AuthController.authApp(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(400);
 
@@ -349,7 +350,7 @@ describe('Testing authApp', () => {
 				// mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				await authController.authApp(req, res);
+				await AuthController.authApp(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -361,7 +362,7 @@ describe('Testing authApp', () => {
 				mockGetProfileById(false);
 
 				var res = httpMocks.createResponse();
-				await authController.authApp(req, res);
+				await AuthController.authApp(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
@@ -382,7 +383,7 @@ describe('Testing authApp', () => {
 		test('invalid res, return 400', async () => {
 
 			var res = httpMocks.createResponse();
-			await authController.authApp(req, res);
+			await AuthController.authApp(req, res);
 			expect(getInfoSpy).toHaveBeenCalled();
 			expect(res.statusCode).toBe(400);
 
@@ -396,7 +397,7 @@ describe('Testing verify', () => {
 
 		mockVerify(true);
 
-		await expect(authController.verify(idToken)).resolves.toBe('Verifed');
+		await expect(Gverify.verify(idToken)).resolves.toBe('Verifed');
 
 	})
 	
@@ -405,12 +406,12 @@ describe('Testing verify', () => {
 function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
-		authController.verify.mockImplementationOnce(() => {
+		Gverify.verify.mockImplementationOnce(() => {
 			return Promise.resolve('Verifed');
 		});
 	} else {
 		console.log('mockVerify: false');
-		authController.verify.mockImplementationOnce(() => {
+		Gverify.verify.mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}

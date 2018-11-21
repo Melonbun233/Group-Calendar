@@ -10,23 +10,7 @@
 // the req is the idToken of user
 var User = require('../models/user.js');
 var UidG = require('./uuidGenerator.js');
-
-// var url = require('url');
-const {OAuth2Client} = require('google-auth-library');
-var CLIENTID = '948599028756-qju3o61c2ob60um012tvol60u6p7q6gf.apps.googleusercontent.com';
-// var is_varified = 0;
-
-async function verify(_idToken) {
-  const client = new OAuth2Client(CLIENTID);
-  const ticket = await client.verifyIdToken({
-    idToken: _idToken,
-    audience: CLIENTID, 
-  });
-  //const payload = ticket.getPayload();
-  //const userid = payload['sub'];
-  // If request specified a G Suite domain:
-  //const domain = payload['hd'];
-}
+var Gverify = require('./googleVerification.js')
 
 async function authGoogle (req, res){
 
@@ -49,7 +33,7 @@ async function authGoogle (req, res){
 
   //verify google idToken
 
-  await verify(idToken)
+  await Gverify.verify(idToken)
   .then(result => {
     console.log('Successful Verification')
   })
