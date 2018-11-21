@@ -269,7 +269,7 @@ describe('Testing authGoogle', () => {
 			}
 		});
 
-		test('Verifed, userInfo found, return 200', async () => {
+		test.only('Verifed, userInfo found, return 200', async () => {
 
 			mockVerify(true);
 			mockGetInfo(true, true);
