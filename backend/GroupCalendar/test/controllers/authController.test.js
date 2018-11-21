@@ -384,7 +384,7 @@ describe('Testing authApp', () => {
 
 	})
 	
-	xdescribe('Testing by invalid req', () => {
+	describe('Testing by invalid req', () => {
 		var req = httpMocks.createRequest({
 			body: {
 				userEmail: 'jsmith@gmail.com',
@@ -403,7 +403,7 @@ describe('Testing authApp', () => {
 	})
 })
 
-xdescribe('Testing verify', () => {
+describe('Testing verify', () => {
 
 	test('Mock test, true', async () => {
 
