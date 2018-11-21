@@ -39,9 +39,9 @@ async function authGoogle (req, res){
   console.log(userLastname);
   console.log(userFirstname);
 
-  if(idToken === 'undefined' || email === 'undefined'  || 
+  if(idToken === 'undefined' || email === 'undefined' || 
     userFirstname === 'undefined'){
-    console.log('Err: empty post body');
+    // console.log('Err: empty post body');
   res.status(400).send('Can\'t find your google id token or profile information');
 
 }
@@ -59,12 +59,12 @@ await verify(idToken)
 
   var userInfo = await User.getInfo(email)
   .catch((error) => {
-    return res.status(400).send('Err: getInfo');
+    return res.status(500).send('Err: getInfo');
   });
   
   console.log('Finding user google email from our Database...');
   //   auth_res.status(400).send('Server fails to deal with your Google account.');
-  if(userInfo === null){
+  if(userInfo === null || userInfo === 'undefined'){
     var user = {
       userEmail: email
     }
@@ -74,10 +74,19 @@ await verify(idToken)
       userFirstname: userFirstname
     }
 
-    var newUser = await User.createUser(user, profile)
+    await User.createUser(user, profile)
     .catch((error) => {
-      return res.status(400).send('Err: createUser');
+      return res.status(500).send('Err: createUser');
     });
+
+    var newUser = await User.getInfo(email)
+    .catch((error) => {
+      return res.status(500).send('Err: getInfo');
+    });
+
+    if(newUser === null || userInfo === 'undefined'){
+      return res.status(500).send('Err: getInfo');
+    }
 
     console.log('created new user');
     userId = newUser.userId;
@@ -89,13 +98,11 @@ await verify(idToken)
     userId = userInfo.userId;
 
     console.log(userId = userInfo.userId);
-
-    if(userFirstname !== null || userFirstname !== 'undefined')
     var setcmd = "userFirstname='" + userFirstname + "'";
 
     await User.updateProfile(setcmd, userId)
     .catch ((error) => {
-      return res.status(400).send('Err: updateProfile');
+      return res.status(500).send('Err: updateProfile');
     });
 
 
@@ -103,8 +110,7 @@ await verify(idToken)
       setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
-        throw error;
-        return res.status(400).send('Err: updateProfile');
+        return res.status(500).send('Err: updateProfile');
       });
     }
   }
@@ -113,14 +119,11 @@ await verify(idToken)
 
 var profile = await User.getProfileById(userId)
 .catch ((error) => {
-  return res.status(400).send('Err: getProfileById');
+  return res.status(500).send('Err: getProfileById');
 });
 
 var uuid = UidG.uuidCreate(email);
 req.session.uuid = uuid;
-
-console.log(req.session.uuid);
-
 res.status(200).json(profile);
 
 }
@@ -160,7 +163,7 @@ async function authApp (req, res){
   console.log(userId);
 
   if(userId == null || userId == undefined){
-    return res.status(400).send('Err: login');
+    return res.status(500).send('Err: login');
   }
   if(userId == 0 || userId == -1){
     return res.status(400).send('Incorrect emial or password');
@@ -168,7 +171,7 @@ async function authApp (req, res){
   
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
-    return res.status(400).send('Err: getProfileById');
+    return res.status(500).send('Err: getProfileById');
   });
 
   console.log(profile);
