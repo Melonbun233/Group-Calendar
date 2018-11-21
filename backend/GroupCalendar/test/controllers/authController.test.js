@@ -255,7 +255,7 @@ describe('Testing authGoogle', () => {
 // 	})
 // })
 
-describe('Testing authGoogle', () => {
+xdescribe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
