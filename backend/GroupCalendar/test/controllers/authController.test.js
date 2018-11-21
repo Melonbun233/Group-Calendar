@@ -115,7 +115,7 @@ describe('Testing authGoogle', () => {
 	})
 })
 
-describe('Testing authGoogle', () => {
+xdescribe('Testing authGoogle', () => {
 	var req = httpMocks.createRequest({
 		session: {
 			uuid: null
