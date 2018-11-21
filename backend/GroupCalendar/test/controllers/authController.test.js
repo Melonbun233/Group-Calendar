@@ -42,7 +42,7 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing without err', () => {
 
-			test.only('Verified, no userInfo found, return 200', async () => {
+			test('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
 				mockGetInfo(true, false);
@@ -423,6 +423,17 @@ describe('Testing verify', () => {
 
 	})
 
+	test.only('Mock test, return 200', async () => {
+
+		mockVerify(true);
+
+		var res = httpMocks.createResponse();
+		await authController.authApp(req, res);
+		expect(getInfoSpy).toHaveBeenCalled();
+		expect(res.statusCode).toBe(200);
+
+	})
+
 	
 })
 
@@ -530,8 +541,8 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterAll( () => {
-	db.mockReset();
-	User.mockRestore();
-});
+// afterAll( () => {
+// 	db.mockReset();
+// 	User.mockRestore();
+// });
 
