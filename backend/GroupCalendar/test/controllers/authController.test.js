@@ -485,8 +485,8 @@ function mockGetProfileById(isPassed){
 				userDescrption: null,
 				userAvarar: null,
 				userRegion: null,
-				userLastname: Smith,
-				userFirstname: Jackal,
+				userLastname: 'Smith',
+				userFirstname: 'Jackal',
 				isAdmin: 0,
 				userEmail: 'jsmith@gmail.com'
 			});
