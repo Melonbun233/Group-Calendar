@@ -306,6 +306,9 @@ describe('Testing authApp', () => {
 	describe('Testing by valid req', () => {
 
 		var req = httpMocks.createRequest({
+			session: {
+				uuid: null;
+			},
 			body: {
 				userEmail: 'jsmith@gmail.com',
 				userPwd: '123456'
