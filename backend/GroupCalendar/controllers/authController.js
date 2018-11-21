@@ -35,36 +35,47 @@ async function authGoogle (req, res){
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
   let userId;
+  let err = false;
 
-  console.log(userLastname);
-  console.log(userFirstname);
+  // console.log(userLastname);
+  // console.log(userFirstname);
 
-  if(idToken === 'undefined' || email === 'undefined'  || 
+  if(idToken === 'undefined' || email === 'undefined' || 
     userFirstname === 'undefined'){
-    console.log('Err: empty post body');
+    console.log('empty post body');
   res.status(400).send('Can\'t find your google id token or profile information');
 
 }
 
-await verify(idToken)
-.catch((error) => {
+  //verify google idToken
+
+  await verify(idToken)
+  .catch((error) => {
     // is_varified = 0;
-    res.status(400).send('Can\'t verify your google id token');
-    return console.log(error);
-  })
-.then(async(result) => {
+    console.log('Verification Failure');
+    err = true;
+  });
+  
+  if (err){
+    return res.status(400).send('Can\'t verify your google id token');
+  }
+
   console.log('Successful Verification');
 
   // successfully in server
 
   var userInfo = await User.getInfo(email)
   .catch((error) => {
-    return res.status(400).send('Err: getInfo');
+    console.log('Err: getInfo');
+    err = true;
   });
-  
+  if (err){
+    return res.status(500).end();
+  }
+
   console.log('Finding user google email from our Database...');
-  //   auth_res.status(400).send('Server fails to deal with your Google account.');
-  if(userInfo === null){
+
+  if(userInfo === null || userInfo === 'undefined'){
     var user = {
       userEmail: email
     }
@@ -74,10 +85,30 @@ await verify(idToken)
       userFirstname: userFirstname
     }
 
-    var newUser = await User.createUser(user, profile)
+    await User.createUser(user, profile)
     .catch((error) => {
-      return res.status(400).send('Err: createUser');
+      console.log('Err: createUser');
+      err = true;
     });
+
+    if (err){
+      return res.status(500).end();
+    }
+
+    var newUser = await User.getInfo(email)
+    .catch((error) => {
+      console.log('Err: getInfo');
+      err = true;
+    });
+
+    if (err){
+      return res.status(500).end();
+    }
+
+    if(newUser === null || userInfo === 'undefined'){
+      console.log('Err: getInfo');
+      return res.status(500).end();
+    }
 
     console.log('created new user');
     userId = newUser.userId;
@@ -89,51 +120,59 @@ await verify(idToken)
     userId = userInfo.userId;
 
     console.log(userId = userInfo.userId);
-
-    if(userFirstname !== null || userFirstname !== 'undefined')
     var setcmd = "userFirstname='" + userFirstname + "'";
 
     await User.updateProfile(setcmd, userId)
     .catch ((error) => {
-      return res.status(400).send('Err: updateProfile');
+      console.log('Err: updateProfile');
+      err = true;
     });
+
+    if(err){
+      return res.status(500).end();
+    }
 
 
     if(userLastname !== null || userLastname !== 'undefined'){
       setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
-        throw error;
-        return res.status(400).send('Err: updateProfile');
+        console.log('Err: updateProfile');
+        err = true;
       });
+
+      if(err){
+        return res.status(500).end();
+      }
     }
   }
 
-})
 
-var profile = await User.getProfileById(userId)
-.catch ((error) => {
-  return res.status(400).send('Err: getProfileById');
-});
+  var profile = await User.getProfileById(userId)
+  .catch ((error) => {
+    console.log('Err: getProfileById');
+    err = true;
+  });
 
-var uuid = UidG.uuidCreate(email);
-req.session.uuid = uuid;
+  if(err){
+    return res.status(500).end();
+  }
 
-console.log(req.session.uuid);
-
-res.status(200).json(profile);
+  var uuid = UidG.uuidCreate(email);
+  req.session.uuid = uuid;
+  res.status(200).json(profile);
 
 }
 
 async function authApp (req, res){
 
   let email = req.body.userEmail;
-  let pwd = req.body.userPwd
+  let pwd = req.body.userPwd;
+  let err = false;
   
   if(email === 'undefined' || pwd === 'undefined'){
-    console.log('Err: empty post body');
+    console.log('empty post body');
     return res.status(400).send('Empty email or password');
-
   }
 
   // await User.login(email, pwd)
@@ -154,22 +193,29 @@ async function authApp (req, res){
   // })
   var userId = await User.login(email, pwd)
   .catch(error => {
-    res.status(400).send('Invalid email');
+    console.log('Err: login');
+    err = true;
   });
+
+  if(err){
+    res.status(500).end();
+  }
   
   console.log(userId);
 
-  if(userId == null || userId == undefined){
-    return res.status(400).send('Err: login');
-  }
   if(userId == 0 || userId == -1){
     return res.status(400).send('Incorrect emial or password');
   }
   
   var profile = await User.getProfileById(userId)
   .catch ((error) => {
-    return res.status(400).send('Err: getProfileById');
+    console.log('Err: getProfileById');
+    err = true;
   });
+
+  if(err){
+    return res.status(500).end();
+  }
 
   console.log(profile);
 
