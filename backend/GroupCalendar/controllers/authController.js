@@ -118,8 +118,8 @@ async function authGoogle (req, res){
     }
 
 
-    if(userLastname !== null || userLastname !== 'undefined'){
-      
+    if(userLastname !== null && userLastname !== 'undefined'){
+
       console.log(userLastname);
 
       setcmd = "userLastname='" + userLastname + "'";
