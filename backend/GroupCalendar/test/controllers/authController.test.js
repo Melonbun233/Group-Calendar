@@ -9,11 +9,15 @@ const db = require('../../databases/UserDB');
 db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-// const verifyMock = jest.spyOn(AuthController, 'verify');
-// verifyMock = jest.fn();
 jest.mock('../../controllers/googleVerification');
+Gverify.verify = jest.fn();
 /*------------mocking user---------------*/
 jest.mock('../../models/user');
+User.getInfo = jest.fn();
+User.createUser = jest.fn();
+User.updateProfile = jest.fn();
+User.getProfileById = jest.fn();
+User.login = jest.fn();
 
 describe('Testing authGoogle', () => {
 
