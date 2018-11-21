@@ -258,7 +258,7 @@ describe('Testing authGoogle', () => {
 				accessToken: '123abc',
 				user: 
 				{ photo: 'https://example.com/photo.jpg',
-				familyName: null,
+				familyName: 'undefined',
 				name: 'Jackal Smith',
 				email: 'jsmith@gmail.com',
 				id: '12345',

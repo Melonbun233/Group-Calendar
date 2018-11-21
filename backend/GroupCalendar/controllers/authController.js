@@ -104,7 +104,7 @@ async function authGoogle (req, res){
     console.log('Found user from DB');
     userId = userInfo.userId;
 
-    console.log(userId = userInfo.userId);
+    // console.log(userId);
     var setcmd = "userFirstname='" + userFirstname + "'";
 
     await User.updateProfile(setcmd, userId)
