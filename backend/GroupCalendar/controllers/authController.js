@@ -55,6 +55,7 @@ async function authGoogle (req, res){
     console.log('Verification Failure');
     err = true;
   });
+  
   if (err){
     return res.status(400).send('Can\'t verify your google id token');
   }
