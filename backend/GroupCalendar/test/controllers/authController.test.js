@@ -318,7 +318,7 @@ describe('Testing authApp', () => {
 
 		describe('Testing without err', () => {
 
-			test.only('Success, return 200', async () => {
+			test('Success, return 200', async () => {
 
 				mockLogin(true, true);
 				mockGetProfileById(true);
