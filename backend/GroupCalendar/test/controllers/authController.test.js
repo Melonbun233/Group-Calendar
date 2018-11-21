@@ -116,6 +116,25 @@ describe('Testing authGoogle', () => {
 })
 
 describe('Testing authGoogle', () => {
+	var req = httpMocks.createRequest({
+		session: {
+			uuid: null
+		},
+		body: {
+			idToken: 'abc123',
+			accessToken: '123abc',
+			user: 
+			{ photo: 'https://example.com/photo.jpg',
+			familyName: 'undefined',
+			name: 'Jackal Smith',
+			email: 'jsmith@gmail.com',
+			id: '12345',
+			givenName: 'Jackal' },
+			accessTokenExpirationDate: 3599.8298959732056,
+			serverAuthCode: null,
+			scopes: [] 
+		}
+	});
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
@@ -173,6 +192,25 @@ describe('Testing authGoogle', () => {
 	})
 
 	describe('Testing with err', () => {
+		var req = httpMocks.createRequest({
+			session: {
+				uuid: null
+			},
+			body: {
+				idToken: 'abc123',
+				accessToken: '123abc',
+				user: 
+				{ photo: 'https://example.com/photo.jpg',
+				familyName: 'undefined',
+				name: 'Jackal Smith',
+				email: 'jsmith@gmail.com',
+				id: '12345',
+				givenName: 'Jackal' },
+				accessTokenExpirationDate: 3599.8298959732056,
+				serverAuthCode: null,
+				scopes: [] 
+			}
+		});
 
 		test('Unverifed, return 400', async () => {
 
