@@ -19,7 +19,7 @@ User.updateProfile = jest.fn();
 User.getProfileById = jest.fn();
 User.login = jest.fn();
 
-xdescribe('Testing authGoogle', () => {
+describe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
