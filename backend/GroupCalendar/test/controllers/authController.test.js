@@ -269,7 +269,7 @@ describe('Testing authGoogle', () => {
 			}
 		});
 
-		test.only('Verifed, userInfo found, return 200', async () => {
+		test('Verifed, userInfo found, return 200', async () => {
 
 			mockVerify(true);
 			mockGetInfo(true, true);
@@ -509,6 +509,7 @@ function mockLogin(isPassed, isValid){
 }
 
 afterEach( () => {
-	
+	User.mockRest();
+	Gverify.mockRest();
 });
 
