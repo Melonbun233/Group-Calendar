@@ -10,9 +10,30 @@ db.query = jest.fn();
 /*-----------mocking verify---------*/
 // const verifyMock = jest.spyOn(authController, 'verify');
 // verifyMock = jest.fn();
-authController.verify = jest.fn();
+// authController.verify = jest.fn();
 /*------------mocking user---------------*/
 jest.mock('../../models/user');
+
+describe('Testing verify', () => {
+
+	var idToken = 'abc123';
+
+	test('failure test only', async () => {
+
+		await expect(authController.verify(idToken)).rejects.not.toBeUndefined();
+
+	})
+
+	test('Mock test, true', async () => {
+
+		mockVerify(true);
+
+		await expect(authController.verify(idToken)).resolves.toBe('Verifed');
+
+	})
+	
+})
+
 
 describe('Testing authGoogle', () => {
 
@@ -388,27 +409,6 @@ describe('Testing authApp', () => {
 
 		})
 	})
-})
-
-describe('Testing verify', () => {
-
-	var idToken = 'abc123';
-
-	test('failure test only', async () => {
-
-		await expect(authController.verify(idToken)).rejects.not.toBeUndefined();
-
-	})
-
-	test('Mock test, true', async () => {
-
-		mockVerify(true);
-
-		await expect(authController.verify(idToken)).resolves.toBe('Verifed');
-
-	})
-
-	
 })
 
 function mockVerify(isVerified){
