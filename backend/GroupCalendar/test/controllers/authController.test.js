@@ -45,7 +45,7 @@ describe('Testing authGoogle', () => {
 			}
 		});
 
-		test.only('Unverifed; return 400', async () => {
+		test('Unverifed; return 400', async () => {
 
 			mockVerify(false);
 
