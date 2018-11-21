@@ -44,8 +44,6 @@ describe('Testing authGoogle', () => {
 
 			test.only('Verified, no userInfo found, return 200', async () => {
 
-				console.log('mockVerify: true');
-				
 				mockVerify(true);
 				mockGetInfo(true, false);
 				mockCreateUser(true);
@@ -429,10 +427,9 @@ describe('Testing verify', () => {
 })
 
 function mockVerify(isVerified){
-	if (isVerified === true){
+	if (isVerified){
 		authController.verify.mockImplementationOnce(() => {
-			console.log('mockVerify: true');
-			return Promise.resolve({result: 'verified'});
+			return Promise.resolve();
 		});
 	} else {
 		authController.verify.mockImplementationOnce(() => {
@@ -442,8 +439,8 @@ function mockVerify(isVerified){
 }
 
 function mockGetInfo(isPassed, isFound){
-	if (isPassed === true){
-		if (isFound === true){
+	if (isPassed){
+		if (isFound){
 			User.getInfo.mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
@@ -465,7 +462,7 @@ function mockGetInfo(isPassed, isFound){
 }
 
 function mockCreateUser(isPassed){
-	if (isPassed === true){
+	if (isPassed){
 		User.createUser.mockImplementationOnce(() => {
 			return Promise.resolve();
 		});
@@ -478,7 +475,7 @@ function mockCreateUser(isPassed){
 }
 
 function mockUpdateProfile(isPassed){
-	if (isPassed === true){
+	if (isPassed){
 		User.updateProfile.mockImplementationOnce(() => {
 			return Promise.resolve();
 		});
@@ -491,7 +488,7 @@ function mockUpdateProfile(isPassed){
 }
 
 function mockGetProfileById(isPassed){
-	if (isPassed === true){
+	if (isPassed){
 		User.getProfileById.mockImplementationOnce(() => {
 			return Promise.resolve({
 				userId: 1,
@@ -514,8 +511,8 @@ function mockGetProfileById(isPassed){
 }
 
 function mockLogin(isPassed, isValid){
-	if (isPassed === true){
-		if (isValid === true){
+	if (isPassed){
+		if (isValid){
 			User.login.mockImplementationOnce(() => {
 				return Promise.resolve(1);
 			});
