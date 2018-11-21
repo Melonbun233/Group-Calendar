@@ -407,7 +407,7 @@ describe('Testing verify', () => {
 
 		mockVerify(true);
 
-		return expect(await authController.verify(idToken)).resolves.toBe('Verifed');
+		await expect(authController.verify(idToken)).resolves.toBe('Verifed');
 
 	})
 
