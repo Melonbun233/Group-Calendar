@@ -19,7 +19,7 @@ User.updateProfile = jest.fn();
 User.getProfileById = jest.fn();
 User.login = jest.fn();
 
-describe('Testing authGoogle', () => {
+xdescribe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
@@ -255,7 +255,7 @@ describe('Testing authGoogle', () => {
 // 	})
 // })
 
-xdescribe('Testing authGoogle', () => {
+describe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
@@ -384,7 +384,7 @@ describe('Testing authApp', () => {
 
 	})
 	
-	describe('Testing by invalid req', () => {
+	xdescribe('Testing by invalid req', () => {
 		var req = httpMocks.createRequest({
 			body: {
 				userEmail: 'jsmith@gmail.com',
@@ -403,7 +403,7 @@ describe('Testing authApp', () => {
 	})
 })
 
-describe('Testing verify', () => {
+xdescribe('Testing verify', () => {
 
 	test('Mock test, true', async () => {
 
