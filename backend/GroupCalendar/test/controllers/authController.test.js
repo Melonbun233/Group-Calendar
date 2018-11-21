@@ -19,7 +19,7 @@ User.updateProfile = jest.fn();
 User.getProfileById = jest.fn();
 User.login = jest.fn();
 
-describe('Testing authGoogle', () => {
+xdescribe('Testing authGoogle', () => {
 
 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
@@ -215,45 +215,45 @@ describe('Testing authGoogle', () => {
 	})
 })
 
-// describe('Testing authGoogle', () => {
+describe('Testing authGoogle', () => {
 
-// 	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
+	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
 
-// 	describe('Testing by invalid req', () => {
+	describe('Testing by invalid req', () => {
 
-// 		var req = httpMocks.createRequest({
-// 			session: {
-// 				uuid: null
-// 			},
-// 			body: {
-// 				idToken: 'undefined',
-// 				accessToken: '123abc',
-// 				user: 
-// 				{ photo: 'https://example.com/photo.jpg',
-// 				familyName: 'Smith',
-// 				name: 'Jackal Smith',
-// 				email: 'jsmith@gmail.com',
-// 				id: '12345',
-// 				givenName: 'Jackal' },
-// 				accessTokenExpirationDate: 3599.8298959732056,
-// 				serverAuthCode: null,
-// 				scopes: [] 
-// 			}
-// 		});
+		var req = httpMocks.createRequest({
+			session: {
+				uuid: null
+			},
+			body: {
+				idToken: 'undefined',
+				accessToken: '123abc',
+				user: 
+				{ photo: 'https://example.com/photo.jpg',
+				familyName: 'Smith',
+				name: 'Jackal Smith',
+				email: 'jsmith@gmail.com',
+				id: '12345',
+				givenName: 'Jackal' },
+				accessTokenExpirationDate: 3599.8298959732056,
+				serverAuthCode: null,
+				scopes: [] 
+			}
+		});
 
-// 		test.only('Unverifed; return 400', async () => {
+		test.only('Unverifed; return 400', async () => {
 
-// 			mockVerify(false);
+			mockVerify(false);
 
-// 			var res = httpMocks.createResponse();
-// 			await AuthController.authGoogle(req, res);
-// 			expect(res.statusCode).toBe(400);
-// 			expect(getInfoSpy).toHaveBeenCalled();
+			var res = httpMocks.createResponse();
+			await AuthController.authGoogle(req, res);
+			expect(res.statusCode).toBe(400);
+			expect(getInfoSpy).toHaveBeenCalled();
 
-// 		})
+		})
 
-// 	})
-// })
+	})
+})
 
 describe('Testing authGoogle', () => {
 
