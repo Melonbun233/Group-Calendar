@@ -238,7 +238,7 @@ describe('Testing authGoogle', () => {
 			}
 		});
 
-		test('Unverifed; return 400', async () => {
+		test.only('Unverifed; return 400', async () => {
 
 			mockVerify(false);
 
@@ -410,12 +410,12 @@ describe('Testing verify', () => {
 
 function mockVerify(isVerified){
 	if (isVerified){
-		console.log('mockVerify: true');
+		// console.log('mockVerify: true');
 		Gverify.verify.mockImplementationOnce(() => {
 			return Promise.resolve('Verifed');
 		});
 	} else {
-		console.log('mockVerify: false');
+		// console.log('mockVerify: false');
 		Gverify.verify.mockImplementationOnce(() => {
 			return Promise.reject();
 		});
