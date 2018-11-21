@@ -4,8 +4,8 @@ const User = require('../../models/user');
 
 /*------------mocking db.query---------------*/
 jest.mock('../../databases/UserDB');
-// const db = require('../../databases/UserDB');
-// db.query = jest.fn();
+const db = require('../../databases/UserDB');
+db.query = jest.fn();
 
 /*-----------mocking verify---------*/
 // const verifyMock = jest.spyOn(authController, 'verify');
@@ -75,7 +75,7 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing with err', () => {
 
-			test.only('Unverifed, return 400', async () => {
+			test('Unverifed, return 400', async () => {
 
 				mockVerify(false);
 
