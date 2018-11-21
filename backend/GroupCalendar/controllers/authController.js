@@ -54,13 +54,12 @@ async function authGoogle (req, res){
     // is_varified = 0;
     console.log('Verification Failure');
     err = true;
-  });
-  
+  })
+  .then(result => console.log(console.log('Successful Verification')));
+
   if (err){
     return res.status(400).send('Can\'t verify your google id token');
   }
-
-  console.log('Successful Verification');
 
   // successfully in server
 

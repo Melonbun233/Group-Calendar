@@ -530,7 +530,8 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterEach( () => {
-	db.query.mockReset();
+afterAll( () => {
+	db.mockReset();
+	User.mockRestore();
 });
 
