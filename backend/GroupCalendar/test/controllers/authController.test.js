@@ -8,7 +8,9 @@ const User = require('../../models/user');
 // db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-const verifyMock = jest.spyOn(authController, 'verify');
+// const verifyMock = jest.spyOn(authController, 'verify');
+// verifyMock = jest.fn();
+authController.verify = jest.fn();
 /*------------mocking user---------------*/
 jest.mock('../../models/user');
 
@@ -414,11 +416,11 @@ describe('Testing verify', () => {
 
 function mockVerify(isVerified){
 	if (isVerified === true){
-		verifyMock.mockImplementationOnce(() => {
+		authController.verify.mockImplementationOnce(() => {
 			return Promise.resolve({result: 'verified'});
 		});
 	} else {
-		verifyMock.mockImplementationOnce(() => {
+		authController.verify.mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
