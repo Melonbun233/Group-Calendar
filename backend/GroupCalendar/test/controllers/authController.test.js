@@ -407,7 +407,7 @@ describe('Testing verify', () => {
 
 		mockVerify(true);
 
-		expect(await authController.verify(idToken)).resolves.toBe('Verifed');
+		expect(await authController.verify(idToken)).resolves.toBe(Promise.resolve('Verifed'));
 
 	})
 
@@ -418,7 +418,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolve('Verifed');
+			return Promise.resolve(Promise.resolve('Verifed'));
 		});
 	} else {
 		console.log('mockVerify: false');
