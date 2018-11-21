@@ -49,8 +49,7 @@ async function authGoogle (req, res){
 await verify(idToken)
 .catch((error) => {
     // is_varified = 0;
-    res.status(400).send('Can\'t verify your google id token');
-    return console.log(error);
+    return res.status(400).send('Can\'t verify your google id token');
   })
 .then(async(result) => {
   console.log('Successful Verification');
