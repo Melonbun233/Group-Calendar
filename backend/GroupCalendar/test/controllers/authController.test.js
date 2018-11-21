@@ -23,7 +23,7 @@ describe('Testing authGoogle', () => {
 		var req = httpMocks.createRequest({
 			session: {
 				uuid: null
-			}
+			},
 			body: {
 				idToken: 'abc123',
 				accessToken: '123abc',
@@ -216,7 +216,7 @@ describe('Testing authGoogle', () => {
 		var req = httpMocks.createRequest({
 			session: {
 				uuid: null
-			}
+			},
 			body: {
 				idToken: 'undefined',
 				accessToken: '123abc',
@@ -251,7 +251,7 @@ describe('Testing authGoogle', () => {
 		var req = httpMocks.createRequest({
 			session: {
 				uuid: null
-			}
+			},
 			body: {
 				idToken: 'abc123',
 				accessToken: '123abc',
@@ -396,7 +396,7 @@ describe('Testing verify', () => {
 		body: {
 			session: {
 				uuid: null
-			}
+			},
 			idToken: 'abc123',
 			accessToken: '123abc',
 			user: 
