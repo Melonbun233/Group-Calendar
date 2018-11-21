@@ -119,6 +119,9 @@ async function authGoogle (req, res){
 
 
     if(userLastname !== null || userLastname !== 'undefined'){
+      
+      console.log(userLastname);
+
       setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
