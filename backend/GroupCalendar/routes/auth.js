@@ -7,7 +7,7 @@ var authController = require('../controllers/authController');
 
 /* GET users listing. */
 router.post('/google', function(req, res){
-	console.log(req.body);
+	// console.log(req.body);
 
 	if(req === null){
 		res.status(400).send('No request Found');
@@ -19,7 +19,7 @@ router.post('/google', function(req, res){
 });
 
 router.post('/app', function(req, res){
-	console.log(req.body);
+	// console.log(req.body);
 
 	if(req === null){
 		res.status(400).send('No request Found');

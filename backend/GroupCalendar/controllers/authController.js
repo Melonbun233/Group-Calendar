@@ -27,7 +27,7 @@ async function authGoogle (req, res){
   if(idToken === 'undefined' || email === 'undefined' || 
     userFirstname === 'undefined'){
     console.log('empty post body');
-  res.status(400).send('Can\'t find your google id token or profile information');
+   return res.status(400).send('Can\'t find your google id token or profile information');
 
 }
 
@@ -58,7 +58,7 @@ async function authGoogle (req, res){
     return res.status(500).end();
   }
 
-  console.log('Finding user google email from our Database...');
+  // console.log('Finding user google email from our Database...');
 
   if(userInfo === null || userInfo === 'undefined'){
     var user = {
@@ -95,13 +95,13 @@ async function authGoogle (req, res){
       return res.status(500).end();
     }
 
-    console.log('created new user');
+    // console.log('created new user');
     userId = newUser.userId;
 
 
   } else {
     // found the exisiting record
-    console.log('Found user from DB');
+    // console.log('Found user from DB');
     userId = userInfo.userId;
 
     // console.log(userId);
@@ -159,7 +159,7 @@ async function authApp (req, res){
   let err = false;
   
   if(email === 'undefined' || pwd === 'undefined'){
-    console.log('empty post body');
+    // console.log('empty post body');
     return res.status(400).send('Empty email or password');
   }
 
