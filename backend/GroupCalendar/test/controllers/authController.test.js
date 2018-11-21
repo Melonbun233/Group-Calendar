@@ -44,6 +44,8 @@ describe('Testing authGoogle', () => {
 
 			test.only('Verified, no userInfo found, return 200', async () => {
 
+				console.log('test');
+
 				mockVerify(true);
 				mockGetInfo(true, false);
 				mockCreateUser(true);
@@ -428,10 +430,12 @@ describe('Testing verify', () => {
 
 function mockVerify(isVerified){
 	if (isVerified){
+		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
 			return Promise.resolve();
 		});
 	} else {
+		console.log('mockVerify: false');
 		authController.verify.mockImplementationOnce(() => {
 			return Promise.reject();
 		});
