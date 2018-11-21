@@ -8,7 +8,7 @@ var validator = require('../middlewares/validation');
 router.put('/', 
 	userController.userUpdate);
 
-router.post('/',
+router.post('/signup',
 	// (req, res, next) => { 
 	// 	Object.assign(req.params, req.body.profile, req.body.user);
 	// 	next();
