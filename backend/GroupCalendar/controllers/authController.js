@@ -202,7 +202,7 @@ async function authApp (req, res){
     res.status(500).end();
   }
   
-  console.log(userId);
+  // console.log(userId);
 
   if(userId == 0 || userId == -1){
     return res.status(400).send('Incorrect emial or password');
@@ -218,12 +218,12 @@ async function authApp (req, res){
     return res.status(500).end();
   }
 
-  console.log(profile);
+  // console.log(profile);
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
 
-  console.log(req.session.uuid);
+  // console.log(req.session.uuid);
 
   res.status(200).json(profile);
 
