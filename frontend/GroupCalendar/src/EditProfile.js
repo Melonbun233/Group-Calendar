@@ -93,6 +93,7 @@ export default class EditProfile extends Component {
 				return (
 					<View style = {s.contentContainer}>
 					<DatePickerIOS
+						testID = 'datePicker'
 						date = {date}
 						onDateChange = {this._onChangeDate}
 						mode = 'date'
@@ -107,6 +108,7 @@ export default class EditProfile extends Component {
 				return (
 					<View style = {s.contentContainer}>
 					<Picker 
+						testID = 'genderPicker'
 						selectedValue = {gender}
 						onValueChange = {this._onPickGender}
 					>
@@ -121,6 +123,7 @@ export default class EditProfile extends Component {
 				return (
 					<View style = {[s.contentContainer]}>
 					<TextField
+						testID = {config.label}
 						label = {config.label}
 						value = {item[name]}
 						onChangeText = {(text) => 

@@ -25,7 +25,7 @@ export default class GCNetwork extends Component {
                     userFirstname: 'Zhuohang',
                     userLastname: 'Zeng',
                     userEmail: _userEmail,
-                    userGender: '0',
+                    userGender: '1',
                     userBirth: date.toJSON(),
                     userDescription: 'hello this is henry',
                     userRegion: 'Canada',
@@ -81,29 +81,8 @@ export default class GCNetwork extends Component {
 	//		400: invalid user id
 	//		404: cannot find user id
 	static async fetchProfile(_userId){
-		let url = config.server.concat('/users/profile');
 		try {
-			let cookie = await Storage.getCookie();
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: {
-					'Content-Type' : 'application/json',
-					'cookie' : cookie,
-				},
-				body: JSON.stringify({
-					userId: _userId,
-				})
-			});
-			let responseJson = await response.json();
-
-			if (response.status == 200) {
-				await Storage.setCookie(res.headers.get('set-cookie'));
-				await Storage.setProfile(responseJson.profile);
-			}
-			
-			return {
-				status: response.status,
-			};
+			return 200;
 		} catch (error) {
 			return {
 				status: 0,

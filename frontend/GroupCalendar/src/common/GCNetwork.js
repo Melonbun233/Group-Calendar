@@ -31,10 +31,10 @@ export default class GCNetwork extends Component {
 				})
 			});
 			let responseJson = await response.json();
-
 			if (response.status == 200) {
 				await Storage.setProfile(responseJson);
-				await Storage.setCookie(res.headers.get('set-cookie'));
+				await Storage.setCookie(response.headers.get('set-cookie'));
+				Alert.alert(JSON.stringify(response.headers.get('set-cookie')));
 			}
 			return response.status;
 		} catch (_error) {
@@ -92,7 +92,7 @@ export default class GCNetwork extends Component {
 			let responseJson = await response.json();
 
 			if (response.status == 200) {
-				await Storage.setCookie(res.headers.get('set-cookie'));
+				await Storage.setCookie(response.headers.get('set-cookie'));
 				await Storage.setProfile(responseJson.profile);
 			}
 			
@@ -117,7 +117,7 @@ export default class GCNetwork extends Component {
 				})
 			});
 			let responseJson = await response.json();
-			await Storage.setCookie(res.headers.get('set-cookie'));
+			await Storage.setCookie(response.headers.get('set-cookie'));
 
 			return {
 				projectList: responseJson,
@@ -153,7 +153,7 @@ export default class GCNetwork extends Component {
 					userId: _userId,
 				})
 			});
-			await Storage.setCookie(res.headers.get('set-cookie'));
+			await Storage.setCookie(response.headers.get('set-cookie'));
 			return response.status;
 		} catch (error) {
 			return 0;
@@ -176,7 +176,7 @@ export default class GCNetwork extends Component {
 			});
 			let responseJson = await response.json();
 
-			await Storage.setCookie(res.headers.get('set-cookie'));
+			await Storage.setCookie(response.headers.get('set-cookie'));
 
 			return response.status;
 		} catch (error) {
@@ -200,9 +200,11 @@ export default class GCNetwork extends Component {
 			})
 			let responseJson = await response.json();
 
-			await Storage.setCookie(res.headers.get('set-cookie'));
-			await Storage.setProfile(responseJson.profile);
-
+			if (response.status == 200) {
+				Alert.alert(JSON.stringify(responseJson));
+				await Storage.setCookie(response.headers.get('set-cookie'));
+				await Storage.setProfile(responseJson);
+			}
 			return response.status;
 		} catch (_error) {
 			return 0;
