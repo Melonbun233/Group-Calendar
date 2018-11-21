@@ -409,7 +409,7 @@ describe('Testing verify', () => {
 		mockVerify(true);
 
 		var res = httpMocks.createResponse();
-		expect(await authController.verify(idToken)).resolve.toBe("Verifed");
+		expect(await authController.verify(idToken)).resolves.toBe("Verifed");
 
 	})
 
