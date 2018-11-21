@@ -1,5 +1,5 @@
 var httpMocks = require('node-mocks-http');
-const AuthController = require('../../controllers/AuthController');
+const AuthController = require('../../controllers/authController');
 const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
