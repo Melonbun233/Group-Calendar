@@ -417,7 +417,7 @@ describe('Testing verify', () => {
 		mockVerify.mockRestore();
 
 		var res = httpMocks.createResponse();
-		await authController.authApp(req, res);
+		await authController.verify(req, res);
 		expect(getInfoSpy).toHaveBeenCalled();
 		expect(res.statusCode).toBe(400);
 
@@ -428,7 +428,7 @@ describe('Testing verify', () => {
 		mockVerify(true);
 
 		var res = httpMocks.createResponse();
-		await authController.authApp(req, res);
+		await authController.verify(req, res);
 		expect(getInfoSpy).toHaveBeenCalled();
 		expect(res.statusCode).toBe(200);
 
