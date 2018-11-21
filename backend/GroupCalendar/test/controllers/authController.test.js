@@ -21,6 +21,9 @@ describe('Testing authGoogle', () => {
 	describe('Testing by valid req', () => {
 
 		var req = httpMocks.createRequest({
+			session: {
+				uuid: null
+			}
 			body: {
 				idToken: 'abc123',
 				accessToken: '123abc',
@@ -211,6 +214,9 @@ describe('Testing authGoogle', () => {
 	describe('Testing by invalid req', () => {
 
 		var req = httpMocks.createRequest({
+			session: {
+				uuid: null
+			}
 			body: {
 				idToken: 'undefined',
 				accessToken: '123abc',
@@ -243,6 +249,9 @@ describe('Testing authGoogle', () => {
 	describe('Testing by valid req without familyName', () => {
 
 		var req = httpMocks.createRequest({
+			session: {
+				uuid: null
+			}
 			body: {
 				idToken: 'abc123',
 				accessToken: '123abc',
@@ -385,6 +394,9 @@ describe('Testing verify', () => {
 
 	var req = httpMocks.createRequest({
 		body: {
+			session: {
+				uuid: null
+			}
 			idToken: 'abc123',
 			accessToken: '123abc',
 			user: 
