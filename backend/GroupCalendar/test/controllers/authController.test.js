@@ -396,8 +396,6 @@ describe('Testing verify', () => {
 
 	test('failure test only', async () => {
 
-		authController.verify.mockRestored();
-
 		await expect(authController.verify(idToken)).rejects.not.toBeUndefined();
 
 	})
@@ -417,7 +415,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolve(Promise.resolve('Verifed'));
+			return Promise.resolve('Verifed');
 		});
 	} else {
 		console.log('mockVerify: false');
