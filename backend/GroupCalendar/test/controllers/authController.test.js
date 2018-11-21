@@ -42,7 +42,7 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing without err', () => {
 
-			test.only('Verified, no userInfo found, return 200', async () => {
+			test('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
 				mockGetInfo(true, false);
@@ -391,35 +391,23 @@ describe('Testing verify', () => {
 
 	var getInfoSpy = jest.spyOn(authController, 'verify');
 
-
-	var req = httpMocks.createRequest({
-		body: {
-			session: {
-				uuid: null
-			},
-			idToken: 'abc123',
-			accessToken: '123abc',
-			user: 
-			{ photo: 'https://example.com/photo.jpg',
-			familyName: 'Smith',
-			name: 'Jackal Smith',
-			email: 'jsmith@gmail.com',
-			id: '12345',
-			givenName: 'Jackal' },
-			accessTokenExpirationDate: 3599.8298959732056,
-			serverAuthCode: null,
-			scopes: [] 
-		}
-	});
+	var idToken = 'abc123';
 
 	test('failure test only, return 400', async () => {
 
 		mockVerify.mockRestore();
 
-		var res = httpMocks.createResponse();
-		await authController.authApp(req, res);
+		await authController.verify(idToken);
 		expect(getInfoSpy).toHaveBeenCalled();
 		expect(res.statusCode).toBe(400);
+
+	})
+
+	test.only('Mock test, return 200', async () => {
+
+		mockVerify(true);
+
+		expect(await authController.verify(idToken)).resolves.toBe(Promise.resolve('Verifed'));
 
 	})
 
@@ -430,7 +418,7 @@ function mockVerify(isVerified){
 	if (isVerified){
 		console.log('mockVerify: true');
 		authController.verify.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolve(Promise.resolve('Verifed'));
 		});
 	} else {
 		console.log('mockVerify: false');
@@ -530,7 +518,8 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterEach( () => {
-	db.query.mockReset();
-});
+// afterAll( () => {
+// 	db.mockReset();
+// 	User.mockRestore();
+// });
 
