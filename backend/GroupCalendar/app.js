@@ -27,7 +27,7 @@ var app = express();
  * exclude path listed here
  */
 function checkPath(path){
-  if(path === '/auth/google' || path === '/auth/app'){
+  if(path === '/auth/google' || path === '/auth/app' || path === '/users/signup'){
     return false;
   } else {
     return true;
