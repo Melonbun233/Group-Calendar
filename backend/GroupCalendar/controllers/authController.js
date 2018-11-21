@@ -46,12 +46,14 @@ async function authGoogle (req, res){
 
 }
 
-await verify(idToken)
-.catch((error) => {
+  //verify google idToken
+
+  await verify(idToken)
+  .catch((error) => {
     // is_varified = 0;
     return res.status(400).send('Can\'t verify your google id token');
   })
-.then(async(result) => {
+
   console.log('Successful Verification');
 
   // successfully in server
@@ -60,9 +62,9 @@ await verify(idToken)
   .catch((error) => {
     return res.status(500).send('Err: getInfo');
   });
-  
+
   console.log('Finding user google email from our Database...');
-  //   auth_res.status(400).send('Server fails to deal with your Google account.');
+
   if(userInfo === null || userInfo === 'undefined'){
     var user = {
       userEmail: email
@@ -114,16 +116,15 @@ await verify(idToken)
     }
   }
 
-})
 
-var profile = await User.getProfileById(userId)
-.catch ((error) => {
-  return res.status(500).send('Err: getProfileById');
-});
+  var profile = await User.getProfileById(userId)
+  .catch ((error) => {
+    return res.status(500).send('Err: getProfileById');
+  });
 
-var uuid = UidG.uuidCreate(email);
-req.session.uuid = uuid;
-res.status(200).json(profile);
+  var uuid = UidG.uuidCreate(email);
+  req.session.uuid = uuid;
+  res.status(200).json(profile);
 
 }
 
