@@ -157,14 +157,11 @@ async function authApp (req, res){
   // })
   var userId = await User.login(email, pwd)
   .catch(error => {
-    res.status(400).send('Invalid email');
+    res.status(500).send('Err: login');
   });
   
   console.log(userId);
 
-  if(userId == null || userId == undefined){
-    return res.status(500).send('Err: login');
-  }
   if(userId == 0 || userId == -1){
     return res.status(400).send('Incorrect emial or password');
   }
