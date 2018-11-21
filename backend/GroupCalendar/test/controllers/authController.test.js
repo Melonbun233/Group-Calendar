@@ -9,10 +9,10 @@ const db = require('../../databases/UserDB');
 db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-jest.mock('../../controllers/googleVerification');
+// jest.mock('../../controllers/googleVerification');
 Gverify.verify = jest.fn();
 /*------------mocking user---------------*/
-jest.mock('../../models/user');
+// jest.mock('../../models/user');
 User.getInfo = jest.fn();
 User.createUser = jest.fn();
 User.updateProfile = jest.fn();
