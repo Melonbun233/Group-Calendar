@@ -45,6 +45,7 @@ async function userCreate (req, res) {
 	try{
 		await User.createUser(req.body.user, req.body.profile);
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({ error });
 	}
 
