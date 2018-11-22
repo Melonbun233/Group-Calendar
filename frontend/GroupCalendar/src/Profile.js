@@ -22,6 +22,7 @@ export default class Profile extends Component {
 		};
 		this._onRefresh = this._onRefresh.bind(this);
 		this._onEditProfile = this._onEditProfile.bind(this);
+		this._onChangePwd = this._onChangePwd.bind(this);
 	}
 
 	async componentDidMount() {
@@ -33,7 +34,6 @@ export default class Profile extends Component {
 			let age = curr.getFullYear() - userBirth.getFullYear();
 
 			this.setState ({
-				userBirth,
 				age,
 				profile,
 				isLoading: false,
@@ -45,30 +45,39 @@ export default class Profile extends Component {
 
 	//callback function for refreshing
 	_onRefresh = async () => {
-		let {profile, cookie} = this.state;
+		let {profile} = this.state;
 
 		this.setState({isRefreshing: true});
-		let status = await Network.fetchProfile(profile.userId);
-		switch(status) {
-			case 200: {
-				profile = await Storage.getProfile();
-				this.setState({profile});
+		try {
+			let status = await Network.fetchProfile(profile.userId);
+			switch(status) {
+				case 200: {
+					profile = await Storage.getProfile();
+					let curr = new Date();
+					let userBirth = new Date(profile.userBirth);
+					let age = curr.getFullYear() - userBirth.getFullYear();
+					this.setState({profile, age});
+				}
+				break;
+				//fetch failed, probably user has expired the session
+				//we will log out
+				case 400:
+				case 404: this.props.onSessionOut();
+				break;
+				default: Alert.alert('HTTP ERROR ');
 			}
-			break;
-			//fetch failed, probably user has expired the session
-			//we will log out
-			case 400:
-			case 404: this.props.onSessionOut();
-			break;
-			default: Alert.alert('HTTP ERROR', JSON.stringify(res.error));
+		} catch(error) {
+			Alert.alert('Something went wrong', JSON.stringify(error));
 		}
 		this.setState({isRefreshing: false});
 	}
 
+	_onChangePwd = () => {
+		this.props.navigation.push('ChangePwd');
+	}
 	//push a new editing page
 	_onEditProfile = (_editInfo) => {
-		let {userLastname, userFirstname, userId} = this.state.profile;
-		let {cookie} = this.state;
+		let {userLastname, userFirstname, userId, userEmail} = this.state.profile;
 		switch(_editInfo){
 			case 'username' : {
 				this.props.navigation.push('EditProfile', {
@@ -105,8 +114,8 @@ export default class Profile extends Component {
 			);
 		}
 		let {userLastname, userFirstname, userDescription, userRegion, userGender,
-			userEmail} = this.state.profile;
-		let {age, userBirth} = this.state;
+			userEmail, userBirth} = this.state.profile;
+		let {age} = this.state;
 		return(
 			<View style = {[cs.container, s.content]}>
 				<ScrollView 
@@ -206,7 +215,7 @@ export default class Profile extends Component {
 						Gender
 						</Text>
 						<Text style = {cs.h5}>
-						{userGender === '1' ? 'Male' : 'Female'}
+						{userGender}
 						</Text>
 					</View>
 				</TouchableWithoutFeedback>
@@ -220,10 +229,21 @@ export default class Profile extends Component {
 						Birth Day
 						</Text>
 						<Text style = {cs.h5}>
-						{userBirth.toDateString()}
+						{userBirth ? userBirth.substr(0, 10) : ''}
 						</Text>
 					</View>
 				</TouchableWithoutFeedback>
+				{/* change password */}
+					<View style = {[cs.container, cs.flowLeft]}>
+						<View style = {[cs.container, s.buttonContainer]}>
+							<Button 
+								testID = 'changePwdButton'
+								title = 'change password'
+								color = '#66a3ff'
+								onPress = {() => this._onChangePwd()}
+							/>
+						</View>
+					</View>
 				{/*log out button*/}
 					<View style = {[cs.container, cs.flowLeft]}>
 						<View style = {[cs.container, s.buttonContainer]}>
@@ -247,7 +267,7 @@ const s = StyleSheet.create({
 	},
 	buttonContainer: {
 		width: 50,
-		height: 40,
+		height: 45,
 	},
 	generalContainer: {
 		alignItems: 'flex-start',

@@ -15,8 +15,6 @@ var Promise = require('promise'); // npm install promise...
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 /*------------------------------*/
-
-
 var app = express();
 
 /*

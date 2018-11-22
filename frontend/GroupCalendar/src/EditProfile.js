@@ -74,7 +74,7 @@ export default class EditProfile extends Component {
 				userId,
 			});
 		} else {
-			Alert.alert('Something Bad Happened');
+			Alert.alert('Something went wrong');
 			navigation.goBack();
 		}
 	}
@@ -112,8 +112,9 @@ export default class EditProfile extends Component {
 						selectedValue = {gender}
 						onValueChange = {this._onPickGender}
 					>
-					<Picker.Item label = 'Male' value = '1'/>
-					<Picker.Item label = 'Female' value = '0'/>
+					<Picker.Item label = 'Male' value = 'Male'/>
+					<Picker.Item label = 'Female' value = 'Female'/>
+					<Picker.Item label = 'Secret' value = 'Secret'/>
 					</Picker>
 					</View>
 				)
@@ -125,7 +126,7 @@ export default class EditProfile extends Component {
 					<TextField
 						testID = {config.label}
 						label = {config.label}
-						value = {item[name]}
+						value = {item[name] ? item[name] : ''}
 						onChangeText = {(text) => 
 							this._onChangeText(item.key, name, text)}
 						autoCorrect = {false}
@@ -150,7 +151,7 @@ export default class EditProfile extends Component {
 
 	_onChangeDate(date){
 		let {data} = this.state;
-		data[0].userBirth = date;
+		data[0].userBirth = date.toJSON().substr(0, 10);
 		this.setState({data});
 	}
 
@@ -161,7 +162,7 @@ export default class EditProfile extends Component {
 	}
 
 	async _onSubmit(){
-		let {data} = this.state;
+		let {data, userId} = this.state;
 		let update = {};
 
 		for (object in data) {
@@ -199,7 +200,7 @@ export default class EditProfile extends Component {
 		if(isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large' animating = {false}/>
+					<ActivityIndicator size = 'large'/>
 				</View>
 			);
 		}
@@ -215,9 +216,9 @@ export default class EditProfile extends Component {
 					extraData = {this.state.pickerFlag}
 				/>
 				<Button
-					disabled = {isLoading}
+					disabled = {isUpdating}
 					onPress = {this._onSubmit}
-					title = 'Submit'
+					title = {isUpdating ? 'Submitting...' : 'Submit'}
 				/>
 			</ScrollView>
 		)

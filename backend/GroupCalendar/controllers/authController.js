@@ -13,7 +13,6 @@ var UidG = require('./uuidGenerator.js');
 var Gverify = require('./googleVerification.js')
 
 async function authGoogle (req, res){
-
   let idToken = req.body.idToken;
   let email = req.body.user.userEmail;
   let pwd = req.body.user.userPwd;

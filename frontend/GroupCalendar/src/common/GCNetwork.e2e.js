@@ -25,13 +25,12 @@ export default class GCNetwork extends Component {
                     userFirstname: 'Zhuohang',
                     userLastname: 'Zeng',
                     userEmail: _userEmail,
-                    userGender: '1',
+                    userGender: 'Male',
                     userBirth: date.toJSON(),
                     userDescription: 'hello this is henry',
                     userRegion: 'Canada',
                     isAdmin: '1',
                 });
-                await Storage.setCookie({test: 'this is our cookie'});
                 return 200;
             } else {
                 return 400;
@@ -44,6 +43,13 @@ export default class GCNetwork extends Component {
 		}
 	}
 
+    static async updatePwd(_userId, _userPwd) {
+		try {
+			return 200;
+		} catch (error) {
+			throw error;
+		}
+	}
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
 	static async searchProfile(_userId) {
