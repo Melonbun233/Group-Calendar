@@ -59,7 +59,7 @@ async function authGoogle (req, res){
     return res.status(500).end();
   }
 
-  // console.log('Finding user google email from our Database...');
+  console.log(userInfo);
 
   if(userInfo === null || userInfo === 'undefined'){
 
