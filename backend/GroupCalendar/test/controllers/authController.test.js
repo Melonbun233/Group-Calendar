@@ -4,15 +4,15 @@ const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
-jest.mock('../../databases/UserDB');
-const db = require('../../databases/UserDB');
-db.query = jest.fn();
+// jest.mock('../../databases/UserDB');
+// const db = require('../../databases/UserDB');
+// db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-// jest.mock('../../controllers/googleVerification');
+jest.mock('../../controllers/googleVerification');
 Gverify.verify = jest.fn();
 /*------------mocking user---------------*/
-// jest.mock('../../models/user');
+jest.mock('../../models/user');
 User.getInfo = jest.fn();
 User.createUser = jest.fn();
 User.updateProfile = jest.fn();

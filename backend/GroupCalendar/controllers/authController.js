@@ -20,7 +20,7 @@ async function authGoogle (req, res){
   let userFirstname = req.body.user.givenName;
   let userId;
   let err = false;
-  let hasAccount;
+  let pwdSet = true;
 
   // console.log(userLastname);
   // console.log(userFirstname);
@@ -62,7 +62,6 @@ async function authGoogle (req, res){
   // console.log('Finding user google email from our Database...');
 
   if(userInfo === null || userInfo === 'undefined'){
-    hasAccount = false;
 
     var user = {
       userEmail: email,
@@ -101,13 +100,17 @@ async function authGoogle (req, res){
 
     // console.log('created new user');
     userId = newUser.userId;
+    pwdSet = false;
 
 
   } else {
     // found the exisiting record
     // console.log('Found user from DB');
-    hasAccount = true;
     userId = userInfo.userId;
+
+    if(userInfo.userPwd === null || userInfo.userPwd === 'undefined'){
+      pwdSet = false;
+    }
 
     // console.log(userId);
     var setcmd = "userFirstname='" + userFirstname + "'";
@@ -153,7 +156,7 @@ async function authGoogle (req, res){
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
-  return res.status(200).json({profile, hasAccount});
+  return res.status(200).json({profile, pwdSet});
 
 }
 
