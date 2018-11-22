@@ -1,4 +1,4 @@
-describe('Test sign up', () => {
+describe.only('Test sign up', () => {
     beforeEach(async () => {
         await device.reloadReactNative();
         await element(by.id('SignUpButton')).tap();
