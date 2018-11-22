@@ -14,21 +14,16 @@ async function getInfo (email) {
 	return result[0];
 };
 
-async function updateUser (user) {
-	for (var x in user){
-		if (x !== 'userId'){
-			var query = "UPDATE Users SET " + x + " = '" + user[x] + "' WHERE userId = '" + user.userId + "'";
-			
-			await db.query(query)
-			.then( (result) => {
-				if (!result.affectedRows)
-					throw "No such userId";
-			})
-			.catch( (err) => {
-				throw err;
-			})
-		}
-	}
+async function updateUser (userId, userPwd) {
+	var query = "UPDATE Users SET userPwd = '" + userPwd + "' WHERE userId = '" + userId + "'";
+
+	var result = await db.query(query)
+	.catch( (err) => {
+		throw err;
+	});
+
+	if (!result.affectedRows)
+		throw "No such userId";
 };
 
 async function createUser (user, profile) {
@@ -137,6 +132,22 @@ async function getProfileById (userId) {
 // 	})
 //  }
 
+
+async function modifyProfile (userId, profile){
+	for (var x in profile){
+		var query = "UPDATE Profiles SET " + x + " = '" + profile[x] + "' WHERE userId = '" + userId + "'";
+
+		await db.query(query)
+		.then( (result) => {
+			if (!result.affectedRows)
+				throw "No such userId";
+		})
+		.catch( (err) => {
+			throw err;
+		})
+	}
+}
+
 async function updateProfile(setCmd, userId){
 	var query = "UPDATE Profiles SET " + setCmd + " WHERE userId=" + userId;
 	await db.query(query)
@@ -207,7 +218,8 @@ module.exports = {
 	getProfile,
 	getProfileById,
 	updateProfile,
-	login
+	login,
+	modifyProfile
 }
 
 //------the above function has been modified to async functions----

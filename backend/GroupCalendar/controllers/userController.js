@@ -22,13 +22,13 @@ async function userInfoGet (req, res) {
 };
 
 async function userUpdate (req, res){
-	const errors = validationResult(req);
-	if (!errors.isEmpty()){
-		return res.status(400).json({"error": "Invalid user info."});
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()){
+	// 	return res.status(400).json({"error": "Invalid user info."});
+	// }
 
 	try {
-		await User.updateUser(req.body);
+		await User.updateUser(req.body.userId, req.body.update.userPwd);
 	} catch (error) {
 		res.status(400).json({error});
 	}
@@ -37,18 +37,19 @@ async function userUpdate (req, res){
 };
 
 async function userCreate (req, res) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()){ 
-		return res.status(400).json({"error": "Invalid user info."});
-	}
+	// const errors = validationResult(req);
+	// if (!errors.isEmpty()){ 
+	// 	return res.status(400).json({"error": "Invalid user info."});
+	// }
 
 	try{
 		await User.createUser(req.body.user, req.body.profile);
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({ error });
 	}
 
-	var uuid = UidG.uuidCreate(email);
+	var uuid = UidG.uuidCreate(req.body.user.email);
 	req.session.uuid = uuid;
 	
 	res.status(200).json();
@@ -80,7 +81,7 @@ async function profileGet (req, res) {
 
 async function profileUpdate (req, res) {
 	try {
-		await User.updateProfile(req.body);
+		await User.modifyProfile(req.body.userId, req.body.update);
 	} catch (error) {
 		return res.status(400).json({error});
 	}
