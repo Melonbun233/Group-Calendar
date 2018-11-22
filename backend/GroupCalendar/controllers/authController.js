@@ -26,7 +26,7 @@ async function authGoogle (req, res){
 
   if(idToken === 'undefined' || email === 'undefined' || 
     userFirstname === 'undefined' || pwd === 'undefined'){
-    console.log('empty post body');
+    console.log('req is not valid');
    return res.status(400).send('Can\'t find your google id token or profile information');
 
 }

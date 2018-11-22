@@ -530,12 +530,12 @@ function mockLogin(isPassed, isValid){
 }
 
 afterEach( () => {
-	// User.getInfo.mockRest();
-	// User.createUser.mockRest();
-	// User.updateProfile.mockRest();
-	// User.getProfileById.mockRest();
-	// User.login.mockRest();
+	User.getInfo.mockRest();
+	User.createUser.mockRest();
+	User.updateProfile.mockRest();
+	User.getProfileById.mockRest();
+	User.login.mockRest();
 
-	// Gverify.verify.mockRest();
+	Gverify.verify.mockRest();
 });
 
