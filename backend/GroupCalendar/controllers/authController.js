@@ -64,8 +64,7 @@ async function authGoogle (req, res){
   if(userInfo == null || userInfo == 'undefined'){
 
     var user = {
-      userEmail: email,
-      userPwd: pwd
+      userEmail: email
     }
     var profile = {
       userEmail: email,
