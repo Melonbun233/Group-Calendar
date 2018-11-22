@@ -9,7 +9,12 @@ async function getInfo (email) {
 	.catch( (err) => {
 		throw err;
 	})
-	return result[0];
+	if (result.length == 0){
+		return null;
+	} else {
+		return result[0];
+	}
+	
 };
 
 async function updateUser (userId, userPwd) {
