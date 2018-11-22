@@ -14,8 +14,8 @@ var Gverify = require('./googleVerification.js')
 
 async function authGoogle (req, res){
   let idToken = req.body.idToken;
-  let email = req.body.user.userEmail;
-  let pwd = req.body.user.userPwd;
+  let email = req.body.user.email;
+  let pwd = req.body.user.pwd;
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
   let userId;
