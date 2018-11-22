@@ -15,17 +15,18 @@ var Gverify = require('./googleVerification.js')
 async function authGoogle (req, res){
   let idToken = req.body.idToken;
   let email = req.body.user.email;
-  let pwd = req.body.user.pwd;
+  // let pwd = req.body.user.pwd;
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
   let userId;
   let err = false;
+  let hasAccount;
 
   // console.log(userLastname);
   // console.log(userFirstname);
 
   if(idToken === 'undefined' || email === 'undefined' || 
-    userFirstname === 'undefined' || pwd === 'undefined'){
+    userFirstname === 'undefined'){
     console.log('req is not valid');
    return res.status(400).send('Can\'t find your google id token or profile information');
 
@@ -61,6 +62,8 @@ async function authGoogle (req, res){
   // console.log('Finding user google email from our Database...');
 
   if(userInfo === null || userInfo === 'undefined'){
+    hasAccount = false;
+
     var user = {
       userEmail: email,
       userPwd: pwd
@@ -103,6 +106,7 @@ async function authGoogle (req, res){
   } else {
     // found the exisiting record
     // console.log('Found user from DB');
+    hasAccount = true;
     userId = userInfo.userId;
 
     // console.log(userId);
@@ -149,7 +153,7 @@ async function authGoogle (req, res){
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
-  return res.status(200).json(profile);
+  return res.status(200).json({profile, hasAccount});
 
 }
 
