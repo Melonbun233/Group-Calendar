@@ -16,6 +16,7 @@ async function authGoogle (req, res){
 
   let idToken = req.body.idToken;
   let email = req.body.user.userEmail;
+  let pwd = req.body.user.userPwd;
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
   let userId;
@@ -62,7 +63,8 @@ async function authGoogle (req, res){
 
   if(userInfo === null || userInfo === 'undefined'){
     var user = {
-      userEmail: email
+      userEmail: email,
+      userPwd: pwd
     }
     var profile = {
       userEmail: email,
