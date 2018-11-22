@@ -98,7 +98,6 @@ export default class SignUpPage extends Component {
 						userLastname,
 					}
 				});
-		//Alert.alert(JSON.stringify(res.body));
 		switch (status) {
 			case 200: {
 				this.setState({isLoading: false});

@@ -106,6 +106,7 @@ export default class SignInPage extends Component {
 		this.setState({isLoading: true});
 		try {
 			let status = await Network.verifyUser(userEmail, userPwd);
+			//Alert.alert(JSON.stringify(status));
 			switch (status) {
 				//correct user_email and user_pwd
 				//we save the user info to async storage and jump to main pages

@@ -25,22 +25,44 @@ export default class GCNetwork extends Component {
 				headers: {
 					'Content-Type' : 'application/json',
 				},
+				credentials : 'include',
 				body: JSON.stringify({
 					'userEmail':_userEmail,
 					'userPwd':_userPwd,
 				})
 			});
-			let responseJson = await response.json();
 			if (response.status == 200) {
+				let responseJson = await response.json();
 				await Storage.setProfile(responseJson);
-				await Storage.setCookie(response.headers.get('set-cookie'));
-				Alert.alert(JSON.stringify(response.headers.get('set-cookie')));
 			}
+			
 			return response.status;
-		} catch (_error) {
-			return 0;
+		} catch (error) {
+			throw error;
 		}
 	}
+
+	static async updatePwd(userId, userPwd) {
+		let url = config.server.concat('/users');
+		let update = {userPwd};
+		try {
+			let response = await fetch (url, {
+				method: 'PUT',
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				credentials : 'include',
+				body: JSON.stringify({
+					userId,
+					update
+				})
+			});
+			return response.status;
+		} catch (error) {
+			throw error;
+		}
+	}
+
 
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
@@ -76,29 +98,24 @@ export default class GCNetwork extends Component {
 	//		400: invalid user id
 	//		404: cannot find user id
 	static async fetchProfile(_userId){
-		let url = config.server.concat('/users/profile');
+		let url = config.server.concat('/users/profile' + '?userId=' + _userId);
 		try {
-			let cookie = await Storage.getCookie();
 			let response = await fetch(url, {
 				method: 'GET',
 				headers: {
 					'Content-Type' : 'application/json',
-					'cookie' : cookie,
 				},
-				body: JSON.stringify({
-					userId: _userId,
-				})
+				credentials : 'include',
 			});
-			let responseJson = await response.json();
 
 			if (response.status == 200) {
-				await Storage.setCookie(response.headers.get('set-cookie'));
+				let responseJson = await response.json();
 				await Storage.setProfile(responseJson.profile);
 			}
 			
 			return response.status;
 		} catch (error) {
-			return 0;
+			throw error;
 		}
 	}
 
@@ -131,7 +148,6 @@ export default class GCNetwork extends Component {
 	static async fetchProject(projectId, userId) {
 		let url = config.server.concat('/projects');
 		try {
-			let cookie = await Storage.getCookie();
 			//let response = await 
 		} catch (error) {
 
@@ -141,19 +157,17 @@ export default class GCNetwork extends Component {
 	static async updateProfile(_update, _userId) {
 		let url = config.server.concat('/users/profile');
 		try {
-			let cookie = await Storage.getCookie();
 			let response = await fetch(url, {
 				method: 'PUT',
 				headers: {
 					"Content-Type" : "application/json",
-					"cookie" : cookie,
 				},
+				credentials : 'include',
 				body: JSON.stringify({
 					update: _update,
 					userId: _userId,
 				})
 			});
-			await Storage.setCookie(response.headers.get('set-cookie'));
 			return response.status;
 		} catch (error) {
 			return 0;
@@ -167,17 +181,16 @@ export default class GCNetwork extends Component {
 	//		200: all correct user infomation
 	//		400: invalid user information
 	static async createUser(userInfo) {
-		let url = config.server.concat('/users');
+		let url = config.server.concat('/users/signup');
+		let user = userInfo.user;
+		let profile = userInfo.profile;
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
 				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(userInfo),
+				credentials : 'include',
+				body: JSON.stringify({user, profile}),
 			});
-			let responseJson = await response.json();
-
-			await Storage.setCookie(response.headers.get('set-cookie'));
-
 			return response.status;
 		} catch (error) {
 			return 0;
@@ -197,12 +210,11 @@ export default class GCNetwork extends Component {
 				method: 'POST',
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(userInfo),
+				credentials : 'include',
 			})
-			let responseJson = await response.json();
-
+			
 			if (response.status == 200) {
-				Alert.alert(JSON.stringify(responseJson));
-				await Storage.setCookie(response.headers.get('set-cookie'));
+				let responseJson = await response.json();
 				await Storage.setProfile(responseJson);
 			}
 			return response.status;

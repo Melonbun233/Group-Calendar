@@ -12,6 +12,7 @@ import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
 import CreateProject from './CreateProject';
+import ChangePwd from './ChangePwd';
 import {createStackNavigator} from 'react-navigation';
 
 export default class App extends Component {
@@ -30,6 +31,7 @@ const IntroStack = createStackNavigator(
 		Main: MainPage,
 		EditProfile: EditProfile,
 		CreateProject: CreateProject,
+		ChangePwd: ChangePwd,
 	},
 	{
 		initialRouteName: 'SignIn',
