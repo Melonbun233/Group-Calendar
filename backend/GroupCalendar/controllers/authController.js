@@ -165,7 +165,7 @@ async function authApp (req, res){
   let pwd = req.body.userPwd;
   let err = false;
   
-  if(email == 'undefined' || pwd == 'undefined'){
+  if(email == 'undefined' || pwd == 'undefined' || email == null || pwd == null){
     // console.log('empty post body');
     return res.status(400).send('Empty email or password');
   }
