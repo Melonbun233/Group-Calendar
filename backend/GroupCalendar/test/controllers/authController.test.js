@@ -531,7 +531,7 @@ function mockUpdateProfile(isPassed){
 	}
 }
 
-unction mockUpdateProfileAll(isPassed){
+function mockUpdateProfileAll(isPassed){
 	if (isPassed){
 		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.resolve([]);
