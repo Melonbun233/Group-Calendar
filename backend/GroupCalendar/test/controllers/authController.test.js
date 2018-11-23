@@ -151,18 +151,18 @@ describe('Testing authGoogle', () => {
 
 			})
 
-			test('Verifed, userInfo found, return 200', async () => {
+			test.only('Verifed, userInfo found, return 200', async () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfile(true);
-				mockUpdateProfile(true);
+				mockUpdateProfileAll(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
+				console.log(res);
 				expect(res.pwdSet).toBe(true);
 
 			})
@@ -171,8 +171,7 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfoNoPwd();
-				mockUpdateProfile(true);
-				mockUpdateProfile(true);
+				mockUpdateProfileAll(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
