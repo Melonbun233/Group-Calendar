@@ -1,32 +1,23 @@
-// var mysql = require('mysql');
-
-// var con_userDB = mysql.createConnection({
-//   host: "localhost",
-//   user: "yourusername",
-//   password: "yourpassword",
-//   database: "UserDB"
-// });
-
-// the req is the idToken of user
 var User = require('../models/user.js');
 var UidG = require('./uuidGenerator.js');
 var Gverify = require('./googleVerification.js')
 
 async function authGoogle (req, res){
-
   let idToken = req.body.idToken;
-  let email = req.body.user.userEmail;
+  let email = req.body.user.email;
+  // let pwd = req.body.user.pwd;
   let userLastname = req.body.user.familyName;
   let userFirstname = req.body.user.givenName;
   let userId;
   let err = false;
+  let pwdSet = true;
 
   // console.log(userLastname);
   // console.log(userFirstname);
 
-  if(idToken === 'undefined' || email === 'undefined' || 
-    userFirstname === 'undefined'){
-    console.log('empty post body');
+  if(idToken == 'undefined' || email == 'undefined' || 
+    userFirstname == 'undefined'){
+    console.log('req is not valid');
    return res.status(400).send('Can\'t find your google id token or profile information');
 
 }
@@ -58,9 +49,10 @@ async function authGoogle (req, res){
     return res.status(500).end();
   }
 
-  // console.log('Finding user google email from our Database...');
+  // console.log(userInfo);
 
-  if(userInfo === null || userInfo === 'undefined'){
+  if(userInfo == null || userInfo == 'undefined'){
+
     var user = {
       userEmail: email
     }
@@ -90,19 +82,24 @@ async function authGoogle (req, res){
       return res.status(500).end();
     }
 
-    if(newUser === null || userInfo === 'undefined'){
+    if(newUser == null || userInfo == 'undefined'){
       console.log('Err: getInfo');
       return res.status(500).end();
     }
 
     // console.log('created new user');
     userId = newUser.userId;
+    pwdSet = false;
 
 
   } else {
     // found the exisiting record
     // console.log('Found user from DB');
     userId = userInfo.userId;
+
+    if(userInfo.userPwd == null || userInfo.userPwd == 'undefined'){
+      pwdSet = false;
+    }
 
     // console.log(userId);
     var setcmd = "userFirstname='" + userFirstname + "'";
@@ -118,11 +115,11 @@ async function authGoogle (req, res){
     }
 
 
-    if(userLastname !== null && userLastname !== 'undefined'){
+    if(userLastname != null && userLastname != 'undefined'){
 
-      console.log(userLastname);
+      // console.log(userLastname);
 
-      setcmd = "userLastname='" + userLastname + "'";
+      var setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
         console.log('Err: updateProfile');
@@ -148,7 +145,7 @@ async function authGoogle (req, res){
 
   var uuid = UidG.uuidCreate(email);
   req.session.uuid = uuid;
-  return res.status(200).json(profile);
+  return res.status(200).json({profile, pwdSet});
 
 }
 
@@ -158,7 +155,7 @@ async function authApp (req, res){
   let pwd = req.body.userPwd;
   let err = false;
   
-  if(email === 'undefined' || pwd === 'undefined'){
+  if(email == 'undefined' || pwd == 'undefined' || email == null || pwd == null){
     // console.log('empty post body');
     return res.status(400).send('Empty email or password');
   }

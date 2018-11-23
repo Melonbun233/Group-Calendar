@@ -9,9 +9,12 @@ async function getInfo (email) {
 	.catch( (err) => {
 		throw err;
 	})
-	if (result.length == 0)
-		throw "User name does not refer to any entry.";
-	return result[0];
+	if (result.length == 0){
+		return null;
+	} else {
+		return result[0];
+	}
+	
 };
 
 async function updateUser (userId, userPwd) {
