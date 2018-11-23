@@ -215,11 +215,16 @@ export default class GCNetwork extends Component {
 			
 			if (response.status == 200) {
 				let responseJson = await response.json();
-				await Storage.setProfile(responseJson);
+				await Storage.setProfile(responseJson.profile);
+				if (responseJson.pwdSet) {
+					return 200;
+				} else {
+					return 0;
+				}
 			}
 			return response.status;
 		} catch (_error) {
-			return 0;
+			return 500;
 		}
 	}
 }

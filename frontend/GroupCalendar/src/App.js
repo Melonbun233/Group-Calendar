@@ -14,6 +14,7 @@ import EditProfile from './EditProfile';
 import CreateProject from './CreateProject';
 import ChangePwd from './ChangePwd';
 import {createStackNavigator} from 'react-navigation';
+import GoogleSignInPwd from './GoogleSignInPwd';
 
 export default class App extends Component {
 	render() {
@@ -32,6 +33,7 @@ const IntroStack = createStackNavigator(
 		EditProfile: EditProfile,
 		CreateProject: CreateProject,
 		ChangePwd: ChangePwd,
+		GoogleSignIn: GoogleSignInPwd,
 	},
 	{
 		initialRouteName: 'SignIn',

@@ -142,19 +142,21 @@ export default class SignInPage extends Component {
 			.then(async (userInfo) => 
 			{
 				let status = await Network.verifyUserByGoogle(userInfo);
-				switch (status) {
+				switch(status) {
+					//already has an account
 					case 200: {
-						this.setState({isSigning: false});
 						Storage.setSignInByGoogle('true');
+						this.setState({isSigning: false});
 						this.props.navigation.navigate('Main');
 					}
 					break;
-					case 400: {
-						Alert.alert('Something Wrong with Your Google Account');
+					//doesnt has a password
+					case 0: {
+						this.props.navigation.push('GoogleSignIn');
 					}
 					break;
 					default: {
-						Alert.alert('Internet Error', JSON.stringify(res.error));
+						Alert.alert('Internet Error', JSON.stringify(status));
 					}
 				}
 			})
@@ -168,7 +170,7 @@ export default class SignInPage extends Component {
 					Alert.alert('Play Service Not Avaliable');
 				} else {
 					//some other error happened
-					Alert.alert('Something Bad Happend\n', JSON.stringify(error));
+					Alert.alert('Something went wrong\n', JSON.stringify(error));
 				}
 			});
 		this.setState({isSigning: false});

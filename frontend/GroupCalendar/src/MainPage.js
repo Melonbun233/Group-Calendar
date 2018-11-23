@@ -21,7 +21,7 @@ export default class MainPage extends Component {
 		super(props);
 		this.state = {
 			//calendar is the default content page
-			isLoading: true,
+			isLoading: false,
 			title: 'Calendar',
 			buttonColor: {
 				calendar: cs.blue,
@@ -33,19 +33,6 @@ export default class MainPage extends Component {
 		this._onSignOut = this._onSignOut.bind(this);
 		this._onSessionOut = this._onSessionOut.bind(this);
 		this._switchContent = this._switchContent.bind(this);
-	}
-
-	async componentDidMount() {
-		try {
-			let profile = await Storage.getProfile();
-			this.setState ({
-				profile,
-				isLoading: false,
-			});
-		} catch (error) {
-			Alert.alert('Something went wrong');
-			await Storage.deleteAll();
-		}
 	}
 
 	//this function is invoked on switch button press

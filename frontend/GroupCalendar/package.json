@@ -10,6 +10,7 @@
     "npm": "^6.4.1",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.3",
+    "react-native-calendars": "^1.21.0",
     "react-native-google-signin": "^1.0.0-rc7",
     "react-native-material-ripple": "^0.8.0",
     "react-native-material-textfield": "^0.12.0",

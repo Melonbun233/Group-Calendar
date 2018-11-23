@@ -59,3 +59,15 @@ export const changePwdConstraints = {
 		},
 	}
 }
+
+export const setGooglePwdConstraints = {
+	pwd: {
+		presence: true,
+		length: {
+			minimum: 6,
+			maximum: 14,
+			tooLong: 'maximum length is 14',
+			tooShort: 'minimum length is 6',
+		},
+	},
+}
