@@ -155,7 +155,7 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
-				mockUpdateProfile(true);
+				// mockUpdateProfile(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -246,7 +246,7 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, false);
 				mockCreateUser(true);
-				mockGetInfo(true, false);
+				mockGetInfo(false, false);
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
