@@ -163,7 +163,7 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 				console.log(res.body);
-				expect(res..body.pwdSet).toBe(true);
+				expect(res.body.pwdSet).toBe(true);
 
 			})
 
