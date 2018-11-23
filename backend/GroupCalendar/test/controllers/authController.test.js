@@ -46,16 +46,6 @@ describe('Testing authGoogle', () => {
 			}
 		});
 
-		afterEach( () => {
-			// User.getInfo = getInfo;
-			// User.createUser = createUser;
-			// User.updateProfile = updateProfile;
-			// User.getProfileById = getProfileById;
-			// User.login = login;
-
-			Gverify.verify = verify;
-		});
-
 		test('Unverifed; return 400', async () => {
 
 			mockVerify(false);
@@ -89,16 +79,6 @@ describe('Testing authGoogle', () => {
 				serverAuthCode: null,
 				scopes: [] 
 			}
-		});
-
-		afterEach( () => {
-			User.getInfo = getInfo;
-			// User.createUser = createUser;
-			User.updateProfile = updateProfile;
-			User.getProfileById = getProfileById;
-			// User.login = login;
-
-			Gverify.verify = verify;
 		});
 
 		test('Verifed, userInfo found, return 200', async () => {
@@ -168,16 +148,6 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
-
-				User.getInfo = getInfo;
-				User.createUser = createUser;
-				// User.updateProfile = updateProfile;
-				User.getProfileById = getProfileById;
-				// User.login = login;
-
-				Gverify.verify = verify;
-
-
 			})
 
 			test('Verifed, userInfo found, return 200', async () => {
@@ -193,18 +163,9 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
-
-				User.getInfo = getInfo;
-				// User.createUser = createUser;
-				User.updateProfile = updateProfile;
-				User.getProfileById = getProfileById;
-				// User.login = login;
-
-				Gverify.verify = verify;
-
-
 			})
 		})
+
 		describe('Testing with err', () => {
 			var req = httpMocks.createRequest({
 				session: {
@@ -236,9 +197,6 @@ describe('Testing authGoogle', () => {
 				expect(res.statusCode).toBe(400);
 				expect(getInfoSpy).toHaveBeenCalled();
 
-				Gverify.verify = verify;
-
-
 			})
 
 			test('Verified, no userInfo found, first getInfo err, return 500', async () => {
@@ -251,9 +209,6 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
-
-				User.getInfo = getInfo;
-				Gverify.verify = verify;
 
 			})
 
@@ -268,10 +223,6 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
-
-				User.getInfo = getInfo;
-				User.createUser = createUser;
-				Gverify.verify = verify;
 
 			})
 
@@ -288,11 +239,6 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				User.getInfo = getInfo;
-				User.createUser = createUser;
-				Gverify.verify = verify;
-
-
 			})
 
 			test('Verified, no userInfo found twice, return 500', async () => {
@@ -306,10 +252,6 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
-
-				User.getInfo = getInfo;
-				User.createUser = createUser;
-				Gverify.verify = verify;
 
 			})
 
@@ -326,14 +268,6 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				User.getInfo = getInfo;
-				User.createUser = createUser;
-				User.updateProfile = updateProfile;
-				User.getProfileById = getProfileById;
-				// User.login = login;
-
-				Gverify.verify = verify;
-
 			})
 
 
@@ -348,11 +282,6 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
-
-				User.getInfo = getInfo;
-				User.updateProfile = updateProfile;
-				
-				Gverify.verify = verify;
 
 			})
 
@@ -369,11 +298,6 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				// User.getInfo = getInfo;
-				// User.updateProfile = updateProfile;
-			
-				// Gverify.verify = verify;
-
 			})
 
 			test('Verifed, userInfo found, getProfileById err, return 500', async () => {
@@ -388,12 +312,6 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
-
-				// User.getInfo = getInfo;
-				// User.updateProfile = updateProfile;
-				// User.getProfileById = getProfileById;
-
-				// Gverify.verify = verify;
 
 			})
 		})
@@ -621,5 +539,15 @@ function mockLogin(isPassed, isValid){
 		});
 	}
 }
+
+afterEach( () => {
+	User.getInfo = getInfo;
+	User.createUser = createUser;
+	User.updateProfile = updateProfile;
+	User.getProfileById = getProfileById;
+	User.login = login;
+
+	Gverify.verify = verify;
+})
 
 
