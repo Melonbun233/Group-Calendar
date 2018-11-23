@@ -155,7 +155,8 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
-				// mockUpdateProfile(true);
+				mockUpdateProfile(true);
+				mockUpdateProfile(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
