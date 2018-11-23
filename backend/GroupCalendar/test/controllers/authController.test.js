@@ -9,15 +9,15 @@ const Gverify = require('../../controllers/googleVerification')
 // db.query = jest.fn();
 
 /*-----------mocking verify---------*/
-jest.mock('../../controllers/googleVerification');
-Gverify.verify = jest.fn();
+// jest.mock('../../controllers/googleVerification');
+const mockVerify = Gverify.verify;
 /*------------mocking user---------------*/
-jest.mock('../../models/user');
-User.getInfo = jest.fn();
-User.createUser = jest.fn();
-User.updateProfile = jest.fn();
-User.getProfileById = jest.fn();
-User.login = jest.fn();
+// jest.mock('../../models/user');
+const getInfo = User.getInfo;
+const createUser = User.createUser;
+const updateProfile = User.updateProfile;
+const getProfileById = User.getProfileById;
+const login = User.login;
 
 describe('Testing authGoogle', () => {
 
@@ -428,12 +428,12 @@ describe('Testing verify', () => {
 function mockVerify(isVerified){
 	if (isVerified){
 		// console.log('mockVerify: true');
-		Gverify.verify.mockImplementationOnce(() => {
+		Gverify.verify.jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve('Verifed');
 		});
 	} else {
 		// console.log('mockVerify: false');
-		Gverify.verify.mockImplementationOnce(() => {
+		Gverify.verify.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -442,7 +442,7 @@ function mockVerify(isVerified){
 function mockGetInfo(isPassed, isFound){
 	if (isPassed){
 		if (isFound){
-			User.getInfo.mockImplementationOnce(() => {
+			User.getInfo.jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
 					isAdmin: 0,
@@ -451,12 +451,12 @@ function mockGetInfo(isPassed, isFound){
 				});
 			});
 		} else {
-			User.getInfo.mockImplementationOnce(() => {
+			User.getInfo.jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(null);
 			});
 		}
 	} else {
-		User.getInfo.mockImplementationOnce(() => {
+		User.getInfo.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -464,12 +464,12 @@ function mockGetInfo(isPassed, isFound){
 
 function mockCreateUser(isPassed){
 	if (isPassed){
-		User.createUser.mockImplementationOnce(() => {
+		User.createUser.jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve([]);
 		});
 		
 	} else {
-		User.createUser.mockImplementationOnce(() => {
+		User.createUser.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -477,12 +477,12 @@ function mockCreateUser(isPassed){
 
 function mockUpdateProfile(isPassed){
 	if (isPassed){
-		User.updateProfile.mockImplementationOnce(() => {
+		User.updateProfile.jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve([]);
 		});
 		
 	} else {
-		User.updateProfile.mockImplementationOnce(() => {
+		User.updateProfile.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -490,7 +490,7 @@ function mockUpdateProfile(isPassed){
 
 function mockGetProfileById(isPassed){
 	if (isPassed){
-		User.getProfileById.mockImplementationOnce(() => {
+		User.getProfileById.jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve({
 				userId: 1,
 				userGender: 1,
@@ -505,7 +505,7 @@ function mockGetProfileById(isPassed){
 			});
 		});
 	} else {
-		User.getProfileById.mockImplementationOnce(() => {
+		User.getProfileById.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -514,28 +514,28 @@ function mockGetProfileById(isPassed){
 function mockLogin(isPassed, isValid){
 	if (isPassed){
 		if (isValid){
-			User.login.mockImplementationOnce(() => {
+			User.login.jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(1);
 			});
 		} else {
-			User.login.mockImplementationOnce(() => {
+			User.login.jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(-1);
 			});
 		}
 	} else {
-		User.login.mockImplementationOnce(() => {
+		User.login.jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
 }
 
-// afterEach( () => {
-// 	User.getInfo.mockRest();
-// 	User.createUser.mockRest();
-// 	User.updateProfile.mockRest();
-// 	User.getProfileById.mockRest();
-// 	User.login.mockRest();
+afterEach( () => {
+	User.getInfo = getInfo;
+	User.createUser = createUser;
+	User.updateProfile = updateProfile;
+	User.getProfileById = getProfileById;
+	User.login = login;
 
-// 	Gverify.verify.mockRest();
-// });
+	Gverify.verify = verify;
+});
 
