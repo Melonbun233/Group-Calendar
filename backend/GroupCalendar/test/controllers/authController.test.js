@@ -92,7 +92,7 @@ describe('Testing authGoogle', () => {
 			await AuthController.authGoogle(req, res);
 			expect(getInfoSpy).toHaveBeenCalled();
 			expect(res.statusCode).toBe(200);
-
+			expect(res.pwdSet).toBe(true);
 		})
 
 		test('Verifed, userInfo found, getProfileById err, return 500', async () => {
@@ -147,6 +147,7 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
+				expect(res.pwdSet).toBe(false);
 
 			})
 
@@ -154,13 +155,15 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfileAll(true);
+				mockUpdateProfile(true);
+				mockUpdateProfile(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
+				expect(res.pwdSet).toBe(true);
 
 			})
 
@@ -168,13 +171,15 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfoNoPwd();
-				mockUpdateProfileAll(true);
+				mockUpdateProfile(true);
+				mockUpdateProfile(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
+				expect(res.pwdSet).toBe(false);
 
 			})
 
