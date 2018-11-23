@@ -155,8 +155,6 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
-				mockUpdateProfile(true);
-				mockUpdateProfile(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -489,12 +487,12 @@ function mockCreateUser(isPassed){
 
 function mockUpdateProfile(isPassed){
 	if (isPassed){
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
+		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.resolve([]);
 		});
 		
 	} else {
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
+		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.reject();
 		});
 	}
