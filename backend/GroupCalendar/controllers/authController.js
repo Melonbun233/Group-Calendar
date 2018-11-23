@@ -1,13 +1,3 @@
-// var mysql = require('mysql');
-
-// var con_userDB = mysql.createConnection({
-//   host: "localhost",
-//   user: "yourusername",
-//   password: "yourpassword",
-//   database: "UserDB"
-// });
-
-// the req is the idToken of user
 var User = require('../models/user.js');
 var UidG = require('./uuidGenerator.js');
 var Gverify = require('./googleVerification.js')

@@ -154,7 +154,7 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfile(true);
+				mockUpdateProfileAll(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -168,7 +168,7 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfoNoPwd();
-				mockUpdateProfile(true);
+				mockUpdateProfileAll(true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -304,7 +304,6 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
-				User.updateProfile = updateProfile;
 				mockUpdateProfile(false);
 
 
@@ -452,7 +451,7 @@ describe('Testing verify', () => {
 
 		var idToken = 'abc123';
 
-		await expect(Gverify.verify(idToken)).resolves.not.toBeUndefined();
+		await expect(Gverify.verify(idToken)).rejects.not.toBeUndefined();
 
 	})
 	
@@ -520,6 +519,19 @@ function mockCreateUser(isPassed){
 }
 
 function mockUpdateProfile(isPassed){
+	if (isPassed){
+		User.updateProfile = jest.fn().mockImplementationOnce(() => {
+			return Promise.resolve([]);
+		});
+
+	} else {
+		User.updateProfile = jest.fn().mockImplementationOnce(() => {
+			return Promise.reject();
+		});
+	}
+}
+
+unction mockUpdateProfileAll(isPassed){
 	if (isPassed){
 		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.resolve([]);
