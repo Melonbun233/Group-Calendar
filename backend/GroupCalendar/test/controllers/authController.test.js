@@ -163,6 +163,21 @@ describe('Testing authGoogle', () => {
 				expect(res.statusCode).toBe(200);
 
 			})
+
+			test('Verifed, userInfo found, no pwd, return 200', async () => {
+
+				mockVerify(true);
+				mockGetInfoNoPwd();
+				mockUpdateProfile(true);
+				mockGetProfileById(true);
+
+				var res = httpMocks.createResponse();
+				await AuthController.authGoogle(req, res);
+				expect(getInfoSpy).toHaveBeenCalled();
+				expect(res.statusCode).toBe(200);
+
+			})
+
 		})
 
 		describe('Testing with err', () => {
@@ -289,6 +304,7 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
+				User.updateProfile = updateProfile;
 				mockUpdateProfile(false);
 
 
@@ -303,7 +319,6 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfile(false);
 				mockUpdateProfile(true);
 				mockGetProfileById(false);
 
@@ -432,6 +447,14 @@ describe('Testing verify', () => {
 		await expect(Gverify.verify(idToken)).resolves.toBe('Verifed');
 
 	})
+
+	test('Failure test, false', async () => {
+
+		var idToken = 'abc123';
+
+		await expect(Gverify.verify(idToken)).resolves.not.toBeUndefined();
+
+	})
 	
 })
 
@@ -472,12 +495,23 @@ function mockGetInfo(isPassed, isFound){
 	}
 }
 
+function mockGetInfoNoPwd(){
+	User.getInfo = jest.fn().mockImplementationOnce(() => {
+		return Promise.resolve({
+			userId: 1,
+			isAdmin: 0,
+			userEmail: 'jsmith@gmail.com',
+			userPwd: null
+		});
+	});
+}
+
 function mockCreateUser(isPassed){
 	if (isPassed){
 		User.createUser = jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve([]);
 		});
-		
+
 	} else {
 		User.createUser = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
@@ -490,7 +524,7 @@ function mockUpdateProfile(isPassed){
 		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.resolve([]);
 		});
-		
+
 	} else {
 		User.updateProfile = jest.fn().mockImplementation(() => {
 			return Promise.reject();
