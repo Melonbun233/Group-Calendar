@@ -350,11 +350,8 @@ describe('Testing authGoogle', () => {
 				expect(res.statusCode).toBe(500);
 
 				User.getInfo = getInfo;
-				// User.createUser = createUser;
 				User.updateProfile = updateProfile;
-				// User.getProfileById = getProfileById;
-				// User.login = login;
-
+				
 				Gverify.verify = verify;
 
 			})
@@ -372,13 +369,10 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				User.getInfo = getInfo;
-				// User.createUser = createUser;
-				User.updateProfile = updateProfile;
-				// User.getProfileById = getProfileById;
-				// User.login = login;
-
-				Gverify.verify = verify;
+				// User.getInfo = getInfo;
+				// User.updateProfile = updateProfile;
+			
+				// Gverify.verify = verify;
 
 			})
 
@@ -395,13 +389,11 @@ describe('Testing authGoogle', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				User.getInfo = getInfo;
-				// User.createUser = createUser;
-				User.updateProfile = updateProfile;
-				User.getProfileById = getProfileById;
-				// User.login = login;
+				// User.getInfo = getInfo;
+				// User.updateProfile = updateProfile;
+				// User.getProfileById = getProfileById;
 
-				Gverify.verify = verify;
+				// Gverify.verify = verify;
 
 			})
 		})
@@ -440,8 +432,8 @@ describe('Testing authApp', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
 
-				User.getProfileById = getProfileById;
-				User.login = login;
+				// User.getProfileById = getProfileById;
+				// User.login = login;
 
 			})
 
@@ -454,7 +446,7 @@ describe('Testing authApp', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(400);
 
-				User.login = login;
+				// User.login = login;
 
 			})
 		})
@@ -471,8 +463,7 @@ describe('Testing authApp', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				// User.getProfileById = getProfileById;
-				User.login = login;
+				// User.login = login;
 
 			})
 
@@ -486,8 +477,8 @@ describe('Testing authApp', () => {
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(500);
 
-				User.getProfileById = getProfileById;
-				User.login = login;
+				// User.getProfileById = getProfileById;
+				// User.login = login;
 
 			})
 
@@ -530,12 +521,12 @@ describe('Testing verify', () => {
 function mockVerify(isVerified){
 	if (isVerified){
 		// console.log('mockVerify: true');
-		Gverify.verify.jest.fn().mockImplementationOnce(() => {
+		Gverify.verify = jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve('Verifed');
 		});
 	} else {
 		// console.log('mockVerify: false');
-		Gverify.verify.jest.fn().mockImplementationOnce(() => {
+		Gverify.verify = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -544,7 +535,7 @@ function mockVerify(isVerified){
 function mockGetInfo(isPassed, isFound){
 	if (isPassed){
 		if (isFound){
-			User.getInfo.jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
 					isAdmin: 0,
@@ -553,12 +544,12 @@ function mockGetInfo(isPassed, isFound){
 				});
 			});
 		} else {
-			User.getInfo.jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(null);
 			});
 		}
 	} else {
-		User.getInfo.jest.fn().mockImplementationOnce(() => {
+		User.getInfo = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -566,12 +557,12 @@ function mockGetInfo(isPassed, isFound){
 
 function mockCreateUser(isPassed){
 	if (isPassed){
-		User.createUser.jest.fn().mockImplementationOnce(() => {
+		User.createUser = jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve([]);
 		});
 		
 	} else {
-		User.createUser.jest.fn().mockImplementationOnce(() => {
+		User.createUser = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -579,12 +570,12 @@ function mockCreateUser(isPassed){
 
 function mockUpdateProfile(isPassed){
 	if (isPassed){
-		User.updateProfile.jest.fn().mockImplementationOnce(() => {
+		User.updateProfile = jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve([]);
 		});
 		
 	} else {
-		User.updateProfile.jest.fn().mockImplementationOnce(() => {
+		User.updateProfile = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -592,7 +583,7 @@ function mockUpdateProfile(isPassed){
 
 function mockGetProfileById(isPassed){
 	if (isPassed){
-		User.getProfileById.jest.fn().mockImplementationOnce(() => {
+		User.getProfileById = jest.fn().mockImplementationOnce(() => {
 			return Promise.resolve({
 				userId: 1,
 				userGender: 1,
@@ -607,7 +598,7 @@ function mockGetProfileById(isPassed){
 			});
 		});
 	} else {
-		User.getProfileById.jest.fn().mockImplementationOnce(() => {
+		User.getProfileById = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
@@ -616,16 +607,16 @@ function mockGetProfileById(isPassed){
 function mockLogin(isPassed, isValid){
 	if (isPassed){
 		if (isValid){
-			User.login.jest.fn().mockImplementationOnce(() => {
+			User.login = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(1);
 			});
 		} else {
-			User.login.jest.fn().mockImplementationOnce(() => {
+			User.login = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(-1);
 			});
 		}
 	} else {
-		User.login.jest.fn().mockImplementationOnce(() => {
+		User.login = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
 		});
 	}
