@@ -159,11 +159,11 @@ describe('Testing authGoogle', () => {
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
-				var result = await AuthController.authGoogle(req, res);
+				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
-				console.log(result);
-				expect(result.pwdSet).toBe(true);
+				console.log(res);
+				expect(res.pwdSet).toBe(true);
 
 			})
 
