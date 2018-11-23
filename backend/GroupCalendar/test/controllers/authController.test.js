@@ -10,7 +10,7 @@ const Gverify = require('../../controllers/googleVerification')
 
 /*-----------mocking verify---------*/
 // jest.mock('../../controllers/googleVerification');
-const mockVerify = Gverify.verify;
+const verify = Gverify.verify;
 /*------------mocking user---------------*/
 // jest.mock('../../models/user');
 const getInfo = User.getInfo;
