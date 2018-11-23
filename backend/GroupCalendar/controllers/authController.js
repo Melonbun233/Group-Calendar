@@ -119,7 +119,7 @@ async function authGoogle (req, res){
 
       // console.log(userLastname);
 
-      setcmd = "userLastname='" + userLastname + "'";
+      var setcmd = "userLastname='" + userLastname + "'";
       await User.updateProfile(setcmd, userId)
       .catch ((error) => {
         console.log('Err: updateProfile');

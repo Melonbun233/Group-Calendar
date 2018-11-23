@@ -162,8 +162,8 @@ describe('Testing authGoogle', () => {
 				await AuthController.authGoogle(req, res);
 				expect(getInfoSpy).toHaveBeenCalled();
 				expect(res.statusCode).toBe(200);
-				console.log(res);
-				expect(res.pwdSet).toBe(true);
+				console.log(res.json);
+				expect(res.json.pwdSet).toBe(true);
 
 			})
 
