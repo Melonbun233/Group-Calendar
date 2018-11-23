@@ -275,7 +275,7 @@ describe('Testing authGoogle', () => {
 				mockVerify(true);
 				mockGetInfo(true, true);
 				mockUpdateProfile(false);
-				
+
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
@@ -290,7 +290,7 @@ describe('Testing authGoogle', () => {
 				mockGetInfo(true, true);
 				mockUpdateProfile(true);
 				mockUpdateProfile(false);
-				
+
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
@@ -465,7 +465,7 @@ function mockGetInfo(isPassed, isFound){
 function mockCreateUser(isPassed){
 	if (isPassed){
 		User.createUser.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolve([]);
 		});
 		
 	} else {
@@ -478,7 +478,7 @@ function mockCreateUser(isPassed){
 function mockUpdateProfile(isPassed){
 	if (isPassed){
 		User.updateProfile.mockImplementationOnce(() => {
-			return Promise.resolve();
+			return Promise.resolve([]);
 		});
 		
 	} else {
