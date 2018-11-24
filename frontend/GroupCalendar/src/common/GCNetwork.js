@@ -256,6 +256,21 @@ export default class GCNetwork extends Component {
 		}
 	}
 
+	static async createProject(userId, project) {
+		let url = config.server.concat('/project');
+		try {
+			let response = await fetch (url, {
+				method : 'POST',
+				headers: {"Content-Type": "application/json"},
+				credentials : 'include',
+				body: JSON.stringify({userId, project}),
+			})
+			return response.status;
+		} catch (error) {
+			throw Error('unable to create project');
+		}
+	}
+
 	//	Function used to verify a user by google authentication
 	//	Arguments:
 	//		uesrInfo: an json object that directly returns from Google API

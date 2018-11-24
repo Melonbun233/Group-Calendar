@@ -111,6 +111,8 @@ export default class GCNetwork extends Component {
                 case 2: project = allProjects[1];
                 break;
                 case 3: project = allProjects[2];
+                break;
+                case 4: project = allProjects[3];
             }
             return {
                 status: 200,
@@ -152,12 +154,30 @@ export default class GCNetwork extends Component {
 	//		200: all correct user infomation
 	//		400: invalid user information
 	static async createUser(userInfo) {
-		let url = config.server.concat('/users');
 		try {
             await Storage.setProfile(userInfo.profile);
             return 200;
 		} catch (error) {
 			throw Error('unable to create a user');
+		}
+    }
+    
+    static async createProject(userId, project) {
+		try {
+            project = {
+                projectId: 4,
+                projectName: project.projectName,
+                projectOwnerId: userId,
+                projectDescription: project.projectDescription,
+                projectStartDate: project.projectStartDate,
+                projectEndDate: project.projectEndDate,
+                memberId: [],
+                events:[],
+            }
+            allProjects.push(project);
+			return 200;
+		} catch (error) {
+			throw Error('unable to create project');
 		}
 	}
 
@@ -189,7 +209,7 @@ export default class GCNetwork extends Component {
 }
 
 
-const allProjects = [
+var allProjects = [
     {
         projectId: 1,
         projectName: 'Apple',

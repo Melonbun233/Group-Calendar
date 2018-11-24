@@ -100,12 +100,14 @@ export default class ProjectDeatail extends Component {
     _fetchMembers = async () => {
         let {memberId} = this.state.project;
         let members = [];
-        for (let i = 0; i < memberId.length; i ++) {
-            let response = await Network.searchProfile(memberId[i]);
-            if (response.status == 200) {
-                members.push({profile: response.profile});
-            } else {
-                continue;
+        if (memberId) {
+            for (let i = 0; i < memberId.length; i ++) {
+                let response = await Network.searchProfile(memberId[i]);
+                if (response.status == 200) {
+                    members.push({profile: response.profile});
+                } else {
+                    continue;
+                }
             }
         }
         this.setState({members});
