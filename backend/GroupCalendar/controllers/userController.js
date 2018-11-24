@@ -27,6 +27,12 @@ async function userUpdate (req, res){
 
 async function userCreate (req, res) {
 	try{
+		await User.emailExist(req.body.user.userEmail);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+	
+	try{
 		var userId = await User.createUser(req.body.user, req.body.profile);
 		res.status(200).json({userId});
 	} catch (error) {

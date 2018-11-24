@@ -108,7 +108,11 @@ async function isUserInProject (projectId, userId){
 		}
 	}
 
-	throw "userId " + userId + " does not belong to projectId " + projectId;
+	try{
+		await isOwner(projectId, userId);
+	} catch (error){
+		throw "userId " + userId + " does not belong to projectId " + projectId;
+	}
 }
 
 async function getProject (projectId){
