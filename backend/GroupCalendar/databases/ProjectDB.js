@@ -28,5 +28,4 @@ function query(req){
 
 module.exports = {
   query,
-  end
 }
