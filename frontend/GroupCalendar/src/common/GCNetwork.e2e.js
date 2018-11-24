@@ -35,6 +35,14 @@ export default class GCNetwork extends Component {
 		} catch (error) {
 			throw Error('unable to update password');
 		}
+    }
+    
+    static async updateProject(projectId, userId, update) {
+		try {
+			return 200;
+		} catch (error) {
+			throw Error('unable to update project');
+		}
 	}
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
@@ -91,6 +99,25 @@ export default class GCNetwork extends Component {
 			return 200;
 		} catch (error) {
             throw error;
+		}
+    }
+    
+    static async fetchProject(projectId, userId) {
+		try {
+            let project = {};
+			switch (projectId) {
+                case 1: project = allProjects[0];
+                break;
+                case 2: project = allProjects[1];
+                break;
+                case 3: project = allProjects[2];
+            }
+            return {
+                status: 200,
+                project,
+            };
+		} catch (error) {
+			throw Error('unable to fetch project');
 		}
 	}
 
@@ -161,15 +188,16 @@ export default class GCNetwork extends Component {
 	}
 }
 
+
 const allProjects = [
     {
         projectId: 1,
         projectName: 'Apple',
         projectOwnerId: 1,
         projectDescription: 'This is an apple',
-        projectStartDate: '2018-10-20T00:00:00.000Z',
-        projectEndDatae: '2018-11-20T00:00:00.000Z',
-        memberId: [1, 2, 3],
+        projectStartDate: '2018-10-21T00:00:00.000Z',
+        projectEndDate: '2018-11-21T00:00:00.000Z',
+        memberId: [2, 3],
         events:[
             {
                 eventId: 0,
@@ -216,7 +244,7 @@ const allProjects = [
         projectDescription: 'This is a banana',
         projectStartDate: '2018-11-10T00:00:00.000Z',
         projectEndDate:'2018-12-10T00:00:00.000Z',
-        memberId: [1, 3],
+        memberId: [3],
         events:[
             {
                 eventId: 4,
@@ -239,7 +267,7 @@ const allProjects = [
         projectDescription: 'This is a sushi',
         projectStartDate: '2018-11-01T00:00:00.000Z',
         projectEndDate:'2018-12-20T00:00:00.000Z',
-        memberId: [1, 2],
+        memberId: [2],
         events:[
             {
                 eventId: 5,
