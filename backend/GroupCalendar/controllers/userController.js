@@ -52,12 +52,12 @@ async function userDelete (req, res) {
 /*----/users/profiles---*/
 async function profileGet (req, res) {
 	var profile;
-	var projectId;
+	var invitation;
 
 	try {
 		profile = await User.getProfile(req.param('userId'));
-		projectId = await User.getProjectId(req.param('userId'));
-		profile.projectId = projectId;
+		invitation = await User.getInvitation(req.param('userId'));
+		profile.invitation = invitation;
 		return res.status(200).json({profile});
 	} catch (error) {
 		return res.status(400).json({error});

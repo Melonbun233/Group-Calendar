@@ -233,6 +233,22 @@ async function getProjectId (userId){
 }
 
 
+async function getInvitation (userId){
+	var query = "SELECT * FROM InviteList WHERE userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	var invitation = [];
+	for (var i = 0; i < result.length; i++){
+		invitation.push(result[i].userId);
+	}
+
+	return invitation;
+}
+
+
 module.exports = {
 	getInfo,
 	updateUser,
@@ -243,7 +259,8 @@ module.exports = {
 	updateProfile,
 	login,
 	modifyProfile,
-	getProjectId
+	getProjectId,
+	getInvitation
 }
 
 //------the above function has been modified to async functions----
