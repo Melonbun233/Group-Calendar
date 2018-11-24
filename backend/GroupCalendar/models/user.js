@@ -1,5 +1,6 @@
 var db = require('../databases/UserDB.js');
 var calen = require('./calendar.js');
+var ProjectDB = require('../databases/ProjectDB')
 
 
 async function getInfo (email) {
@@ -40,13 +41,17 @@ async function createUser (user, profile) {
 	profileValues = addQuotation(profileValues);
 	var profileQuery = "INSERT INTO Profiles (" + profileColumns + ") VALUES (" + profileValues + ");";
 
-	await db.query(userQuery)
-	.then ( async (result) => {
-		await db.query(profileQuery)
-	})
+	var userResult = await db.query(userQuery)
 	.catch ( (err) => {
 		throw err;
 	})
+
+	var profileResult = await db.query(profileQuery)
+	.catch ( (err) => {
+		throw err;
+	})
+
+	return userResult.insertId;
 }
 
 async function deleteUser (userId) {
@@ -69,11 +74,11 @@ async function deleteUser (userId) {
 	})
 	.catch( (err) => {
 		throw err;
-	})	
+	})
 }
 
 async function getProfile (userId) {
-	var query = "SELECT * FROM Profiles WHERE userId = " + userId + ";";
+	var query = "SELECT * FROM Profiles WHERE userId = " + userId + "";
 
 	var result = await db.query(query)
 	.catch( (err) => {
@@ -140,14 +145,14 @@ async function modifyProfile (userId, profile){
 	for (var x in profile){
 		var query = "UPDATE Profiles SET " + x + " = '" + profile[x] + "' WHERE userId = '" + userId + "'";
 
-		await db.query(query)
-		.then( (result) => {
-			if (!result.affectedRows)
-				throw "No such userId";
-		})
+		var result = await db.query(query)
 		.catch( (err) => {
 			throw err;
 		})
+
+		if (result.affectedRows == 0){
+			throw "userId " + userId + " does not exist in Profiles";
+		}
 	}
 }
 
@@ -212,6 +217,37 @@ async function login(email, pwd){
 	
 }
 
+async function getProjectId (userId){
+	var query = "SELECT projectId FROM Projects WHERE projectOwnerId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	var projectId = [];
+	for (var i = 0; i < result.length; i++){
+		projectId.push(result[i].projectId);
+	}
+
+	return projectId;
+}
+
+
+async function getInvitation (userId){
+	var query = "SELECT * FROM InviteList WHERE userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	var invitation = [];
+	for (var i = 0; i < result.length; i++){
+		invitation.push(result[i].userId);
+	}
+
+	return invitation;
+}
+
 
 module.exports = {
 	getInfo,
@@ -222,7 +258,9 @@ module.exports = {
 	getProfileById,
 	updateProfile,
 	login,
-	modifyProfile
+	modifyProfile,
+	getProjectId,
+	getInvitation
 }
 
 //------the above function has been modified to async functions----

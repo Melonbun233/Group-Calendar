@@ -5,11 +5,6 @@ const {validationResult} = require('express-validator/check');
 
 /* /users */
 async function userInfoGet (req, res) {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()){
-		return res.status(400).json({"error": "Invalid user email."});
-	}
-
 	var info;
 
 	try{ 
@@ -22,71 +17,69 @@ async function userInfoGet (req, res) {
 };
 
 async function userUpdate (req, res){
-	// const errors = validationResult(req);
-	// if (!errors.isEmpty()){
-	// 	return res.status(400).json({"error": "Invalid user info."});
-	// }
-
 	try {
 		await User.updateUser(req.body.userId, req.body.update.userPwd);
+		return res.status(200).json();
 	} catch (error) {
-		res.status(400).json({error});
+		return res.status(400).json({error});
 	}
-	
-	res.status(200).json();
 };
 
 async function userCreate (req, res) {
-	// const errors = validationResult(req);
-	// if (!errors.isEmpty()){ 
-	// 	return res.status(400).json({"error": "Invalid user info."});
-	// }
-
 	try{
-		await User.createUser(req.body.user, req.body.profile);
+		var userId = await User.createUser(req.body.user, req.body.profile);
+		res.status(200).json({userId});
 	} catch (error) {
-		console.log(error);
 		return res.status(400).json({ error });
 	}
 
 	var uuid = UidG.uuidCreate(req.body.user.email);
 	req.session.uuid = uuid;
 	
-	res.status(200).json();
+	return;
 };
 
 async function userDelete (req, res) {
 	try {
 		await User.deleteUser(req.body.userId);
+		return res.status(200).end();
 	} catch (error) {
 		return res.status(400).json({error});
 	}
-
-	return res.status(200).end();
 }
 
 /*----------------------*/
 /*----/users/profiles---*/
 async function profileGet (req, res) {
 	var profile;
+	var invitation;
 
 	try {
 		profile = await User.getProfile(req.param('userId'));
+		invitation = await User.getInvitation(req.param('userId'));
+		profile.invitation = invitation;
+		return res.status(200).json({profile});
 	} catch (error) {
 		return res.status(400).json({error});
 	}
-
-	return res.status(200).json({profile});
 }
 
 async function profileUpdate (req, res) {
 	try {
 		await User.modifyProfile(req.body.userId, req.body.update);
+		return res.status(200).end();
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+}
 
-	return res.status(200).end();
+async function getProjectId (req, res){
+	try{
+		var projectId = await User.getProjectId(req.param('userId'));
+		return res.status(200).json({projectId});
+	} catch (error) {
+		return res.status(400).json({error});
+	}
 }
 
 module.exports = {
@@ -95,5 +88,6 @@ module.exports = {
 	userCreate,
 	userDelete,
 	profileGet,
-	profileUpdate
+	profileUpdate,
+	getProjectId
 }

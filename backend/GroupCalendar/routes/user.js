@@ -9,11 +9,6 @@ router.put('/',
 	userController.userUpdate);
 
 router.post('/signup',
-	// (req, res, next) => { 
-	// 	Object.assign(req.params, req.body.profile, req.body.user);
-	// 	next();
-	// }, 
-	// validator.checkParams,
 	userController.userCreate);
 
 router.delete('/', 
@@ -24,6 +19,9 @@ router.get('/profile',
 
 router.put('/profile',
 	userController.profileUpdate);
+
+router.get('/projects',
+	userController.getProjectId);
 
 
 module.exports = router;
