@@ -1,31 +1,22 @@
 var express = require('express');
 var router = express.Router();
 var parser = require('body-parser');
-var projectController = require('../controllers/peojectController');
+var projectController = require('../controllers/projectController');
 var url = require('url');  
 
 /* project/event */
 // check uuid in session firstly for every methods
 
-/**
- * GET: 
- * req: projectId, userId
- *
- * res: event(json)
- */
-router.get('/event', function(req, res){
-	projectController.getEvents;
-});
 
 /**
  * PUT: 
- * req: projectId, eventId, userId, updatedInfo(json)
+ * req: projectId, eventId, userId, update(json)
  *
- * res: event(json)
+ * res: N/A
  */
-router.put('/event', function(req, res){
-	projectController.putEvents;
-});
+router.put('/event/owner', function(req, res){
+	projectController.putEventOwner(req, res);
+}); //done
 
 /**
  * POST: 
@@ -33,9 +24,9 @@ router.put('/event', function(req, res){
  *
  * res: eventId
  */
-router.post('/event', function(req, res){
-	projectController.createEvents;
-});
+router.post('/events', function(req, res){
+	projectController.createEvents(req, res);
+}); // done
 
 /**
  * DELETE: 
@@ -43,29 +34,32 @@ router.post('/event', function(req, res){
  *
  * res: end
  */
-router.delete('/event', function(req, res){
-	projectController.deleteEvents;
-});
+router.delete('/events', function(req, res){
+	projectController.deleteEvents(req, res);
+}); // done
 
 /**
- * GET: 
+ * GET /projects
  * req: projectId, userId
  *
- * res: project(json)
+ * res: project
+ 			project..
+ 			memberId[]
+ 			events[]
  */
 router.get('/', function(req, res){
-	projectController.getProject;
-});
+	projectController.getProject(req, res);
+}); // done
 
 /**
  * PUT: 
- * req: projectId, userId, updatedInfo(json)
+ * req: projectId, userId, update(json)
  *
  * res: project(json)
  */
 router.put('/', function(req, res){
-	projectController.putProject;
-});
+	projectController.putProject(req, res);
+}); // done
 
 /**
  * POST: 
@@ -74,8 +68,8 @@ router.put('/', function(req, res){
  * res: projectId
  */
 router.post('/', function(req, res){
-	projectController.createProject;
-});
+	projectController.createProject(req, res);
+}); // done
 
 /**
  * DELETE: 
@@ -84,7 +78,7 @@ router.post('/', function(req, res){
  * res: end
  */
 router.delete('/', function(req, res){
-	projectController.deleteProject;
+	projectController.deleteProject(req, res);
 });
 
 /**
@@ -94,7 +88,7 @@ router.delete('/', function(req, res){
  * res: end
  */
 router.post('/invite', function(req, res){
-	projectController.inviteUser;
+	projectController.inviteUser(req, res);
 });
 
 

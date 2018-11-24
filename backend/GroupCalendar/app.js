@@ -12,6 +12,7 @@ var session = require('client-sessions');
 var Promise = require('promise'); // npm install promise...
 
 /*----require routers-----------*/
+var projectRouter = require('./routes/project');
 var userRouter = require('./routes/user');
 var authRouter = require('./routes/auth');
 /*------------------------------*/
@@ -92,6 +93,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRouter);
 app.use('/auth',authRouter);
+app.use('/project', projectRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
