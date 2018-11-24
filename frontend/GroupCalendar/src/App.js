@@ -13,6 +13,7 @@ import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
 import CreateProject from './CreateProject';
 import ChangePwd from './ChangePwd';
+import ProjectDetail from './ProjectDetail';
 import {createStackNavigator} from 'react-navigation';
 import GoogleSignInPwd from './GoogleSignInPwd';
 
@@ -34,6 +35,7 @@ const IntroStack = createStackNavigator(
 		CreateProject: CreateProject,
 		ChangePwd: ChangePwd,
 		GoogleSignIn: GoogleSignInPwd,
+		ProjectDetail: ProjectDetail,
 	},
 	{
 		initialRouteName: 'SignIn',

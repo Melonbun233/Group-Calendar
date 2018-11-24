@@ -127,7 +127,7 @@ export default class SignInPage extends Component {
 				default: Alert.alert('Internet Error', JSON.stringify(res.error));
 			}
 		} catch (error) {
-			Alert.alert('Something went wrong');
+			Alert.alert(error.toString());
 		}
 		this.setState({isLoading: false});
 	}
@@ -160,7 +160,7 @@ export default class SignInPage extends Component {
 					}
 				}
 			})
-			.catch((error) => {
+			.catch(async (error) => {
 				if (error.code === statusCodes.SIGN_IN_CANCELLED) {
 					//user canceled the login flow
 				} else if (error.code === statusCodes.IN_PROGRESS) {
@@ -170,8 +170,11 @@ export default class SignInPage extends Component {
 					Alert.alert('Play Service Not Avaliable');
 				} else {
 					//some other error happened
-					Alert.alert('Something went wrong\n', JSON.stringify(error));
+					await GoogleSignin.revokeAccess();
+					await GoogleSignin.signOut();
+					Alert.alert(error.toString());
 				}
+				
 			});
 		this.setState({isSigning: false});
 	}

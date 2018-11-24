@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 import cs from './common/CommonStyles';
 
-export default class Search extends Component {
+export default class Invitation extends Component {
 	constructor(props) {
 		super(props);
 	
@@ -18,7 +18,7 @@ export default class Search extends Component {
 	render() {
 		return(
 			<View style = {cs.container}>
-				<Text style = {cs.normal}>Search page is under construction.</Text>
+				<Text style = {cs.normal}>Invitation page is under construction.</Text>
 			</View> 
 		);
 	}

@@ -1,14 +1,15 @@
 'use strict';
 import React, {Component} from 'react';
 import {Text, TextInput, View, StyleSheet, Alert, TouchableWithoutFeedback, 
-	ActivityIndicator} from 'react-native';
+	ActivityIndicator, Image} from 'react-native';
 import cs from './common/CommonStyles';
 import Storage from './common/Storage';
 import Profile from './Profile';
 import Calendar from './Calendar';
 import Project from './Project';
-import Search from './Search';
+import Invitation from './Invitation';
 import { GoogleSignin } from 'react-native-google-signin';
+import SvgUri from 'react-native-svg-uri';
 
 export default class MainPage extends Component {
 
@@ -27,7 +28,7 @@ export default class MainPage extends Component {
 				calendar: cs.blue,
 				project: cs.black,
 				profile: cs.black,
-				search: cs.black,
+				invitation: cs.black,
 			},
 		};
 		this._onSignOut = this._onSignOut.bind(this);
@@ -49,6 +50,22 @@ export default class MainPage extends Component {
 				</View>
 			);
 		}
+		let {title} = this.state;
+		let calendarIcon = title == 'Calendar' ? 
+		<SvgUri width = {24} height = {24} source = {require('../img/calendar-color.svg')}/> : 
+		<SvgUri width = {24} height = {24} source = {require('../img/calendar.svg')}/>;
+
+		let projectIcon = title == 'Project' ?
+		<SvgUri width = {24} height = {24} source = {require('../img/project-color.svg')}/> : 
+		<SvgUri width = {24} height = {24} source = {require('../img/project.svg')}/>;
+
+		let invitationIcon = title == 'Invitation' ?
+		<SvgUri width = {24} height = {24} source = {require('../img/invitation-color.svg')}/> : 
+		<SvgUri width = {24} height = {24} source = {require('../img/invitation.svg')}/>;
+
+		let profileIcon = title == 'Profile' ?
+		<SvgUri width = {24} height = {24} source = {require('../img/profile-color.svg')}/> : 
+		<SvgUri width = {24} height = {24} source = {require('../img/profile.svg')}/>;
 
 		return (
 			<View style = {cs.container}>		
@@ -69,7 +86,8 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Calendar')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {buttonColor.calendar}>
+						{calendarIcon}
+						<Text style = {[buttonColor.calendar, {paddingTop:4}]}>
 						Calendar</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -78,17 +96,19 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Project')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {buttonColor.project}>
+						{projectIcon}
+						<Text style = {[buttonColor.project, {paddingTop:4}]}>
 						Project</Text>
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
-						testID = 'searchButton'
-						onPress = {() => this._switchContent('Search')}
+						testID = 'invitationButton'
+						onPress = {() => this._switchContent('Invitation')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {buttonColor.search}>
-						Search</Text>
+						{invitationIcon}
+						<Text style = {[buttonColor.invitation, {paddingTop:4}]}>
+						Invitation</Text>
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
@@ -96,7 +116,8 @@ export default class MainPage extends Component {
 						onPress = {() => this._switchContent('Profile')}
 					>
 						<View style = {s.switchButton}>
-						<Text style = {buttonColor.profile}>
+						{profileIcon}
+						<Text style = {[buttonColor.profile, {paddingTop:4}]}>
 						Me</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -116,7 +137,7 @@ export default class MainPage extends Component {
 						calendar: cs.blue,
 						project: cs.black,
 						profile: cs.black,
-						search: cs.black,
+						invitation: cs.black,
 					}
 				};
 			case 'Calendar' :
@@ -129,10 +150,10 @@ export default class MainPage extends Component {
 					title: 'Project',
 					buttonColor: {project: cs.blue}};
 			break;
-			case 'Search' : 
+			case 'Invitation' : 
 				ret = {
-					title: 'Search',
-					buttonColor: {search: cs.blue}};
+					title: 'Invitation',
+					buttonColor: {invitation: cs.blue}};
 			break;
 			case 'Profile' : 
 				ret = {
@@ -149,22 +170,22 @@ export default class MainPage extends Component {
 		switch(this.state.title) {
 			case 'Calendar' :
 				return(<Calendar
-					onSignOut = {this._onSignOut}
-					onSessionOut = {this._onSessionOut}
+					onSignOut = {this._onSignOut.bind(this)}
+					onSessionOut = {this._onSessionOut.bind(this)}
 					navigation = {this.props.navigation}	
 				/>);
 			case 'Project' :
 				return(<Project
 					navigation = {this.props.navigation}
-					onSignOut = {this._onSignOut}
-					onSessionOut = {this._onSessionOut}
+					onSignOut = {this._onSignOut.bind(this)}
+					onSessionOut = {this._onSessionOut.bind(this)}
 				/>);
-			case 'Search' :
-				return(<Search/>);
+			case 'Invitation' :
+				return(<Invitation/>);
 			case 'Profile' :
 				return(<Profile 
-					onSignOut = {this._onSignOut}
-					onSessionOut = {this._onSessionOut}
+					onSignOut = {this._onSignOut.bind(this)}
+					onSessionOut = {this._onSessionOut.bind(this)}
 					navigation = {this.props.navigation}
 				/>);
 		}
@@ -178,11 +199,11 @@ export default class MainPage extends Component {
 				await GoogleSignin.revokeAccess();
 				await GoogleSignin.signOut();
 			}	
+			//clean up async storage
+			await Storage.deleteAll();
 		} catch (error) {
 			Alert.alert('Something went wrong when signing out');
 		}
-		//clean up async storage
-		await Storage.deleteAll();
 		this.props.navigation.popToTop();
 	}
 
@@ -197,11 +218,10 @@ const s = StyleSheet.create({
 	button: {
 		alignItems: 'center',
 		justifyContent: 'center',
-		margin: 5,
+		marginTop: 5,
 		marginRight: 10,
 		width: 100,
 		height: 40,
-		borderRadius: 5,
 	},
 	switchButton: {
 		width: '25%',
@@ -232,4 +252,7 @@ const s = StyleSheet.create({
 		borderTopWidth: 1,
 		borderTopColor: '#e6e6e6',
 	},
+	icon: {
+		padding:2,
+	}
 });
