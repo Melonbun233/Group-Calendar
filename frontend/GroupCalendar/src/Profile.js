@@ -39,7 +39,7 @@ export default class Profile extends Component {
 				isLoading: false,
 			});
 		} catch (error) {
-			Alert.alert(JSON.stringify(error));
+			Alert.alert(error.toString());
 		}
 	}
 
@@ -67,7 +67,7 @@ export default class Profile extends Component {
 				default: Alert.alert('HTTP ERROR ');
 			}
 		} catch(error) {
-			Alert.alert('Something went wrong', JSON.stringify(error));
+			Alert.alert(error.toString());
 		}
 		this.setState({isRefreshing: false});
 	}
@@ -77,7 +77,7 @@ export default class Profile extends Component {
 	}
 	//push a new editing page
 	_onEditProfile = (_editInfo) => {
-		let {userLastname, userFirstname, userId, userEmail} = this.state.profile;
+		let {userLastname, userFirstname, userId} = this.state.profile;
 		switch(_editInfo){
 			case 'username' : {
 				this.props.navigation.push('EditProfile', {

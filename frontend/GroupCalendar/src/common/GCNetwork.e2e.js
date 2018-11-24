@@ -19,27 +19,13 @@ export default class GCNetwork extends Component {
 	static async verifyUser(_userEmail, _userPwd) {
 		try {
             if (_userEmail === 'test@mail.com') {
-                let date = new Date(1997, 4, 3);
-                await Storage.setProfile({
-                    userId: '1',
-                    userFirstname: 'Zhuohang',
-                    userLastname: 'Zeng',
-                    userEmail: _userEmail,
-                    userGender: 'Male',
-                    userBirth: date.toJSON(),
-                    userDescription: 'hello this is henry',
-                    userRegion: 'Canada',
-                    isAdmin: '1',
-                });
+                await Storage.setProfile(testProfile1);
                 return 200;
             } else {
                 return 400;
             }
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
+		} catch (error) {
+			throw Error('unable to verify user');
 		}
 	}
 
@@ -47,36 +33,31 @@ export default class GCNetwork extends Component {
 		try {
 			return 200;
 		} catch (error) {
-			throw error;
+			throw Error('unable to update password');
 		}
 	}
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
-	static async searchProfile(_userId) {
-		let url = config.server.concat('/users/profile');
+	static async searchProfile(userId) {
 		try {
-			let cookie = await Storage.getCookie();
-			let response = await fetch(url, {
-				method: 'Get',
-				headers: {
-					'Content-Type' : 'application/json',
-					'cookie' : cookie,
-				},
-				body: JSON.stringify({
-					userId: _userId,
-				})
-			});
-			let responseJson = await response.json();
-
-			return {
-				'response' : responseJson,
-				status: response.status
-			}
+            if (userId == 1) {
+                return {
+                    profile: testProfile1,
+                    status: 200
+                }
+            } else if (userId == 2) {
+                return {
+                    profile: testProfile2,
+                    status: 200
+                }
+            } else if (userId == 3) {
+                return {
+                    profile: testProfile3,
+                    status:200
+                }
+            }
 		} catch (error) {
-			return {
-				status: 0,
-				error
-			}
+			throw Error('unable to fetch profile');
 		}
 	}
 	//	Function used to fetch user profile
@@ -90,49 +71,26 @@ export default class GCNetwork extends Component {
 		try {
 			return 200;
 		} catch (error) {
-			return {
-				status: 0,
-				error,
-			}
+			throw Error('unable to fetch profile');
+		}
+    }
+
+	static async fetchProjectList(userId) {
+		try {
+			await Storage.setProjectList({projectId:[1, 2, 3]});
+			return 200;
+		} catch (error) {
+			throw Error('unable to fetch project list');
 		}
 	}
 
-	static async fetchProjectId(userId) {
-		let url = config.server.concat('/users/project/');
+	static async fetchAllProjects(projectId, userId) {
 		try {
-			let cookie = await Storage.getCookie();
-			let response = await fetch(url, {
-				method : 'GET',
-				headers: {
-					'Content-Type' : 'application/json',
-					'cookie' : cookie
-				},
-				body: JSON.stringify({
-					userId: _userId
-				})
-			});
-			let responseJson = await response.json();
-			await Storage.setCookie(res.headers.get('set-cookie'));
-
-			return {
-				projectList: responseJson,
-				status: response.status,
-			}
+            await this.fetchProjectList(1);
+            await Storage.setAllProjects(allProjects);
+			return 200;
 		} catch (error) {
-			return {
-				status: 0,
-				error,
-			}
-		}
-	}
-
-	static async fetchProject(projectId, userId) {
-		let url = config.server.concat('/projects');
-		try {
-			let cookie = await Storage.getCookie();
-			//let response = await 
-		} catch (error) {
-
+            throw error;
 		}
 	}
 
@@ -156,10 +114,7 @@ export default class GCNetwork extends Component {
 				status: response.status,
 			};
 		} catch (error) {
-			return {
-				status: 0,
-				error,
-			}
+			throw Error('unable to update profile');
 		}
 	}
 
@@ -174,11 +129,8 @@ export default class GCNetwork extends Component {
 		try {
             await Storage.setProfile(userInfo.profile);
             return 200;
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
+		} catch (error) {
+			throw Error('unable to create a user');
 		}
 	}
 
@@ -198,17 +150,145 @@ export default class GCNetwork extends Component {
 			})
 			let responseJson = await response.json();
 
-			await Storage.setCookie(res.headers.get('set-cookie'));
 			await Storage.setProfile(responseJson.profile);
 
 			return {
 				status: response.status,
 			}
-		} catch (_error) {
-			return {
-				status: 0,
-				error: _error,
-			}
+		} catch (error) {
+			throw Error('unable to sign in');
 		}
 	}
 }
+
+const allProjects = [
+    {
+        projectId: 1,
+        projectName: 'Apple',
+        projectOwnerId: 1,
+        projectDescription: 'This is an apple',
+        projectStartDate: '2018-10-20T00:00:00.000Z',
+        projectEndDatae: '2018-11-20T00:00:00.000Z',
+        memberId: [1, 2, 3],
+        events:[
+            {
+                eventId: 0,
+                eventName: 'Weekly event 1',
+                eventStartTime: '2018-10-20T12:00:00.000Z',
+                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventLocation: 'test location',
+                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventRepeat: 'week',
+                limit: 10,
+                color: 'aqua',
+                choosenId: [],
+            },
+            {
+                eventId: 1,
+                eventName: 'daily event 1',
+                eventStartTime: '2018-10-20T13:00:00.000Z',
+                eventEndTime: '2018-10-20T14:00:00.000Z',
+                eventLocation: 'test location',
+                eventDescription: 'start on 2018-10-20 pm 13.00',
+                eventRepeat: 'day',
+                limit: 2,
+                color: 'aqua',
+                choosenId: [],
+            },
+            {
+                eventId: 3,
+                eventName: 'one time event 1',
+                eventStartTime: '2018-10-20T12:00:00.000Z',
+                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventLocation: 'test location',
+                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventRepeat: 'week',
+                limit: 0,
+                color: 'aqua',
+                choosenId: [],
+            }
+        ],
+    },
+    {
+        projectId: 2,
+        projectName: 'Banana',
+        projectOwnerId: 1,
+        projectDescription: 'This is a banana',
+        projectStartDate: '2018-11-10T00:00:00.000Z',
+        projectEndDate:'2018-12-10T00:00:00.000Z',
+        memberId: [1, 3],
+        events:[
+            {
+                eventId: 4,
+                eventName: 'Weekly event 2',
+                eventStartTime: '2018-10-20T12:00:00.000Z',
+                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventLocation: 'test location',
+                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventRepeat: 'week',
+                limit: 5,
+                color: 'red',
+                choosenId: [],
+            },
+        ],
+    },
+    {
+        projectId: 3,
+        projectName: 'Sushi',
+        projectOwnerId: 1,
+        projectDescription: 'This is a sushi',
+        projectStartDate: '2018-11-01T00:00:00.000Z',
+        projectEndDate:'2018-12-20T00:00:00.000Z',
+        memberId: [1, 2],
+        events:[
+            {
+                eventId: 5,
+                eventName: 'Weekly event 3',
+                eventStartTime: '2018-10-20T17:00:00.000Z',
+                eventEndTime: '2018-10-20T18:00:00.000Z',
+                eventLocation: 'test location',
+                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventRepeat: 'week',
+                limit: 2,
+                color: 'blueviolet',
+                choosenId: [],
+            },
+        ],
+    }
+];
+
+const testProfile1 = {
+    userId: '1',
+    userFirstname: 'Zhuohang',
+    userLastname: 'Zeng',
+    userEmail: 'test@mail.com',
+    userGender: 'Male',
+    userBirth: '1997-05-03T00:00:00.000Z',
+    userDescription: 'hello this is henry',
+    userRegion: 'Canada',
+    isAdmin: '1',
+};
+
+const testProfile2 = {
+    userId: '2',
+    userFirstname: 'Alice',
+    userLastname: 'Zhang',
+    userEmail: 'alice@mail.com',
+    userGender: 'Female',
+    userBirth: '1998-02-20T00:00:00.000Z',
+    userDescription: 'hello this is alice',
+    userRegion: 'Canada',
+    isAdmin: '1',
+};
+
+const testProfile3 = {
+    userId: '3',
+    userFirstname: 'Kyle',
+    userLastname: 'Jiang',
+    userEmail: 'kyle@mail.com',
+    userGender: 'Male',
+    userBirth: '1997-08-20T00:00:00.000Z',
+    userDescription: 'hello this is kyle',
+    userRegion: 'Canada',
+    isAdmin: '1',
+};

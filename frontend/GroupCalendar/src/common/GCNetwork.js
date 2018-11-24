@@ -16,7 +16,7 @@ export default class GCNetwork extends Component {
 	//		404: cannot find 
 	//	Note that user name should be validated 
 	//
-	static async verifyUser(_userEmail, _userPwd) {
+	static async verifyUser(userEmail, userPwd) {
 		let url = config.server.concat('/auth/app');
 		try {
 			let response = await fetch( url, 
@@ -27,8 +27,8 @@ export default class GCNetwork extends Component {
 				},
 				credentials : 'include',
 				body: JSON.stringify({
-					'userEmail':_userEmail,
-					'userPwd':_userPwd,
+					userEmail,
+					userPwd
 				})
 			});
 			if (response.status == 200) {
@@ -38,7 +38,7 @@ export default class GCNetwork extends Component {
 			
 			return response.status;
 		} catch (error) {
-			throw error;
+			throw Error('unable to verify user');
 		}
 	}
 
@@ -59,35 +59,31 @@ export default class GCNetwork extends Component {
 			});
 			return response.status;
 		} catch (error) {
-			throw error;
+			throw Error('unable to update password');
 		}
 	}
 
 
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
-	static async searchProfile(_userId) {
-		let url = config.server.concat('/users/profile');
+	static async searchProfile(userId) {
+		let url = config.server.concat('/users/profile' + '?userId=' + userId);
 		try {
-			let cookie = await Storage.getCookie();
 			let response = await fetch(url, {
 				method: 'Get',
 				headers: {
 					'Content-Type' : 'application/json',
-					'cookie' : cookie,
 				},
-				body: JSON.stringify({
-					userId: _userId,
-				})
+				credentials : 'include',
 			});
 			let responseJson = await response.json();
 
 			return {
-				'response' : responseJson,
+				profile : responseJson,
 				status: response.status
 			}
 		} catch (error) {
-			return 0;
+			throw Error('unable to find the user');
 		}
 	}
 	//	Function used to fetch user profile
@@ -97,8 +93,8 @@ export default class GCNetwork extends Component {
 	//		200: correct user id
 	//		400: invalid user id
 	//		404: cannot find user id
-	static async fetchProfile(_userId){
-		let url = config.server.concat('/users/profile' + '?userId=' + _userId);
+	static async fetchProfile(userId){
+		let url = config.server.concat('/user/profile' + '?userId=' + userId);
 		try {
 			let response = await fetch(url, {
 				method: 'GET',
@@ -115,47 +111,89 @@ export default class GCNetwork extends Component {
 			
 			return response.status;
 		} catch (error) {
-			throw error;
+			throw Error('unable to fetch profile');
 		}
 	}
 
-	static async fetchProjectId(userId) {
-		let url = config.server.concat('/users/project/');
+	//only called by inner funcitons
+	static async fetchProjectList(userId) {
+		let url = config.server.concat('/user/projects' + '?userId=' + userId);
 		try {
-			let cookie = await Storage.getCookie();
 			let response = await fetch(url, {
 				method : 'GET',
 				headers: {
 					'Content-Type' : 'application/json',
-					'cookie' : cookie
 				},
-				body: JSON.stringify({
-					userId: _userId
-				})
+				credentials : 'include',
 			});
-			let responseJson = await response.json();
-			await Storage.setCookie(response.headers.get('set-cookie'));
 
-			return {
-				projectList: responseJson,
-				status: response.status,
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				await Storage.setProjectList(responseJson.projectId);
 			}
+			return {status: response.status};
 		} catch (error) {
-			return 0;
+			throw Error('unable to fetch project ID')
 		}
 	}
 
 	static async fetchProject(projectId, userId) {
-		let url = config.server.concat('/projects');
+		let url = config.server.concat('/project' + '?userId=' + userId + 
+			'&projectId=' + projectId);
 		try {
-			//let response = await 
+			let response = await fetch(url, {
+				method: 'GET',
+				headers:{
+					'Content-Type' : 'application/json',
+				},
+				credentials : 'include',
+			});
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				return {
+					status: response.status,
+					project: responseJson
+				};
+			}
+			
+			return {status: response.status};
 		} catch (error) {
-
+			throw Error('unable to fetch project');
 		}
 	}
 
-	static async updateProfile(_update, _userId) {
-		let url = config.server.concat('/users/profile');
+	//fetch all projects related to this user
+	static async fetchAllProjects(userId) {
+		try {
+			var allProjects = [];
+			let response = await this.fetchProjectList(userId);
+			if (response.status == 200) {
+				let projectList = await Storage.getProjectList();
+				for (let i = 0; i < projectList.length; i ++) {
+					response = await this.fetchProject(projectList[i], userId);
+					if (response.status == 200) {
+						allProjects.push(response.project);
+					} else {
+						break;
+					}
+				}
+				await Storage.setAllProjects(allProjects);
+				if (allProjects.length != projectList.length) {
+					return 0;
+				}
+				return 200;
+			} else {
+				await Storage.setAllProjects(allProjects);
+				return response.status;
+			}
+		} catch(error) {
+			await Storage.setAllProjects(allProjects);
+			throw error;
+		}
+	}
+
+	static async updateProfile(update, userId) {
+		let url = config.server.concat('/user/profile');
 		try {
 			let response = await fetch(url, {
 				method: 'PUT',
@@ -164,13 +202,13 @@ export default class GCNetwork extends Component {
 				},
 				credentials : 'include',
 				body: JSON.stringify({
-					update: _update,
-					userId: _userId,
+					update,
+					userId
 				})
 			});
 			return response.status;
 		} catch (error) {
-			return 0;
+			throw Error('unbale to update profile');
 		}
 	}
 
@@ -181,7 +219,7 @@ export default class GCNetwork extends Component {
 	//		200: all correct user infomation
 	//		400: invalid user information
 	static async createUser(userInfo) {
-		let url = config.server.concat('/users/signup');
+		let url = config.server.concat('/user/signup');
 		let user = userInfo.user;
 		let profile = userInfo.profile;
 		try {
@@ -193,7 +231,7 @@ export default class GCNetwork extends Component {
 			});
 			return response.status;
 		} catch (error) {
-			return 0;
+			throw Error('unable to create user');
 		}
 	}
 
@@ -223,8 +261,8 @@ export default class GCNetwork extends Component {
 				}
 			}
 			return response.status;
-		} catch (_error) {
-			return 500;
+		} catch (error) {
+			throw Error('unable to verify user by google');
 		}
 	}
 }

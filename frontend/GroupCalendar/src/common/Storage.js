@@ -14,20 +14,6 @@ export default class Storage extends Component {
         }
     }
 
-    //get cookie object from async storage
-    static async getCookie() {
-        let ret = null;
-        try {
-            let cookie = await AsyncStorage.getItem('cookie', null);
-            if (cookie) {
-                ret = JSON.parse(cookie);
-            }
-            return ret;
-        } catch (error) {
-            throw error;
-        }
-    }
-
     //get profile project from async storage
     static async getProfile() {
         let ret = null;
@@ -42,7 +28,7 @@ export default class Storage extends Component {
         }
     }
 
-    static async getProject() {
+    static async getAllProjects() {
         let ret = null;
         try {
             let project = await AsyncStorage.getItem('project');
@@ -55,8 +41,20 @@ export default class Storage extends Component {
         }
     }
 
-    static async setProject(project) {
+    static async getProjectList() {
         let ret = null;
+        try {
+            let projectList = await AsyncStorage.getItem('projectList');
+            if (projectList) {
+                ret = JSON.parse(projectList);
+            }
+            return ret;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    static async setAllProjects(project) {
         try {
             await AsyncStorage.setItem('project',
                 JSON.stringify(project));
@@ -65,16 +63,14 @@ export default class Storage extends Component {
         }
     }
 
-    //set cookie object
-    static async setCookie(cookie) {
+    static async setProjectList(projectList) {
         try {
-            await AsyncStorage.setItem('cookie', 
-                JSON.stringify(cookie));
+            await AsyncStorage.setItem('projectList',
+                JSON.stringify(projectList));
         } catch (error) {
             throw error;
         }
     }
-
     //set profile object
     static async setProfile(profile) {
         try {
@@ -93,10 +89,12 @@ export default class Storage extends Component {
         }
     }
 
+
     //clean all storages
     static async deleteAll() {
         try {
-            await AsyncStorage.removeItem('cookie');
+            await AsyncStorage.removeItem('projectList');
+            await AsyncStorage.removeItem('project');
             await AsyncStorage.removeItem('profile');
             await AsyncStorage.removeItem('signInByGoogle');
         } catch (error) {

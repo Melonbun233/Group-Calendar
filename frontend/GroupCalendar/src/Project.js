@@ -5,11 +5,12 @@
 
 import React, {Component} from 'react';
 import {TouchableWithoutFeedback, StyleSheet, Text, View, Button, Alert, 
-	RefreshControl, AsyncStorage, ActivityIndicator, FlatList, ScrollView} 
+	RefreshControl, ActivityIndicator, FlatList, ScrollView} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import UserAvatar from 'react-native-user-avatar';
 import Network from './common/GCNetwork';
+import Storage from './common/Storage';
 
 export default class Project extends Component {
 	constructor(props) {
@@ -20,42 +21,20 @@ export default class Project extends Component {
 			isRefreshing: false,
 			//loading user's project list when first enter
 			isLoading: true,
-			project:[
-				{
-					projectId: 1,
-					projectName: 'Apple',
-					projectOwnerId: 1,
-					projectDescription: 'This is an apple'
-				},
-				{
-					projectId: 2,
-					projectName: 'Banana',
-					projectOwnerId: 1,
-					projectDescription: 'This is a banana'
-				},
-				{
-					projectId: 3,
-					projectName: 'Sushi',
-					projectOwnerId: 1,
-					projectDescription: 'This is a sushi'
-				}
-			],
 		};
-		this._onRefresh = this._onRefresh.bind(this);
-		this._renderItem = this._renderItem.bind(this);
-		this._getProject = this._getProject.bind(this);
+		this._onPressProject = this._onPressProject.bind(this);
 	}
 
 	//fetch user's projects
 	async componentDidMount() {
 		try{
-			let cookie = await AsyncStorage.getItem('cookie');
-			let profile = await AsyncStorage.getItem('profile')
-				.then((res) => JSON.parse(res));
-				
+			let profile = await Storage.getProfile();
 			this.setState({
-				cookie,
-				profile,
+				profile
+			});
+
+			await this._onRefresh();
+			this.setState({
 				isLoading: false,
 			})
 		} catch (error) {
@@ -63,10 +42,16 @@ export default class Project extends Component {
 		}
 	}
 
+	_onPressProject = (project) => {
+		let {profile} = this.state;
+		this.props.navigation.push('ProjectDetail', {project, profile});
+	}
+
 	_renderItem({item}) {
 		return (
 			<TouchableWithoutFeedback
 				testID = {item.projectName}
+				onPress = {() => this._onPressProject(item)}
 			>
 			<View style = {s.contentContainer}>
 				<View style = {s.project}>
@@ -90,21 +75,27 @@ export default class Project extends Component {
 
 	async _onRefresh() {
 		let {profile} = this.state;
-		var projectId;
-		var project = [];
+		var allProjects;
 		this.setState({isRefreshing: true});
 		try {
-			let res = await Network.fetchProjectId(profile.userId);
+			let status = await Network.fetchAllProjects(profile.userId);
+			allProjects = await Storage.getAllProjects();
+			switch (status) {
+				case 200: 
+				break;
+				case 0: {
+					Alert.alert('Not all projects fetched');
+				}
+				break;
+				default: Alert.alert('Internet Error ' + status.toString());
+			}
 		} catch (error) {
-			Alert.alert(error);
+			Alert.alert(error.toString());
 		}
-		this.setState({isRefreshing: false});
-	}
-
-	async _getProject(projectId) {
-		for (var i = 0; i < projectId.length; i ++) {
-
-		}
+		this.setState({
+			allProjects,
+			isRefreshing: false
+		});
 	}
 
 
@@ -117,8 +108,13 @@ export default class Project extends Component {
 				</View>
 			);
 		}
-		let {project, profile} = this.state;
+		let {allProjects, profile} = this.state;
 		let {navigation} = this.props;
+		let emptyMsg = (
+			<View style = {[cs.container, {paddingTop: '20%', paddingBottom: '30%'}]}>
+				<Text style = {cs.h5}>You don't have any project yet</Text>
+			</View>
+		);
 		return(
 			<ScrollView 
 				style = {s.scrollContainer}
@@ -126,11 +122,17 @@ export default class Project extends Component {
 				refreshControl = {
 				<RefreshControl
 					refreshing = {isRefreshing}
-					onRefresh = {this._onRefresh}
+					onRefresh = {this._onRefresh.bind(this)}
 				/>
 				}
 			>
-				<View style = {s.button}>
+				<FlatList
+					data = {allProjects}
+					renderItem = {this._renderItem.bind(this)}
+					keyExtractor = {(item) => item.projectId.toString()}
+				/>
+				{allProjects.length == 0 ? emptyMsg : null}
+				<View style = {[s.button]}>
 				<Button
 					style = {s.button}
 					testID = 'createProjectButton'
@@ -139,11 +141,6 @@ export default class Project extends Component {
 					onPress = {() => navigation.push('CreateProject', {profile})}
 				/>
 				</View>
-				<FlatList
-					data = {project}
-					renderItem = {this._renderItem}
-					keyExtractor = {(item, index) => item.projectId.toString()}
-				/>
 			</ScrollView>
 		);
 	}
@@ -157,9 +154,7 @@ const s = StyleSheet.create({
 	},
 	button: {
 		padding: 10,
-		alignItems: 'flex-start',
-		borderBottomWidth: 1,
-		borderBottomColor: '#e6e6e6',
+		alignItems: 'center',
 	},
 	contentContainer: {
 		flexDirection: 'row',

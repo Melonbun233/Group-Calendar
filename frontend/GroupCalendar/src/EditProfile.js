@@ -1,7 +1,7 @@
 'user strict';
 
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Alert, Button, ScrollView, DatePickerIOS,
+import {View, StyleSheet, Alert, Button, ScrollView, DatePickerIOS,
 	FlatList, ActivityIndicator, Picker} from 'react-native';
 import Network from './common/GCNetwork';
 import cs from './common/CommonStyles';
@@ -236,4 +236,4 @@ const s = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 	}
-})
+});
