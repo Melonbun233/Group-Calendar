@@ -58,7 +58,7 @@ export const changePwdConstraints = {
 			tooShort: 'minimum length is 6',
 		},
 	}
-}
+};
 
 export const setGooglePwdConstraints = {
 	pwd: {
@@ -70,4 +70,25 @@ export const setGooglePwdConstraints = {
 			tooShort: 'minimum length is 6',
 		},
 	},
-}
+};
+
+export const createProjectConstraints = {
+	projectName: {
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 20,
+			tooLong: 'maximum length is 20',
+			tooShort: 'cannot be empty',
+		},
+	},
+	projectDescription: {
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 200,
+			tooLong: 'maximum length is 200',
+			tooShort: 'cannot be empty',
+		},
+	}
+};

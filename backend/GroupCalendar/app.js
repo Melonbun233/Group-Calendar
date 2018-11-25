@@ -61,7 +61,7 @@ app.use(session({
 app.use(function(req, res, next){
   // console.log('middleware');
   if(checkPath(req.path)){
-    console.log('uuidCheck');
+    // console.log('uuidCheck');
     if (uuidCheck(req.session.uuid)){
       next();
     }else{

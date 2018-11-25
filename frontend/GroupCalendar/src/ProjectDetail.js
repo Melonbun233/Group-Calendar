@@ -39,6 +39,8 @@ export default class ProjectDeatail extends Component {
                         ownerProfile: response.profile,
                         project,
                         profile,
+                        tempProjectStartDate: project.projectStartDate,
+                        tempProjectEndDate: project.projectEndDate,
                     });
                     await this._fetchMembers();
 
@@ -56,37 +58,56 @@ export default class ProjectDeatail extends Component {
         navigation.goBack();
     }
 
-    _onRefresh = () => {
+    _onRefresh = async () => {
+        let {project, profile} = this.state;
         this.setState({isRefreshing: true});
-        Alert.alert('Refresh!');
+        try {
+            let projectResponse = await Network.fetchProject(project.projectId, profile.userId);
+            let profileResponse = await Network.searchProfile(profile.userId);
+            let ownerResponse = await Network.searchProfile(project.projectOwnerId);
+            if (projectResponse.status == 200 && profileResponse.status == 200 &&
+                ownerResponse.status == 200) {
+                this.setState({
+                    ownerProfile: ownerResponse.profile,
+                    project: projectResponse.project,
+                    profile: profileResponse.profile,
+                    tempProjectStartDate: project.projectStartDate,
+                    tempProjectEndDate: project.projectEndDate,
+                });
+                await this._fetchMembers();
+            } else {
+                Alert.alert('Something went wrong');
+            }
+        } catch(error) {
+            Alert.alert(error.toString());
+        }
         this.setState({isRefreshing: false});
     }
 
     _onProjectStartDateChange = (date) => {
-        let {project} = this.state;
         let dateString = date.toJSON();
-        Alert.alert(dateString);
-        project.projectStartDate = dateString;
-        this.setState({project});
+        let tempProjectStartDate = dateString;
+        this.setState({tempProjectStartDate});
     }
 
     _onProjectEndDateChange = (date) => {
-        let {project} = this.state;
         let dateString = date.toJSON();
-        project.projectEndDate = dateString;
-        this.setState({project});
+        let tempProjectEndDate = dateString;
+        this.setState({tempProjectEndDate});
     }
 
     //fetch members and set state
     _fetchMembers = async () => {
         let {memberId} = this.state.project;
         let members = [];
-        for (let i = 0; i < memberId.length; i ++) {
-            let response = await Network.searchProfile(memberId[i]);
-            if (response.status == 200) {
-                members.push({profile: response.profile});
-            } else {
-                continue;
+        if (memberId) {
+            for (let i = 0; i < memberId.length; i ++) {
+                let response = await Network.searchProfile(memberId[i]);
+                if (response.status == 200) {
+                    members.push({profile: response.profile});
+                } else {
+                    continue;
+                }
             }
         }
         this.setState({members});
@@ -195,6 +216,71 @@ export default class ProjectDeatail extends Component {
 
     }
 
+    _onUpdateProject = async (update) => {
+        let {project, profile} = this.state;
+        try {
+            let status = await Network.updateProject(
+                project.projectId, profile.userId, update);
+            if (status == 200) {
+                await this._onRefresh();
+            } else {
+                Alert.alert('Error updating');
+            }
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
+    }
+
+    _renderEndDatePicker = () => {
+        let {tempProjectEndDate} = this.state;
+        return (
+            <View>
+            <View style = {[{backgroundColor: '#f2f2f2'}]}>
+                <DatePickerIOS
+                    date = {new Date(tempProjectEndDate)}
+                    onDateChange = {this._onProjectEndDateChange.bind(this)}
+                    mode = 'date'
+                />
+            </View>
+            <View style = {[s.button, s.borderTop, s.borderBottom]}>
+                <Button
+                    title = 'Submit'
+                    onPress = {() => this._onUpdateProject({
+                        update:{
+                            projectEndDate: tempProjectEndDate,
+                        }
+                    })}
+                />
+            </View>
+            </View>
+        );
+    }
+
+    _renderStartDatePicker = () => {
+        let {tempProjectStartDate} = this.state;
+        return (
+            <View>
+            <View style = {[{backgroundColor: '#f2f2f2'}]}>
+                <DatePickerIOS
+                    date = {new Date(tempProjectStartDate)}
+                    onDateChange = {this._onProjectStartDateChange.bind(this)}
+                    mode = 'date'
+                />  
+            </View>
+            <View style = {[s.button, s.borderTop, s.borderBottom]}>
+                <Button
+                    title = 'Submit'
+                    onPress = {() => this._onUpdateProject({
+                        update:{
+                            projectStartDate: tempProjectStartDate,
+                        }
+                    })}
+                />
+            </View>
+            </View>
+        );
+    }
+
     render() {
         let {isLoading, isRefreshing} = this.state;
         if(isLoading) {
@@ -205,25 +291,13 @@ export default class ProjectDeatail extends Component {
 			);
         }
         let {project, ownerProfile, showStartDatePicker, showMembers,
-            showEndDatePicker, showEvents,} = this.state;
+            showEndDatePicker, showEvents} = this.state;
+
         let projectStartDate = new Date(project.projectStartDate);
         let projectEndDate = new Date(project.projectEndDate);
 
-        let startDatePicker = showStartDatePicker ? 
-        <View style = {{backgroundColor: '#f2f2f2'}}><DatePickerIOS
-                date = {new Date(project.projectStartDate)}
-                onDateChange = {this._onProjectStartDateChange.bind(this)}
-                mode = 'date'
-                maxDate = {new Date(project.projectEndDate)}
-        /></View> : <View></View>;
-
-        let endDatePicker = showEndDatePicker ? 
-        <View style = {{backgroundColor: '#f2f2f2'}}><DatePickerIOS
-                date = {new Date(project.projectEndDate)}
-                onDateChange = {this._onProjectEndDateChange.bind(this)}
-                mode = 'date'
-                minDate = {new Date(project.projectStartDate)}
-        /></View> : <View></View>;
+        let startDatePicker = this._renderStartDatePicker();
+        let endDatePicker = this._renderEndDatePicker();
 
         let members = showMembers ? this._renderMembers() : null;
         let membersArrow = showMembers ? arrowUp : arrowDown;
@@ -246,7 +320,8 @@ export default class ProjectDeatail extends Component {
             </View>
             {/* project owner */}
             <TouchableWithoutFeedback>
-                <View style = {[s.contentContainer, s.borderBottom]}>
+            <View style = {[s.listContainer, s.borderBottom]}>
+                <View style = {[s.contentContainer]}>
                     <Text style = {cs.normalText}>
                     Project Owner
                     </Text>
@@ -254,6 +329,7 @@ export default class ProjectDeatail extends Component {
                     {ownerProfile.userFirstname + ' '+ ownerProfile.userLastname}
                     </Text>
                 </View>
+            </View>
             </TouchableWithoutFeedback>
             {/* start date */}
             <TouchableWithoutFeedback
@@ -261,14 +337,14 @@ export default class ProjectDeatail extends Component {
                     showStartDatePicker: ~showStartDatePicker
                 })}
             >
-                <View style = {[s.dateContainer, s.borderBottom]}>
+                <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
                     <Text style = {cs.normalText}>Start Date</Text>
                     <Text style = {cs.h5}>{projectStartDate.toDateString()}</Text>
                 </View>
-                {startDatePicker}
                 </View>
             </TouchableWithoutFeedback>
+            {showStartDatePicker ? startDatePicker : null}
             {/* end date */}
             <TouchableWithoutFeedback
                 onPress = {() => this.setState({
@@ -280,9 +356,9 @@ export default class ProjectDeatail extends Component {
                     <Text style = {cs.normalText}>End Date</Text>
                     <Text style = {cs.h5}>{projectEndDate.toDateString()}</Text>
                 </View>
-                {endDatePicker}
                 </View>
             </TouchableWithoutFeedback>
+            {showEndDatePicker ? endDatePicker : null}
             {/* Members */}
             <TouchableWithoutFeedback
                 onPress = {() => this.setState({
@@ -335,13 +411,15 @@ const s = StyleSheet.create({
         borderTopColor: '#e6e6e6',
     },
 	contentContainer: {
-        padding: 20,
-        width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     listContainer: {
-        width: '100%',
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingRight: 20,
+        marginLeft: '5%',
+        width: '95%',
         flexDirection: 'column',
     },
 	scrollContainer:{

@@ -22,6 +22,28 @@ async function isOwner (projectId, userId){
 	return true;
 }
 
+// check ProjectDB -> Projects
+async function isOwner2 (projectId, userId){
+	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
+	var project = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (project.length > 1){
+		throw "Multiple projects with same projectId, something's wrong";
+	} else if (project.length == 0){
+		throw "projectId " + projectId + " does not exist in Projects table";
+	}
+
+	if (project[0].projectOwnerId != userId){
+		// this change make it sense
+		return false;
+		// throw  'userId ' + userId + ' is not the owner of projectId ' + projectId;
+	}
+	return true;
+}
+
 async function putEventOwner (eventId, event){
 	for (var x in event){
 		var query = "UPDATE Events SET " + x + " = '" + event[x] + "' WHERE eventId = '" + eventId + "'";
@@ -100,7 +122,11 @@ async function deleteEvents (eventId){
 }
 
 async function isUserInProject (projectId, userId){
-	var memberId = await getMemberId(projectId);
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
 
 	for (var i = 0; i < memberId.length; i++){
 		if (memberId[i] == userId){
@@ -114,6 +140,43 @@ async function isUserInProject (projectId, userId){
 		throw "userId " + userId + " does not belong to projectId " + projectId;
 	}
 }
+
+async function isUserInProject2 (projectId, userId){
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < memberId.length; i++){
+		if (memberId[i] == userId){
+			return true;
+		}
+	}
+
+	try{
+		return (await isOwner2(projectId, userId));
+	} catch (error){
+		throw "userId " + userId + " does not belong to projectId " + projectId;
+	}
+}
+
+async function isMemberInProject (projectId, userId){
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < memberId.length; i++){
+		if (memberId[i] == userId){
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 async function getProject (projectId){
 	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
@@ -179,7 +242,7 @@ async function getMemberId (projectId){
 	})
 
 	if (memberId.length == 0){
-		throw "projectId" + projectId + "does not exist in Membership table";
+		throw "projectId " + projectId + " does not exist in Membership table";
 	}
 
 	var memberIdArr = [];
@@ -280,11 +343,78 @@ async function deleteProject (projectId){
 
 }
 
+async function addUserInEvents (eventIds, userId){
+	for (var x in eventIds){
+		var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + x + "', '" + userId + "')";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+
+		if (result.affectedRows == 0){
+			throw "Err in ProjectDB: Table MemberInEvents could not found";
+		}
+	}
+}
+
+async function deleteUserInEventsAll (userId){
+	var query = "DELETE FROM MemberInEvents WHERE userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+}
+
+async function deleteUserInEvents (events, userId){
+	for (var x in eventIds){
+		var query = "DELETE FROM MemberInEvents WHERE eventId = '" + x + "' AND userId = '" + userId + "'";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+
+		if (result.affectedRows == 0){
+			throw "Err in ProjectDB: Table MemberInEvents fails";
+		}
+	}
+
+}
+
+async function addUserInInviteList (projectId, userId){
+	var query = "INSERT INTO InviteList (projectId, userId) VALUES ('" + x + "', '" + userId + "')";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		throw "Err in ProjectDB: Table MemberInEvents could not found";
+	}
+
+}
+
+async function deleteUserInInviteList (projectId, userId){
+	var query = "DELETE FROM InviteList WHERE projectId = '" + projectId+ "' AND userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		throw "The entry could not be found";
+	}
+
+}
+
 
 module.exports = {
 	isOwner,
+	isOwner2,
 	putEventOwner,
 	isUserInProject,
+	isUserInProject2,
+	isMemberInProject,
 	getProject,
 	getEvents,
 	getMemberId,
@@ -293,4 +423,10 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	addUserInEvents,
+	deleteUserInEvents,
+	deleteUserInEventsAll,
+	addUserInInviteList,
+	deleteUserInInviteList,
+
 }
