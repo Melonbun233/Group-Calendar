@@ -63,6 +63,27 @@ export default class GCNetwork extends Component {
 		}
 	}
 
+	static async updateProject(projectId, userId, update) {
+		let url = config.server.concat('/project');
+		try {
+			let response = await fetch (url, {
+				method: 'PUT',
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					projectId,
+					userId,
+					update
+				})
+			})
+			return response.status;
+		} catch (error) {
+			throw Error('unable to update project');
+		}
+	}
+
 
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
@@ -232,6 +253,21 @@ export default class GCNetwork extends Component {
 			return response.status;
 		} catch (error) {
 			throw Error('unable to create user');
+		}
+	}
+
+	static async createProject(userId, project) {
+		let url = config.server.concat('/project');
+		try {
+			let response = await fetch (url, {
+				method : 'POST',
+				headers: {"Content-Type": "application/json"},
+				credentials : 'include',
+				body: JSON.stringify({userId, project}),
+			})
+			return response.status;
+		} catch (error) {
+			throw Error('unable to create project');
 		}
 	}
 
