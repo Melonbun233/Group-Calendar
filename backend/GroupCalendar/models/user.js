@@ -283,10 +283,15 @@ async function getInvitingProjects (userId){
 	})
 
 	if (invitingProjects.length == 0){
-		throw "projectId" + projectId + "does not exist in Membership table";
+		throw "UserId" + userId + "does not exist in InviteList table";
 	}
 
-	return invitingProjects;
+	var projectIds = [];
+	for (var i = 0; i < invitingProjects.length; i++){
+		projectIds.push(invitingProjects[i].projectId);
+	}
+
+	return projectIds;
 }
 
 
