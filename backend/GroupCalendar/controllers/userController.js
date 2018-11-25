@@ -82,6 +82,7 @@ async function profileUpdate (req, res) {
 async function getProjectId (req, res){
 	try{
 		var projectId = await User.getProjectId(req.param('userId'));
+		console.log(projectId);
 		return res.status(200).json({projectId});
 	} catch (error) {
 		return res.status(400).json({error});
