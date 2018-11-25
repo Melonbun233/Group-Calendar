@@ -293,18 +293,7 @@ async function createProject (project, userId){
 		throw "Creating project was not successful, something wrong with ProjectDB";
 	}
 
-	var projectId = result.insertId;
-
-	query = "INSERT INTO Membership (projectId, userId) VALUES (" + projectId + ", " + userId + ")";
-	result = await ProjectDB.query(query)
-	.catch (error => {
-		throw error;
-	})
-	if (result.affectedRows == 0){
-		throw "Adding owner to Membership was not successful, something wrong with ProjectDB";
-	}
-
-	return projectId;
+	return result.insertId;
 }
 
 async function deleteProject (projectId){

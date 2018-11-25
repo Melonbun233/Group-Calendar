@@ -20,8 +20,16 @@ const Project = require('../models/project');
  * isUserInInviteList
  */
 
-/*------------mocking user---------------*/
-// jest.mock('../../models/user');
+const isMemberInProject = Project.isMemberInProject;
+const addUserInEvents = Project.addUserInEvents;
+const deleteUserInEvents = Project.deleteUserInEvents;
+const deleteUserInEventsAll = Project.deleteUserInEventsAll;
+const isOwner2 = Project.isOwner2;
+const isUserInProject2 = Project.isUserInProject2;
+const addUserInInviteList = Project.addUserInInviteList;
+const deleteUserInInviteList = Project.deleteUserInInviteList;
+
+const isUserInInviteList = User.isUserInInviteList;
 
 /**
  * Test List:
@@ -73,6 +81,7 @@ describe('Testing addEventMember', () => {
 
 	})
 })
+
 describe('Testing verify', () => {
 
 	test('Mock test, true', async () => {
@@ -94,7 +103,7 @@ describe('Testing verify', () => {
 	
 })
 
-function mockVerify(isVerified){
+function mockisMemberInProject(isVerified){
 	if (isVerified){
 		// console.log('mockVerify: true');
 		Gverify.verify = jest.fn().mockImplementationOnce(() => {
@@ -108,7 +117,7 @@ function mockVerify(isVerified){
 	}
 }
 
-function mockGetInfo(isPassed, isFound){
+function mockaddUserInEvents(isPassed, isFound){
 	if (isPassed){
 		if (isFound){
 			User.getInfo = jest.fn().mockImplementationOnce(() => {
