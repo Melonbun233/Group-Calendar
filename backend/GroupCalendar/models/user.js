@@ -277,7 +277,7 @@ async function isUserInInviteList (projectId, userId){
 
 async function getInvitingProjects (userId){
 	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
-	var invitingProjects = await ProjectDB.query(query)
+	var invitingProjects = await db.query(query)
 	.catch ( error => {
 		throw error;
 	})
@@ -310,5 +310,6 @@ module.exports = {
 	emailExist,
 
 	isUserInInviteList,
+	getInvitingProjects,
 
 }
