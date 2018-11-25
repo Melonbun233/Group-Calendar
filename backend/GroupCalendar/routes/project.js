@@ -112,13 +112,23 @@ router.delete('/', function(req, res){
 });
 
 /**
- * DELETE: 
+ * POST: 
  * req: projectId, userId, invitedId
  *
  * res: end
  */
 router.post('/invite', function(req, res){
 	projectController.inviteUser(req, res);
+});
+
+/**
+ * DELETE: 
+ * req: projectId, userId, invitedId
+ *
+ * res: end
+ */
+router.delete('/invite', function(req, res){
+	projectController.deleteInvitedUser(req, res);
 });
 
 

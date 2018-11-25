@@ -1,4 +1,5 @@
 var Project = require('../models/project');
+var User = require('../models/project');
 
 async function putEventOwner (req, res) {
 	try{
@@ -116,7 +117,7 @@ async function deleteProject (req, res){
 	}
 }
 /**
- * putEventMember will only accept the req from project members. Owner could not use this function
+ * addEventMember will only accept the req from project members. Owner could not use this function
  */
 
  async function addEventMember (req, res){
@@ -243,6 +244,38 @@ async function inviteUser (req, res){
 
 }
 
+async function deleteInvitedUser (req, res){
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	var invitedId = req.body.invitedId;
+
+	//this part is optional
+	try {
+		if(!(await Project.isOwner2(projectId, userId))){
+			return res.status(400).send('Only Project Owner can delete invited user');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		if(!(await User.isUserInInviteList(projectId, invitedId))){
+			return res.status(400).send('This user is not in the InvitedList');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		await Project.deleteUserInInviteList(projectId, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+
+}
+
 
 
 
@@ -255,7 +288,7 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
-	putEventMember,
+	addEventMember,
 	deleteEventMember,
 	deleteEventMemberAll,
 	inviteUser,
