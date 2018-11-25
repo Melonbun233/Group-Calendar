@@ -115,6 +115,137 @@ async function deleteProject (req, res){
 		res.status(400).json({error});
 	}
 }
+/**
+ * putEventMember will only accept the req from project members. Owner could not use this function
+ */
+
+ async function addEventMember (req, res){
+ 	var projectId = req.body.projectId;
+ 	var userId = req.body.userId;
+ 	var eventIds = req.body.eventId;
+ 	var isValidMember;
+
+ // 	try {
+ // 		await Project.isUserInProject(projectId, userId);
+ // 	} catch (error) {
+ // 		return res.status(400).json({error});
+ // 	}
+
+	// // this part is optional if owner could vote
+	// try {
+	// 	isValidMember = !(await Project.isOwner2(projectId, userId));
+	// } catch (error) {
+	// 	return res.status(400).json({error});
+	// }
+
+	try {
+ 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 	} catch (error) {
+ 		return res.status(400).json({error});
+ 	}
+
+
+	if(!isValidMember) {
+		return res.status(400).send('This user is not a valid member');
+	}
+
+	try {
+		await Project.addUserInEvents(eventIds, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+
+}
+
+async function deleteEventMember (req, res){
+ 	var projectId = req.body.projectId;
+ 	var userId = req.body.userId;
+ 	var eventIds = req.body.userId;
+ 	var isValidMember;
+
+ 	try {
+ 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 	} catch (error) {
+ 		return res.status(400).json({error});
+ 	}
+
+	if(!isValidMember) {
+		return res.status(400).send('This user is not a valid member');
+	}
+
+	try {
+		await Project.deleteUserInEvents(eventIds, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+
+}
+
+async function deleteEventMemberAll (req, res){
+ 	var projectId = req.body.projectId;
+ 	var userId = req.body.userId;
+ 	var isValidMember;
+
+ 	try {
+ 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 	} catch (error) {
+ 		return res.status(400).json({error});
+ 	}
+
+	if(!isValidMember) {
+		return res.status(400).send('This user is not a valid member');
+	}
+
+	try {
+		await Project.deleteUserInEventsAll(userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+
+}
+
+
+async function inviteUser (req, res){
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	var invitedId = req.body.invitedId;
+
+	//this part is optional
+	try {
+		if(!(await Project.isOwner2(projectId, userId))){
+			return res.status(400).send('Only Project Owner can invite');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		if(!(await Project.isUserInProject2(projectId, invitedId))){
+			return res.status(400).send('Invited user has been in the project');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		await Project.addUserInInviteList(projectId, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+
+}
+
+
+
+
 
 module.exports = {
 	putEventOwner,
@@ -124,5 +255,9 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
-	// inviteUser
+	putEventMember,
+	deleteEventMember,
+	deleteEventMemberAll,
+	inviteUser,
+	deleteInvitedUser
 }

@@ -19,6 +19,36 @@ router.put('/event/owner', function(req, res){
 }); //done
 
 /**
+ * DELETE: 
+ * req: projectId, eventId, userId
+ *
+ * res: N/A
+ */
+router.delete('/event/member', function(req, res){
+	projectController.deleteEventMember(req, res);
+});
+
+/**
+ * DELETE: 
+ * req: projectId, userId
+ *
+ * res: N/A
+ */
+router.delete('/event/member/all', function(req, res){
+	projectController.deleteEventMemberAll(req, res);
+});
+
+/**
+ * POST: 
+ * req: projectId, eventId, userId
+ *
+ * res: N/A
+ */
+router.post('/event/member', function(req, res){
+	projectController.addEventMember(req, res);
+});
+
+/**
  * POST: 
  * req: projectId, userId, event(json)
  *

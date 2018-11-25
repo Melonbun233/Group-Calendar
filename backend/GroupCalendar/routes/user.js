@@ -23,5 +23,8 @@ router.put('/profile',
 router.get('/projects',
 	userController.getProjectId);
 
+router.get('/notification',
+	userController.getNotification);
+
 
 module.exports = router;
