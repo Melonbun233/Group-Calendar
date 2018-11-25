@@ -104,5 +104,6 @@ module.exports = {
 	userDelete,
 	profileGet,
 	profileUpdate,
-	getProjectId
+	getProjectId,
+	getNotification
 }

@@ -286,12 +286,12 @@ async function getInvitingProjects (userId){
 		throw "UserId" + userId + "does not exist in InviteList table";
 	}
 
-	var projectIds = [];
-	for (var i = 0; i < invitingProjects.length; i++){
-		projectIds.push(invitingProjects[i].projectId);
-	}
+	// var projectIds = [];
+	// for (var i = 0; i < invitingProjects.length; i++){
+	// 	projectIds.push(invitingProjects[i].projectId);
+	// }
 
-	return projectIds;
+	return invitingProjects;
 }
 
 
