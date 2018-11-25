@@ -241,10 +241,6 @@ async function getMemberId (projectId){
 		throw error;
 	})
 
-	if (memberId.length == 0){
-		throw "projectId " + projectId + " does not exist in Membership table";
-	}
-
 	var memberIdArr = [];
 	for (var i = 0; i < memberId.length; i++){
 		memberIdArr.push(memberId[i].userId);
