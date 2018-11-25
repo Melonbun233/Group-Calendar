@@ -242,7 +242,7 @@ async function getMemberId (projectId){
 	})
 
 	if (memberId.length == 0){
-		throw "projectId" + projectId + "does not exist in Membership table";
+		throw "projectId " + projectId + " does not exist in Membership table";
 	}
 
 	var memberIdArr = [];
