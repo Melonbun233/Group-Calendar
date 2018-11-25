@@ -143,7 +143,7 @@ async function deleteProject (req, res){
 	// }
 
 	try {
- 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
  		return res.status(400).json({error});
  	}
@@ -170,7 +170,7 @@ async function deleteEventMember (req, res){
  	var isValidMember;
 
  	try {
- 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
  		return res.status(400).json({error});
  	}
@@ -195,7 +195,7 @@ async function deleteEventMemberAll (req, res){
  	var isValidMember;
 
  	try {
- 		isValidMember = await Project.isMemberInProject(projectId, userId);
+ 		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
  		return res.status(400).json({error});
  	}
