@@ -8,8 +8,8 @@ var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
 //var sqlinjection = require('sql-injection');
-var session = require('client-sessions');
-// var session = require('express-sessions');
+// var session = require('client-sessions');
+var session = require('express-session');
 
 var Promise = require('promise'); // npm install promise...
 
@@ -60,16 +60,15 @@ app.use(express.json());
 //app.use(sqlinjection);
 
 app.use(session({
-	cookieName: 'session',
+	name: 'session',
 	secret: 'secret key',
 	//duration: how long the session will live in milliseconds
 	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
-  duration: 60 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
-  activeDuration: 30* 1000,
   cookie: {
     httpOnly: false,
+    maxAge: 20 * 1000,
   }
 }));
 

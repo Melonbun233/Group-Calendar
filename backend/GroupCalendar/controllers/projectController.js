@@ -239,48 +239,48 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try{
 		var result = await User.getInfo(invitedEmail);
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 	console.log(result);
 
 	if (result == null){
 		console.log('Could not find the user');
-			return res.status(400).send('Could not find the user');
+			return res.status(404).send('Could not find the user');
 		}
 	var invitedId = result.userId;
 
 	try {
 		if(await Project.isUserInInviteList(projectId, invitedId)){
-			return res.status(200).json();;
+			return res.status(302).json();;
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	
 	try {
 		if(!(await Project.isUserInProject2(projectId, invitedId))){
 			console.log('Invited user has been in the project');
-			return res.status(400).send('Invited user has been in the project');
+			return res.status(302).send('Invited user has been in the project');
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try {
 		await Project.addUserInInviteList(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	return res.status(200).json();
@@ -299,7 +299,7 @@ async function deleteInvitedUser (req, res){
 			return res.status(400).send('Only Project Owner can delete invited user');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	// try{
@@ -315,16 +315,16 @@ async function deleteInvitedUser (req, res){
 
 	try {
 		if(!(await Project.isUserInInviteList(projectId, invitedId))){
-			return res.status(400).send('This user is not in the InvitedList');
+			return res.status(404).send('This user is not in the InvitedList');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	return res.status(200).json();
@@ -338,14 +338,14 @@ async function deleteMembers(req, res){
 			return res.status(400).send('Only Project Owner can delete members');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.userId);
 		res.status(200).end();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).json({error});
 	}
 }
 
