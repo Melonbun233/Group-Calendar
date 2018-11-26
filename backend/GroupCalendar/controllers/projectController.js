@@ -247,6 +247,15 @@ async function inviteUser (req, res){
 			return res.status(400).send('Could not find the user');
 		}
 	var invitedId = result.userId;
+
+	try {
+		if(await User.isUserInInviteList(projectId, invitedId)){
+			return res.status(200).json();;
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
 	
 	try {
 		if(!(await Project.isUserInProject2(projectId, invitedId))){

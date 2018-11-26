@@ -346,11 +346,11 @@ async function addUserInEvents (projectId, eventIds, userId){
 	} catch(error) {
 		throw error;
 	}
-	console.log(isDup);
+	// console.log(isDup);
 
 	for (var i = 0; i < eventIds.length; i++){
 
-		console.log(eventIds[i]);
+		// console.log(eventIds[i]);
 
 		try {
 			var isValid = await isEventInProject(projectId, eventIds[i]); 
@@ -358,7 +358,7 @@ async function addUserInEvents (projectId, eventIds, userId){
 			throw error;
 		}
 		
-		console.log(isValid);
+		// console.log(isValid);
 
 		if (isDup == false && isValid == true){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
@@ -383,7 +383,7 @@ async function deleteUserInEventsAll (projectId, userId){
 	})
 
 	for (var i = 0; i < result.length; i++){
-		console.log(result[i].eventId);
+		// console.log(result[i].eventId);
 
 		query = "DELETE FROM MemberInEvents WHERE eventId = '" + result[i].eventId + "' AND userId = '" + userId[i] + "'";
 		await ProjectDB.query(query)
@@ -394,7 +394,7 @@ async function deleteUserInEventsAll (projectId, userId){
 
 }
 
-async function deleteUserInEvents (eventIds, userId){
+async function deleteUserInEvents (projectId, eventIds, userId){
 	for (var i = 0; i < eventIds.length; i++){
 		try {
 			var isValid = await isEventInProject(projectId, eventIds[i]); 
@@ -417,7 +417,7 @@ async function deleteUserInEvents (eventIds, userId){
 }
 
 async function addUserInInviteList (projectId, userId){
-	var query = "INSERT INTO InviteList (projectId, userId) VALUES ('" + x + "', '" + userId + "')";
+	var query = "INSERT INTO InviteList (projectId, userId) VALUES ('" + projectId + "', '" + userId + "')";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
 		throw error;
@@ -430,7 +430,7 @@ async function addUserInInviteList (projectId, userId){
 }
 
 async function deleteUserInInviteList (projectId, userId){
-	var query = "DELETE FROM InviteList WHERE projectId = '" + projectId+ "' AND userId = '" + userId + "'";
+	var query = "DELETE FROM InviteList WHERE projectId = '" + projectId + "' AND userId = '" + userId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
 		throw error;
@@ -503,7 +503,7 @@ async function isEventInProject (projectId, eventId){
 		throw error;
 	});
 
-	console.log(result);
+	// console.log(result);
 
 	if (result.affectedRows == 0){
 		return false;
