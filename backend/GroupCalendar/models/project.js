@@ -427,8 +427,9 @@ async function isUserInEvents (eventId, userId){
 	console.log(result);
 
 	for(var i = 0; i < result[0].length; i++){
-		console.log(result[i]);
+		console.log(result[i].userId);
 		if(result[i].userId == userId){
+			console.log('dup');
 			return true;
 		}
 	}
