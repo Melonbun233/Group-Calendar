@@ -36,13 +36,14 @@ export default class CreateEvent extends Component {
         let {navigation} = this.props;
         const profile = navigation.getParam('profile', null);
         const project = navigation.getParam('project', null);
+        const refreshProject = navigation.getParam('refreshProject', null);
 
         let date = new Date();
         date.setMinutes(0);
         date.setSeconds(0);
         date.setMilliseconds(0);
         date = date.toJSON();
-        if (profile && project) {
+        if (profile && project && refreshProject) {
             let event = {
                 eventStartTime: date,
                 eventEndTime: date,
@@ -57,6 +58,7 @@ export default class CreateEvent extends Component {
                 event,
                 profile,
                 isLoading: false,
+                refreshProject,
             })
         } else {
             Alert.alert('Something went wrong');
@@ -127,6 +129,7 @@ export default class CreateEvent extends Component {
                 let status = await Network.createEvent(project.projectId, profile.userId, event);
                 if (status == 200) {
                     Alert.alert('Success!');
+                    this.state.refreshProject(false);
                     this.props.navigation.goBack();
                 } else {
                     Alert.alert('Internet Error' + status.toString());

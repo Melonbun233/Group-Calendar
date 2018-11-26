@@ -104,19 +104,17 @@ export default class GCNetwork extends Component {
     
     static async fetchProject(projectId, userId) {
 		try {
-            let project = {};
-			switch (projectId) {
-                case 1: project = allProjects[0];
-                break;
-                case 2: project = allProjects[1];
-                break;
-                case 3: project = allProjects[2];
-                break;
-                case 4: project = allProjects[3];
+            for (let key in allProjects) {
+                let project = allProjects[key];
+                if (project.projectId == projectId) {
+                    return {
+                        status: 200,
+                        project,
+                    };
+                }
             }
             return {
-                status: 200,
-                project,
+                status: 0,
             };
 		} catch (error) {
 			throw Error('unable to fetch project');
@@ -202,10 +200,22 @@ export default class GCNetwork extends Component {
     
     static async createEvent(projectId, userId, event) {
         try {
-            let project = allProjects[projectId - 1];
+            var project = null;
+            var key;
+            for (key in allProjects) {
+                let value = allProjects[key];
+                if (value.projectId == projectId) {
+                    project = value;
+                    break;
+                }
+            }
+            if (!project) {
+                return 0;
+            }
             event.eventId = project.events.length + 1;
             event.chosenId = [];
             project.events.push(event);
+            allProjects[key] = project;
             return 200;
         } catch (error) {
             throw Error('unable to create event');  
@@ -214,13 +224,24 @@ export default class GCNetwork extends Component {
 
     static async dropEvent(projectId, eventId, userId) {
 		try {
-            let project = allProjects[projectId - 1];
-            for (var key in project.events) {
-                let event = project.events[key];
+            var project = null;
+            var key;
+            for (key in allProjects) {
+                let value = allProjects[key];
+                if (value.projectId == projectId){
+                    project = value;
+                    break;
+                }
+            }
+            if (!project) {
+                return 0;
+            }
+            for (var eventKey in project.events) {
+                let event = project.events[eventKey];
                 if (event.eventId == eventId) {
                     let filtered = event.chosenId.filter(function(e){return e != userId});
-                    project.events[key].chosenId = filtered;
-                    allProjects[projectId-1] = project;
+                    project.events[eventKey].chosenId = filtered;
+                    allProjects[key] = project;
                     break;
                 }
             }
@@ -232,15 +253,6 @@ export default class GCNetwork extends Component {
 
 	static async voteEvent(projectId, eventId, userId){
 		try {
-            let project = allProjects[projectId - 1];
-            for (var key in project.events) {
-                let event = project.events[key];
-                if (event.eventId == eventId) {
-                    project.events[key].chosenId.push(parseInt(userId));
-                    allProjects[projectId - 1] = project;
-                    break;
-                }
-            }
 			return 200;
 		} catch (error) {
 			throw Error('unable to vote events');
@@ -275,12 +287,23 @@ export default class GCNetwork extends Component {
     
     static async deleteEvent(projectId, eventId, userId) {
 		try {
-            let project = allProjects[projectId - 1];
+            let project = null;
+            var key;
+            for (key in allProjects) {
+                let value = allProjects[key];
+                if (value.projectId == projectId){
+                    project = value;
+                    break;
+                }
+            }
+            if (!project) {
+                return 0;
+            }
             for (var key in project.events) {
                 let event = project.events[key];
                 if (event.eventId == eventId) {
                     project.events.splice(key, 1);
-                    allProjects[projectId - 1] = project;
+                    allProjects[key] = project;
                     break;
                 }
             }
@@ -289,6 +312,27 @@ export default class GCNetwork extends Component {
 			throw Error('unable to drop events');
 		}
     }
+
+    static async deleteProject(projectId, userId) {
+		try {
+            let project = null;
+            var key;
+            for (key in allProjects) {
+                let value = allProjects[key];
+                if (value.projectId == projectId){
+                    project = value;
+                    break;
+                }
+            }
+            if (!project) {
+                return 0;
+            }
+            allProjects.splice(key, 1);
+			return 200;
+		} catch (error) {
+			throw Error('unable to delete the project');
+		}
+	}
     
     static async inviteUser(projectId, userId, invitedEmail) {
 		let url = config.server.concat('/project/invite');
@@ -301,12 +345,23 @@ export default class GCNetwork extends Component {
     
     static async deleteMember(projectId, memberId, userId) {
 		try {
-            let project = allProjects[projectId - 1];
-            for (let key in project.memberId) {
-                let id = project.memberId[key];
+            let project = null;
+            var key;
+            for (key in allProjects) {
+                let value = allProjects[key];
+                if (value.projectId == projectId){
+                    project = value;
+                    break;
+                }
+            }
+            if (!project) {
+                return 0;
+            }
+            for (let memberKey in project.memberId) {
+                let id = project.memberId[memberKey];
                 if (id == memberId) {
-                    project.memberId.splice(key, 1);
-                    allProjects[projectId - 1] = project;
+                    project.memberId.splice(memberKey, 1);
+                    allProjects[key] = project;
                     break;
                 }
             }

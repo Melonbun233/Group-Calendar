@@ -34,9 +34,10 @@ export default class ProjectDeatail extends Component {
         let {navigation} = this.props;
         const projectId = navigation.getParam('projectId', null);
         const profile = navigation.getParam('profile', null);
+        const refreshAll = navigation.getParam('refreshAll', null);
         var project;
         try {
-            if (projectId && profile) {
+            if (projectId && profile && refreshAll) {
                 let projectResponse = await Network.fetchProject(projectId, profile.userId);
                 if (projectResponse.status == 200) {
                     project = projectResponse.project;
@@ -52,6 +53,7 @@ export default class ProjectDeatail extends Component {
                         profile,
                         tempProjectStartDate: project.projectStartDate,
                         tempProjectEndDate: project.projectEndDate,
+                        refreshAll,
                     });
                     await this._fetchMembers();
 
@@ -356,7 +358,10 @@ export default class ProjectDeatail extends Component {
 
     _onCreateEvent = () => {
         let {profile, project} = this.state;
-        this.props.navigation.push('CreateEvent', {profile, project});
+        this.props.navigation.push('CreateEvent', {
+            profile, project, 
+            refreshProject: this._onRefresh.bind(this),
+        });
     }
 
     _onDeleteMember = async (member, userId) => {
@@ -455,6 +460,23 @@ export default class ProjectDeatail extends Component {
         }
     }
 
+    _onDeleteProject = async () => {
+        let {project, profile} = this.state;
+        try {
+            let status = await Network.deleteProject(project.projectId, profile.userId);
+            if (status == 200) {
+                this.state.refreshAll();
+                this.props.navigation.goBack();
+            }
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
+    }
+    
+    _onLeaveProject = async () => {
+
+    }
+
     _onUpdateProject = async (update) => {
         let {project, profile} = this.state;
         try {
@@ -533,7 +555,7 @@ export default class ProjectDeatail extends Component {
 			);
         }
         let {project, ownerProfile, showStartDatePicker, showMembers,
-            showEndDatePicker, showEvents} = this.state;
+            showEndDatePicker, showEvents, isOwner} = this.state;
 
         let projectStartDate = new Date(project.projectStartDate);
         let projectEndDate = new Date(project.projectEndDate);
@@ -629,6 +651,52 @@ export default class ProjectDeatail extends Component {
                 </View>
             </TouchableWithoutFeedback>
             {events}
+            {isOwner ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Delete Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Delete Project',
+                            'Are you sure you want to delete this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'DELETE',
+                                    onPress: () => this._onDeleteProject(),
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
+            {!isOwner ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Leave Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Leave Project',
+                            'Are you sure you want to leave this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'LEAVE',
+                                    onPress: () => this._onLeaveProject(),
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
             <View style = {cs.empty}></View>
             </ScrollView>
         )
@@ -645,6 +713,10 @@ const arrowUp = (
 );
 
 const s = StyleSheet.create({
+    button: {
+		padding: 10,
+		alignItems: 'center',
+	},
     borderBottom: {
         borderBottomWidth: 1,
         borderBottomColor: '#e6e6e6',

@@ -424,6 +424,21 @@ export default class GCNetwork extends Component {
 		}
 	}
 
+	static async deleteProject(projectId, userId) {
+		let url = config.server.concat('/project');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to delete the project');
+		}
+	}
+
 	static async deleteMember(projectId, memberId, userId) {
 		memberId = [memberId];
 		let url = config.server.concat('/project/members');
