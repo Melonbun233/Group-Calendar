@@ -228,6 +228,8 @@ async function inviteUser (req, res){
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
+	console.log(invitedEmail);
+
 	//this part is optional
 	try {
 		if(!(await Project.isOwner2(projectId, userId))){
@@ -235,16 +237,18 @@ async function inviteUser (req, res){
 			return res.status(400).send('Only Project Owner can invite');
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({error});
 	}
 
 	try{
 		var result = await User.getInfo(invitedEmail);
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({error});
 	}
 	console(result);
-	
+
 	if (result == null){
 		console.log('Could not find the user');
 			return res.status(400).send('Could not find the user');
@@ -256,6 +260,7 @@ async function inviteUser (req, res){
 			return res.status(200).json();;
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({error});
 	}
 
@@ -266,12 +271,14 @@ async function inviteUser (req, res){
 			return res.status(400).send('Invited user has been in the project');
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({error});
 	}
 
 	try {
 		await Project.addUserInInviteList(projectId, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(400).json({error});
 	}
 
@@ -281,8 +288,9 @@ async function inviteUser (req, res){
 
 async function deleteInvitedUser (req, res){
 	
-	var invitedEmail = req.body.invitedEmail;
-	var invitedId;
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	var invitedId = req.body.invitedId;
 
 	//this part is optional
 	try {
@@ -293,16 +301,16 @@ async function deleteInvitedUser (req, res){
 		return res.status(400).json({error});
 	}
 
-	try{
-		var result = await User.getInfo(invitedEmail);
-	} catch (error) {
-		return res.status(400).json({error});
-	}
+	// try{
+	// 	var result = await User.getInfo(invitedEmail);
+	// } catch (error) {
+	// 	return res.status(400).json({error});
+	// }
 
-	if (result == null){
-			return res.status(400).send('Could not find the user');
-		}
-	var invitedId = result.userId;
+	// if (result == null){
+	// 		return res.status(400).send('Could not find the user');
+	// 	}
+	// var invitedId = result.userId;
 
 	try {
 		if(!(await Project.isUserInInviteList(projectId, invitedId))){
