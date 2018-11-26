@@ -395,7 +395,7 @@ export default class CreateEvent extends Component {
                     disabled = {this.state.isSubmitting}
                 />
             </View>
-
+            <View style = {cs.empty}></View>
             </ScrollView>
             </KeyboardAvoidingView>
         );
@@ -419,7 +419,7 @@ const s = StyleSheet.create({
         justifyContent: 'space-between',
     },
     button: {
-        padding: 10,
+        margin: 10,
     },
     listContainer: {
         paddingTop: 20,

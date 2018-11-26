@@ -78,7 +78,8 @@ export default class Project extends Component {
 
 	_onPressProject = (project) => {
 		let {profile} = this.state;
-		this.props.navigation.push('ProjectDetail', {project, profile});
+		let {projectId} = project;
+		this.props.navigation.push('ProjectDetail', {projectId, profile});
 	}
 
 	_renderItem({item}) {
@@ -113,7 +114,7 @@ export default class Project extends Component {
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large'/>
+					<ActivityIndicator size = 'large' animating = {false}/>
 				</View>
 			);
 		}
@@ -150,6 +151,7 @@ export default class Project extends Component {
 					onPress = {() => navigation.push('CreateProject', {profile})}
 				/>
 				</View>
+				<View style = {cs.empty}></View>
 			</ScrollView>
 		);
 	}
@@ -169,7 +171,7 @@ const s = StyleSheet.create({
 		flexDirection: 'row',
 		padding: 10,
 		borderBottomWidth: 1,
-		borderBottomColor: '#e6e6e6',
+		borderColor: '#e6e6e6',
 	},
 	projectContent: {
 		padding: 10,
@@ -182,4 +184,4 @@ const s = StyleSheet.create({
 		flex:1,
 		paddingRight: 30,
 	}
-})
+});

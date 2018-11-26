@@ -32,10 +32,18 @@ export default class ProjectDeatail extends Component {
 
     componentDidMount = async () => {
         let {navigation} = this.props;
-        const project = navigation.getParam('project', null);
+        const projectId = navigation.getParam('projectId', null);
         const profile = navigation.getParam('profile', null);
+        var project;
         try {
-            if (project && profile) {
+            if (projectId && profile) {
+                let projectResponse = await Network.fetchProject(projectId, profile.userId);
+                if (projectResponse.status == 200) {
+                    project = projectResponse.project;
+                } else {
+                    Alert.alert('Something went wrong');
+                    this.props.navigation.goBack();
+                }
                 let response =  await Network.searchProfile(project.projectOwnerId);
                 if (response.status == 200) {
                     this.setState({
@@ -54,6 +62,9 @@ export default class ProjectDeatail extends Component {
                     })
                     return;
                 }
+            } else {
+                Alert.alert('Something went wrong');
+                this.props.navigation.goBack();
             }
         } catch (error) {
             Alert.alert(error.toString());
@@ -86,6 +97,7 @@ export default class ProjectDeatail extends Component {
                     extraData: !extraData,
                 });
                 await this._fetchMembers();
+                await Network.fetchAllProjects(profile.userId);
             } else {
                 Alert.alert('Something went wrong');
             }
@@ -348,24 +360,43 @@ export default class ProjectDeatail extends Component {
     }
 
     _onDeleteMember = async (member, userId) => {
-        let {project} = this.state;
+        let {project, extraData} = this.state;
         let memberId = member.userId;
         try {
+            //for user experience, set state first
+            for (let key in project.memberId) {
+                let value = project.memberId[key];
+                if (value == memberId) {
+                    project.memberId.splice(key, 1);
+                    this.setState({project, extraData: !extraData});
+                    break;
+                }
+            }
+            //actually deleting the member
             let status = await Network.deleteMember(project.projectId, 
                 memberId, userId);
-            if (status == 200) {
-                await this._onRefresh(false);
-            } else {
+            if (status != 200) {
                 Alert.alert('Internet Error ' + status.toString());
             }
+            await this._onRefresh(false);
         } catch (error) {
             Alert.alert(error.toString());
         }
     }
 
     _onDeleteEvent = async (event, userId) => {
-        let {project} = this.state;
+        let {project, extraData} = this.state;
         try {
+            //for user experience, set state first
+            for (var key in project.events) {
+                let value = project.events[key];
+                if (value.eventId == event.eventId) {
+                    project.events.splice(key, 1);
+                    this.setState({project, extraData: !extraData});
+                    break;
+                }
+            }
+            //actually delete the project
             let status = await Network.deleteEvent(project.projectId, 
                 event.eventId, userId);
             if (status == 200) {
@@ -379,27 +410,46 @@ export default class ProjectDeatail extends Component {
     }
 
     _onVoteEvent = async (event, chosen, avail) => {
-        if (avail == 0) {
-            Alert.alert('This event is full');
-            return;
-        }
-        let {profile, project} = this.state;
+        let {profile, project, extraData} = this.state;
         try {
             var status;
             //unvote from this event
             if (chosen) {
+                //for user experience, update state first
+                for (var key in project.events) {
+                    let value = project.events[key];
+                    if (event.eventId == value.eventId){
+                        let filtered = event.chosenId.filter((e) => {
+                            return e != profile.userId});
+                        project.events[key].chosenId = filtered;
+                        this.setState({project, extraData: !extraData});
+                        break;
+                    }
+                }
                 status = await Network.dropEvent(project.projectId, 
                     event.eventId, profile.userId);
             } else {
                 //vote for this event
+                if (avail == 0) {
+                    Alert.alert('This event is full');
+                    return;
+                }
+                //for user experience, update state first
+                for (var key in project.events) {
+                    let value = project.events[key];
+                    if (event.eventId == value.eventId) {
+                        project.events[key].chosenId.push(parseInt(profile.userId));
+                        this.setState({project, extraData: !extraData});
+                        break;
+                    }
+                }
                 status = await Network.voteEvent(project.projectId,
                     event.eventId, profile.userId);
             }
-            if (status == 200) {
-                await this._onRefresh(false);
-            } else {
+            if (status != 200) {
                 Alert.alert('Internet Error ' + status.toString());
             }
+            await this._onRefresh(false);
         } catch (error) {
             Alert.alert(error.toString());
         }
@@ -411,6 +461,7 @@ export default class ProjectDeatail extends Component {
             let status = await Network.updateProject(
                 project.projectId, profile.userId, update);
             if (status == 200) {
+                Alert.alert('Success');
                 await this._onRefresh();
             } else {
                 Alert.alert('Internet Error ', status.toString());
@@ -434,11 +485,12 @@ export default class ProjectDeatail extends Component {
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
                     title = 'Submit'
-                    onPress = {() => this._onUpdateProject({
-                        update:{
+                    onPress = {() => {
+                        this._onUpdateProject({
                             projectEndDate: tempProjectEndDate,
-                        }
-                    })}
+                        });
+                        this.setState({showEndDatePicker: false});
+                    }}
                 />
             </View>
             </View>
@@ -459,11 +511,12 @@ export default class ProjectDeatail extends Component {
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
                     title = 'Submit'
-                    onPress = {() => this._onUpdateProject({
-                        update:{
+                    onPress = {() => {
+                        this._onUpdateProject({
                             projectStartDate: tempProjectStartDate,
-                        }
-                    })}
+                        });
+                        this.setState({showStartDatePicker: false})
+                    }}
                 />
             </View>
             </View>
@@ -475,7 +528,7 @@ export default class ProjectDeatail extends Component {
         if(isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large' animation = {false}/>
+					<ActivityIndicator size = 'large' animating = {false}/>
 				</View>
 			);
         }
@@ -576,6 +629,7 @@ export default class ProjectDeatail extends Component {
                 </View>
             </TouchableWithoutFeedback>
             {events}
+            <View style = {cs.empty}></View>
             </ScrollView>
         )
     }
@@ -654,5 +708,5 @@ const s = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         padding: 5,
-    }
+    },
 })

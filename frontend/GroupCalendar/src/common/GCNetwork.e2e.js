@@ -92,9 +92,9 @@ export default class GCNetwork extends Component {
 		}
 	}
 
-	static async fetchAllProjects(projectId, userId) {
+	static async fetchAllProjects(userId) {
 		try {
-            await this.fetchProjectList(1);
+            await this.fetchProjectList(userId);
             await Storage.setAllProjects(allProjects);
 			return 200;
 		} catch (error) {
@@ -120,6 +120,25 @@ export default class GCNetwork extends Component {
             };
 		} catch (error) {
 			throw Error('unable to fetch project');
+		}
+    }
+    
+    static async fetchAllInvitations(userId) {
+		try {
+            this.fetchInvitationList(userId);
+            await Storage.setAllInvitations(allProjects);
+			return 200;
+		} catch (error) {
+			throw error;
+		}
+	}
+
+	static async fetchInvitationList(userId) {
+		try {
+			await Storage.setInvitationList([1, 2, 3]);
+			return 200;
+		} catch(error) {
+			throw error;
 		}
 	}
 
@@ -295,6 +314,22 @@ export default class GCNetwork extends Component {
 		} catch (error) {
             Alert.alert(error.toString());
 			throw Error('unable to remove members');
+		}
+    }
+    
+    static async acceptInvitation(projectId, userId) {
+		try {
+			return 200;
+		} catch(error) {
+			throw Error('unable to accept the invitation');
+		}
+	}
+
+	static async rejectInvitation(projectId, userId) {
+		try {
+			return 200;
+		} catch (error) {
+			throw Error('unable to reject the invitation');
 		}
 	}
 }

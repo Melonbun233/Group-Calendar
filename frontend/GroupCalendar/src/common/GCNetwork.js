@@ -185,8 +185,8 @@ export default class GCNetwork extends Component {
 
 	//fetch all projects related to this user
 	static async fetchAllProjects(userId) {
+		var allProjects = [];
 		try {
-			var allProjects = [];
 			let response = await this.fetchProjectList(userId);
 			if (response.status == 200) {
 				let projectList = await Storage.getProjectList();
@@ -195,9 +195,7 @@ export default class GCNetwork extends Component {
 					if (response.status == 200) {
 						allProjects.push(response.project);
 					} else {
-						let json = await response.json();
-						Alert.alert(JSON.stringify(json));
-						break;
+						continue;
 					}
 				}
 				await Storage.setAllProjects(allProjects);
@@ -214,6 +212,63 @@ export default class GCNetwork extends Component {
 			throw error;
 		}
 	}
+
+	static async fetchAllInvitations(userId) {
+		var allInvitations = [];
+		try {
+			let response = await this.fetchInvitationList(userId);
+			Alert.alert(JSON.stringify(response));
+			if (response.status == 200) {
+				let invitationList = await Storage.getInvitationList();
+				for (let i = 0; i < invitationList.length; i ++) {
+					response = await this.fetchProject(invitationList[i], userId);
+					if (response.status == 200) {
+						allInvitations.push(response.project);
+					} else {
+						continue;
+					}
+				}
+				await Storage.setAllInvitations(allInvitations);
+				if (allInvitations.length != invitationList.length) {
+					return 0;
+				}
+				return 200;
+			} else {
+				await Storage.setAllInvitations(allInvitations);
+				return response.status;
+			}
+		} catch (error) {
+			await Storage.setAllInvitations(allInvitations);
+			throw error;
+		}
+	}
+
+	static async fetchInvitationList(userId) {
+		let url = config.server.concat('/user/notification' + '?userId=' + 
+				userId);
+		Alert.alert(url);
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				credentials : 'include',
+			});
+
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				Alert.alert(JSON.stringify(responseJson));
+				await Storage.setInvitationList(responseJson);
+			}
+			
+			return {status: response.status};
+		} catch(error) {
+			throw Error('unable to fetch invitation list');
+		}
+	}
+
+	
 
 	static async updateProfile(update, userId) {
 		let url = config.server.concat('/user/profile');
@@ -397,6 +452,36 @@ export default class GCNetwork extends Component {
 			return response.status;
 		} catch (error) {
 			throw Error('unable to invite user');
+		}
+	}
+
+	static async acceptInvitation(projectId, userId) {
+		let url = config.server.concat('/user/invite/accept');
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch(error) {
+			throw Error('unable to accept the invitation');
+		}
+	}
+
+	static async rejectInvitation(projectId, userId) {
+		let url = config.server.concat('/user/invite/decline');
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to reject the invitation');
 		}
 	}
 }

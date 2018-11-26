@@ -108,4 +108,7 @@ export default StyleSheet.create({
 	white: {
 		color: '#ffffff',
 	},
+	empty: {
+        height: 50,
+    },
 });

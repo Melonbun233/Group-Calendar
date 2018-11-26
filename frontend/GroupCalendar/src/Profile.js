@@ -255,6 +255,7 @@ export default class Profile extends Component {
 							/>
 						</View>
 					</View>
+					<View style = {cs.empty}></View>
 				</ScrollView>
 			</View> 
 		);

@@ -54,10 +54,45 @@ export default class Storage extends Component {
         }
     }
 
+    static async getInvitationList() {
+        let ret = null;
+        try {
+            let invitationList = await AsyncStorage.getItem('invitationList');
+            if (invitationList) {
+                ret = JSON.parse(invitationList);
+            }
+            return ret;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    static async getAllInvitations() {
+        let ret = null;
+        try {
+            let allInvitations = await AsyncStorage.getItem('allInvitations');
+            if (allInvitations) {
+                ret = JSON.parse(allInvitations);
+            }
+            return ret;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async setAllProjects(project) {
         try {
             await AsyncStorage.setItem('project',
                 JSON.stringify(project));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async setAllInvitations(allInvitations) {
+        try {
+            await AsyncStorage.setItem('allInvitations',
+                JSON.stringify(allInvitations));
         } catch (error) {
             throw error;
         }
@@ -84,6 +119,15 @@ export default class Storage extends Component {
     static async setSignInByGoogle(flag) {
         try {
             await AsyncStorage.setItem('signInByGoogle',flag);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async setInvitationList(invitationList) {
+        try {
+            await AsyncStorage.setItem('invitationList', 
+                JSON.stringify(invitationList));
         } catch (error) {
             throw error;
         }
