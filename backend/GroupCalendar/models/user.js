@@ -266,8 +266,8 @@ async function isUserInInviteList (projectId, userId){
 		throw error;
 	}
 
-	for (var x in invitingProjects){
-		if (x == projectId){
+	for (var i = 0; i < invitingProjects.length; i++){
+		if (invitingProjects[i] == projectId){
 			return true;
 		}
 	}
