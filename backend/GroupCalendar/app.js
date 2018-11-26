@@ -57,7 +57,7 @@ app.use(session({
   duration: 5,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
-  activeDuration: 5,
+  // activeDuration: 5,
 }));
 
 app.use(function(req, res, next){
