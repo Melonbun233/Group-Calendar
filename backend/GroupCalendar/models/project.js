@@ -542,7 +542,7 @@ async function getInvitingProjects (userId){
 	})
 
 	if (invitingProjects.length == 0){
-		throw "UserId" + userId + "does not exist in InviteList table";
+		throw "UserId " + userId + " does not exist in InviteList table";
 	}
 
 	// var projectIds = [];
