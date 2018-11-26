@@ -541,15 +541,6 @@ async function getInvitingProjects (userId){
 		throw error;
 	})
 
-	if (invitingProjects.length == 0){
-		throw "UserId " + userId + " does not exist in InviteList table";
-	}
-
-	// var projectIds = [];
-	// for (var i = 0; i < invitingProjects.length; i++){
-	// 	projectIds.push(invitingProjects[i].projectId);
-	// }
-
 	return invitingProjects;
 }
 
