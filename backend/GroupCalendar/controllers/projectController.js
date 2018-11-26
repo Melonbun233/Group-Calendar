@@ -182,6 +182,8 @@ async function deleteEventMember (req, res){
  		return res.status(400).json({error});
  	}
 
+ 	console.log("found user");
+
 	if(!isValidMember) {
 		return res.status(400).send('This user is not a valid member');
 	}
