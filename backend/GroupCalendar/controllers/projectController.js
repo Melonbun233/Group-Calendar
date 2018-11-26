@@ -153,6 +153,13 @@ async function deleteProject (req, res){
 		return res.status(400).send('This user is not a valid member');
 	}
 
+	try{
+		if(await Project.isUserInEvents(eventIds, userId)){
+			return res.status(400).send('This user has already been in the event')
+		}
+	}	catch (error) {
+		res.status(400).json({error});
+	}
 	try {
 		await Project.addUserInEvents(eventIds, userId);
 	} catch (error) {

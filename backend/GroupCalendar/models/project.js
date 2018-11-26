@@ -341,6 +341,14 @@ async function deleteProject (projectId){
 
 async function addUserInEvents (eventIds, userId){
 	for (var x in eventIds){
+		try {
+			if (await isUserInEvents(x, userId)) {
+				continue;
+			}
+		} catch(error) {
+			throw error;
+		}
+
 		var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + x + "', '" + userId + "')";
 		var result = await ProjectDB.query(query)
 		.catch (error => {
@@ -400,6 +408,20 @@ async function deleteUserInInviteList (projectId, userId){
 	if (result.affectedRows == 0){
 		throw "The entry could not be found";
 	}
+
+}
+
+async function isUserInEvents (eventId, userId){
+	var query = "SELECT FROM MemberInEvents WHERE eventId = '" + eventId + "' AND userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		return false;
+	}
+	return true;
 
 }
 
