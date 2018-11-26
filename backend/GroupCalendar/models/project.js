@@ -534,6 +534,7 @@ async function isUserInInviteList (projectId, userId){
 }
 
 async function getInvitingProjects (userId){
+	console.log(userId);
 	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
 	var invitingProjects = await ProjectDB.query(query)
 	.catch ( error => {
