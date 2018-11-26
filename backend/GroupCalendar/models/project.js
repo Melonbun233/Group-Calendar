@@ -340,20 +340,18 @@ async function deleteProject (projectId){
 }
 
 async function addUserInEvents (eventIds, userId){
-	console.log(eventIds);
-	console.log(eventIds[0]);
 
-	for (var x in eventIds){
+	for (var i = 0; i < eventIds.length; i++){
 
-		console.log(x);
+		console.log(eventIds[i]);
 		var isDup;
 		try {
-			isDup = await isUserInEvents(x, userId); 
+			isDup = await isUserInEvents(eventIds[i], userId); 
 		} catch(error) {
 			throw error;
 		}
 		if (!isDup){
-			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + x + "', '" + userId + "')";
+			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
 				throw error;
@@ -376,8 +374,8 @@ async function deleteUserInEventsAll (userId){
 }
 
 async function deleteUserInEvents (events, userId){
-	for (var x in eventIds){
-		var query = "DELETE FROM MemberInEvents WHERE eventId = '" + x + "' AND userId = '" + userId + "'";
+	for (var i = 0; i < eventIds.length; i++){
+		var query = "DELETE FROM MemberInEvents WHERE eventId = '" + eventIds[i] + "' AND userId = '" + userId + "'";
 		var result = await ProjectDB.query(query)
 		.catch (error => {
 			throw error;
@@ -427,8 +425,8 @@ async function isUserInEvents (eventId, userId){
 		return false;
 	}
 
-	for(var x in result){
-		if(x == userId){
+	for(var i = 0; i < result.length; i++){
+		if(result[i] == userId){
 			return true;
 		}
 	}
