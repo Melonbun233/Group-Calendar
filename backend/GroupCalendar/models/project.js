@@ -424,9 +424,9 @@ async function isUserInEvents (eventId, userId){
 	if (result.affectedRows == 0){
 		return false;
 	}
-	console.log(result);
+	// console.log(result);
 
-	for(var i = 0; i < result[0].length; i++){
+	for(var i = 0; i < result.length; i++){
 		console.log(result[i].userId);
 		if(result[i].userId == userId){
 			console.log('dup');
