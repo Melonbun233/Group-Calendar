@@ -44,10 +44,12 @@ export default class Profile extends Component {
 	}
 
 	//callback function for refreshing
-	_onRefresh = async () => {
+	_onRefresh = async (animating) => {
 		let {profile} = this.state;
 
-		this.setState({isRefreshing: true});
+		if (animating){
+			this.setState({isRefreshing: true});
+		}
 		try {
 			let status = await Network.fetchProfile(profile.userId);
 			switch(status) {
@@ -69,7 +71,9 @@ export default class Profile extends Component {
 		} catch(error) {
 			Alert.alert(error.toString());
 		}
-		this.setState({isRefreshing: false});
+		if (animating) {
+			this.setState({isRefreshing: false});
+		}
 	}
 
 	_onChangePwd = () => {
@@ -84,7 +88,8 @@ export default class Profile extends Component {
 					editInfo: {
 						userLastname,
 						userFirstname
-					}, userId
+					}, userId, 
+					refresh: this._onRefresh.bind(this)
 				});
 			}
 			break;
@@ -96,7 +101,8 @@ export default class Profile extends Component {
 				var editInfo = {};
 				editInfo[_editInfo] = info;
 				this.props.navigation.push('EditProfile', {
-					editInfo, userId
+					editInfo, userId,
+					refresh: this._onRefresh.bind(this)
 				});
 			}
 			break;
@@ -123,7 +129,7 @@ export default class Profile extends Component {
 					refreshControl = {
 						<RefreshControl 
 							refreshing = {isRefreshing}
-							onRefresh = {this._onRefresh}
+							onRefresh = {() => this._onRefresh(true)}
 						/>
 					}
 				>
@@ -255,6 +261,7 @@ export default class Profile extends Component {
 							/>
 						</View>
 					</View>
+					<View style = {cs.empty}></View>
 				</ScrollView>
 			</View> 
 		);

@@ -5,7 +5,7 @@
 
 import React, {Component} from 'react';
 import {TouchableWithoutFeedback, StyleSheet, Text, View, Button, Alert, 
-	RefreshControl, ActivityIndicator, FlatList, ScrollView} 
+	RefreshControl, ActivityIndicator, FlatList, ScrollView, TouchableOpacity} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import UserAvatar from 'react-native-user-avatar';
@@ -21,6 +21,7 @@ export default class Project extends Component {
 			isRefreshing: false,
 			//loading user's project list when first enter
 			isLoading: true,
+			extraData: false,
 		};
 		this._onPressProject = this._onPressProject.bind(this);
 	}
@@ -29,11 +30,20 @@ export default class Project extends Component {
 	async componentDidMount() {
 		try{
 			let profile = await Storage.getProfile();
-			this.setState({
-				profile
-			});
+			if (!profile) {
+				Alert.alert('Something went wrong');
+				this.props.onSessionOut();
+			}
+			this.setState({profile});
+			let allProjects = await Storage.getAllProjects();
 
-			await this._onRefresh();
+			if (allProjects) {
+				this.setState({
+					allProjects,
+				});
+			} else {
+				await this._onRefresh();
+			}
 			this.setState({
 				isLoading: false,
 			})
@@ -42,9 +52,38 @@ export default class Project extends Component {
 		}
 	}
 
+	async _onRefresh() {
+		let {profile, extraData} = this.state;
+		var allProjects;
+		this.setState({isRefreshing: true});
+		try {
+			let status = await Network.fetchAllProjects(profile.userId);
+			allProjects = await Storage.getAllProjects();
+			switch (status) {
+				case 200: 
+				break;
+				case 0: {
+					Alert.alert('Not all projects fetched');
+				}
+				break;
+				default: Alert.alert('Internet Error ' + status.toString());
+			}
+			this.setState({
+				allProjects,
+				isRefreshing: false,
+				extraData: !extraData,
+			});
+		} catch (error) {
+			Alert.alert(error.toString());
+		}
+	}
+
 	_onPressProject = (project) => {
 		let {profile} = this.state;
-		this.props.navigation.push('ProjectDetail', {project, profile});
+		let {projectId} = project;
+		this.props.navigation.push('ProjectDetail', {
+			projectId, profile, 
+			refreshAll: this._onRefresh.bind(this)});
 	}
 
 	_renderItem({item}) {
@@ -73,34 +112,32 @@ export default class Project extends Component {
 		);
 	}
 
-	async _onRefresh() {
-		let {profile} = this.state;
-		var allProjects;
-		this.setState({isRefreshing: true});
-		try {
-			let status = await Network.fetchAllProjects(profile.userId);
-			allProjects = await Storage.getAllProjects();
-			switch (status) {
-				case 200: 
-				break;
-				case 0: {
-					Alert.alert('Not all projects fetched');
-				}
-				break;
-				default: Alert.alert('Internet Error ' + status.toString());
+	_getOwnerProjects() {
+		let {allProjects, profile} = this.state;
+		var ownerProjects = [];
+		for (let key in allProjects) {
+			let value = allProjects[key];
+			if (value.projectOwnerId == profile.userId) {
+				ownerProjects.push(value);
 			}
-		} catch (error) {
-			Alert.alert(error.toString());
 		}
-		this.setState({
-			allProjects,
-			isRefreshing: false
-		});
+		return ownerProjects;
 	}
 
+	_getMemberProjects() {
+		let {allProjects, profile} = this.state;
+		var memberProjects = [];
+		for (let key in allProjects) {
+			let value = allProjects[key];
+			if (value.projectOwnerId != profile.userId) {
+				memberProjects.push(value);
+			}
+		}
+		return memberProjects;
+	}
 
 	render() {
-		let {isLoading, isRefreshing} = this.state;
+		let {isLoading, isRefreshing, extraData} = this.state;
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
@@ -115,6 +152,10 @@ export default class Project extends Component {
 				<Text style = {cs.h5}>You don't have any project yet</Text>
 			</View>
 		);
+
+		let	ownerProjects = this._getOwnerProjects();
+		let memberProjects = this._getMemberProjects();
+
 		return(
 			<ScrollView 
 				style = {s.scrollContainer}
@@ -126,21 +167,40 @@ export default class Project extends Component {
 				/>
 				}
 			>
+				{/* User's project */}
+				{ownerProjects.length != 0 ? 
+				<View style = {s.membership}>
+					<Text style = {[cs.h5, {fontStyle: "italic"}]}>You are the owner</Text>
+				</View> : null}
 				<FlatList
-					data = {allProjects}
+					data = {ownerProjects}
 					renderItem = {this._renderItem.bind(this)}
 					keyExtractor = {(item) => item.projectId.toString()}
+					extraData = {extraData}
 				/>
-				{allProjects.length == 0 ? emptyMsg : null}
+				{/* projects belonged */}
+				{memberProjects.length != 0 ? 
+				<View style = {s.membership}>
+					<Text style = {[cs.h5, {fontStyle: "italic"}]}>You are the member</Text>
+				</View> : null}
+				<FlatList
+					data = {memberProjects}
+					renderItem = {this._renderItem.bind(this)}
+					keyExtractor = {(item) => item.projectId.toString()}
+					extraData = {extraData}
+				/>
+				{!allProjects || allProjects.length == 0 ? emptyMsg : null}
 				<View style = {[s.button]}>
 				<Button
 					style = {s.button}
 					testID = 'createProjectButton'
 					title = 'New Project'
 					color = '#66a3ff'
-					onPress = {() => navigation.push('CreateProject', {profile})}
+					onPress = {() => navigation.push('CreateProject', {
+						profile, refreshAll: this._onRefresh.bind(this)})}
 				/>
 				</View>
+				<View style = {cs.empty}></View>
 			</ScrollView>
 		);
 	}
@@ -160,7 +220,7 @@ const s = StyleSheet.create({
 		flexDirection: 'row',
 		padding: 10,
 		borderBottomWidth: 1,
-		borderBottomColor: '#e6e6e6',
+		borderColor: '#e6e6e6',
 	},
 	projectContent: {
 		padding: 10,
@@ -172,5 +232,15 @@ const s = StyleSheet.create({
 	avatar: {
 		flex:1,
 		paddingRight: 30,
+	},
+	membership: {
+		padding: 10,
+		paddingLeft: 20,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		borderBottomWidth: 1,
+		borderColor: '#e6e6e6',
+		backgroundColor: '#f2f2f2',
 	}
-})
+});

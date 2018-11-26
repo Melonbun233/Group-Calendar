@@ -5,7 +5,7 @@ export const signUpConstraints = {
 	email: {
 		presence: true,
 		email: {
-			message: 'Looks like an email address',
+			message: 'invalid email address',
 		},
 	},
 	firstname: {
@@ -92,3 +92,42 @@ export const createProjectConstraints = {
 		},
 	}
 };
+
+export const createEventConstraints = {
+	eventName: {
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 20,
+			tooLong: 'maximum length is 20',
+			tooShort: 'cannot be empty',
+		},
+	},
+	eventDescription: {
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 200,
+			tooLong: 'maximum length is 200',
+			tooShort: 'cannot be empty',
+		},
+	},
+	eventLocation: {
+		presence: true,
+		length: {
+			minimum: 1,
+			maximum: 200,
+			tooLong: 'maximum length is 200',
+			tooShort: 'cannot be empty',
+		},
+	}
+};
+
+export const inviteUserByEmailConstraints = {
+	email: {
+		presence: true,
+		email: {
+			message: 'invalid email address',
+		},
+	},
+}

@@ -2,12 +2,15 @@
 
 import React, {Component} from 'react';
 import {Alert, StyleSheet, ScrollView, View, ActivityIndicator, Text,
-    Button, RefreshControl, TouchableWithoutFeedback, DatePickerIOS, FlatList
-    } from 'react-native';
+    Button, RefreshControl, TouchableWithoutFeedback, DatePickerIOS, FlatList,
+    TouchableOpacity, AlertIOS} from 'react-native';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
 import SvgUri from 'react-native-svg-uri';
 import SwipeOut from 'react-native-swipeout';
+import validate from 'validate.js';
+import {inviteUserByEmailConstraints} from './common/validation';
+
 
 export default class ProjectDeatail extends Component {
     static navigationOptions = {
@@ -23,16 +26,25 @@ export default class ProjectDeatail extends Component {
             showStartDatePicker: false,
             showEndDatePicker: false,
             showMembers: false,
+            extraData : false,
         }
     }
 
     componentDidMount = async () => {
         let {navigation} = this.props;
-        const project = navigation.getParam('project', null);
+        const projectId = navigation.getParam('projectId', null);
         const profile = navigation.getParam('profile', null);
-
+        const refreshAll = navigation.getParam('refreshAll', null);
+        var project;
         try {
-            if (project && profile) {
+            if (projectId && profile && refreshAll) {
+                let projectResponse = await Network.fetchProject(projectId, profile.userId);
+                if (projectResponse.status == 200) {
+                    project = projectResponse.project;
+                } else {
+                    Alert.alert('Something went wrong');
+                    this.props.navigation.goBack();
+                }
                 let response =  await Network.searchProfile(project.projectOwnerId);
                 if (response.status == 200) {
                     this.setState({
@@ -41,6 +53,7 @@ export default class ProjectDeatail extends Component {
                         profile,
                         tempProjectStartDate: project.projectStartDate,
                         tempProjectEndDate: project.projectEndDate,
+                        refreshAll,
                     });
                     await this._fetchMembers();
 
@@ -51,6 +64,9 @@ export default class ProjectDeatail extends Component {
                     })
                     return;
                 }
+            } else {
+                Alert.alert('Something went wrong');
+                this.props.navigation.goBack();
             }
         } catch (error) {
             Alert.alert(error.toString());
@@ -58,33 +74,45 @@ export default class ProjectDeatail extends Component {
         navigation.goBack();
     }
 
-    _onRefresh = async () => {
-        let {project, profile} = this.state;
-        this.setState({isRefreshing: true});
+    _onRefresh = async (animation) => {
+        let {project, profile, extraData} = this.state;
+        if (animation) {
+            this.setState({isRefreshing: true});
+        }
         try {
             let projectResponse = await Network.fetchProject(project.projectId, profile.userId);
             let profileResponse = await Network.searchProfile(profile.userId);
             let ownerResponse = await Network.searchProfile(project.projectOwnerId);
+
             if (projectResponse.status == 200 && profileResponse.status == 200 &&
                 ownerResponse.status == 200) {
+                project = projectResponse.project;
+                profile = profileResponse.profile;
+                let ownerProfile = ownerResponse.profile;
+
                 this.setState({
-                    ownerProfile: ownerResponse.profile,
-                    project: projectResponse.project,
-                    profile: profileResponse.profile,
+                    ownerProfile,
+                    project,
+                    profile,
                     tempProjectStartDate: project.projectStartDate,
                     tempProjectEndDate: project.projectEndDate,
+                    extraData: !extraData,
                 });
                 await this._fetchMembers();
+                await Network.fetchAllProjects(profile.userId);
             } else {
                 Alert.alert('Something went wrong');
             }
         } catch(error) {
             Alert.alert(error.toString());
         }
-        this.setState({isRefreshing: false});
+        if (animation) {
+            this.setState({isRefreshing: false});
+        }
     }
 
     _onProjectStartDateChange = (date) => {
+        //let tempProjectEndDate 
         let dateString = date.toJSON();
         let tempProjectStartDate = dateString;
         this.setState({tempProjectStartDate});
@@ -104,7 +132,8 @@ export default class ProjectDeatail extends Component {
             for (let i = 0; i < memberId.length; i ++) {
                 let response = await Network.searchProfile(memberId[i]);
                 if (response.status == 200) {
-                    members.push({profile: response.profile});
+                    let profile = response.profile;
+                    members.push({profile});
                 } else {
                     continue;
                 }
@@ -116,20 +145,39 @@ export default class ProjectDeatail extends Component {
 
     //get member flat list for rendering
     _renderMembers = () => {
-        let {members, isOwner} = this.state;
+        let {members, isOwner, extraData} = this.state;
         return (
             <View>
             {isOwner ? 
             <View style = {[s.button, s.borderBottom]}>
                 <Button
                     title = 'Invite a new member'
-                    onPress = {this._onInviteMember.bind(this)}
+                    onPress = {() => {
+                        AlertIOS.prompt(
+                            'Enter user\'s email',
+                            'Enter user\'s email to invite',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'OK',
+                                    onPress: (email) => {
+                                        this._onInviteMember(email);
+                                    }
+                                }
+                            ],
+                            'plain-text',
+                            '',
+                            'email-address',
+                        );}}
                 />
             </View> : null}
             <FlatList
                 data = {members}
                 renderItem = {this._renderSingleMember.bind(this)}
                 keyExtractor = {(item) => item.profile.userId.toString()}
+                extraData = {extraData}
             />
             </View>
         );
@@ -138,7 +186,7 @@ export default class ProjectDeatail extends Component {
     //get event flat list for rendering
     _renderEvents = () => {
         let {events} = this.state.project;
-        let {isOwner} = this.state;
+        let {isOwner, extraData} = this.state;
         return (
             <View>
             {isOwner ? 
@@ -148,10 +196,14 @@ export default class ProjectDeatail extends Component {
                     onPress = {this._onCreateEvent.bind(this)}
                 />
             </View> : null}
+            {/* <View style = {[s.hint, s.borderBottom]}>
+                <Text style = {cs.h5}>Tap to select a event you want to attend</Text>
+            </View> */}
             <FlatList
                 data = {events}
                 renderItem = {this._renderSingleEvent.bind(this)}
                 keyExtractor = {(item) => item.eventId.toString()}
+                extraData = {extraData}
             />
             </View>
         );
@@ -160,18 +212,36 @@ export default class ProjectDeatail extends Component {
     _renderSingleMember = ({item}) => {
         let {profile} = item;
         let {userId} = this.state.profile;
+        let {isOwner} = this.state;
+        let button = isOwner ? [{
+            backgroundColor: 'red',
+            underlayColor: 'red',
+            color: 'white',
+            text: 'Remove',
+            onPress: () => {
+                AlertIOS.alert(
+                    'Remove Member',
+                    profile.userFirstname + ' ' + profile.userLastname,
+                    [
+                        {
+                            text: 'Cancel',
+                        },
+                        {
+                            text: 'Remove',
+                            onPress: () => this._onDeleteMember(profile, userId),
+                            style: 'destructive',
+                        },
+                    ],
+                );
+            }
+        }] : [];
         return (
             <SwipeOut
-                right = {[{
-                    backgroundColor: 'red',
-                    underlayColor: 'red',
-                    color: 'white',
-                    text: 'Delete',
-                    onPress: function(){this._onDeleteMember(profile.userId, userId)}
-                }]}
+                right = {button}
+                autoClose = {true}
             >
             <View style = {[s.member, s.borderBottom]}>
-                <Text style = {cs.h5}>
+                <Text style = {cs.normalText}>
                 {profile.userFirstname + ' ' +  profile.userLastname}
                 </Text>
             </View>
@@ -179,40 +249,231 @@ export default class ProjectDeatail extends Component {
         );
     }
 
+    _getEventTime (dateString) {
+        let time = new Date(dateString);
+        let array = time.toString().split(' ');
+        return (array[0] + ' ' + array[4].slice(0, 5));
+    }
+
     _renderSingleEvent = ({item}) => {
         let {userId} = this.state.profile;
+        let {isOwner} = this.state;
+        let button = isOwner ? [{
+            backgroundColor: 'red',
+            underlayColor: 'red',
+            color: 'white',
+            text: 'Delete',
+            onPress: () => {
+                AlertIOS.alert(
+                    'Delete Event',
+                    item.eventName,
+                    [
+                        {
+                            text: 'Cancel',
+                        },
+                        {
+                            text: 'Delete',
+                            onPress: () => this._onDeleteEvent(item, userId),
+                            style: 'destructive',
+                        },
+                    ],
+                )}
+        }] : [];
+
+        let chosen = item.chosenId.includes(parseInt(userId));
+        let bg = chosen ? '#66a3ff' : '#f2f2f2';
+        let cl = chosen ? '#fff' : '#000';
+
+        let startTime = this._getEventTime(item.eventStartTime);
+        let endTime = this._getEventTime(item.eventEndTime);
+        
+        let avail = item.userLimit - item.chosenId.length;
+
+        var repeat;
+        switch (item.eventRepeat) {
+            case 'week' : repeat = 'Weekly'
+            break;
+            case 'day' : repeat = 'Daily'
+            break;
+            case 'none' : repeat = 'Once'
+        }
         return (
             <SwipeOut
-                right = {[{
-                    backgroundColor: 'red',
-                    underlayColor: 'red',
-                    color: 'white',
-                    text: 'Delete',
-                    onPress: function(){() => this._onDeleteEvent(item.eventId, userId)}
-                }]}
+                right = {button}
+                style = {[s.borderBottom, s.borderTop]}
+                autoClose = {true}
             >
-            <View style = {[s.member, s.borderBottom]}>
-                <Text style = {cs.h5}>
-                {item.eventName}
-                </Text>
+            <TouchableOpacity
+                onPress = {() => this._onVoteEvent(item, chosen, avail)}
+            >
+            <View style = {[s.event, {backgroundColor: bg}]}>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>{item.eventName}</Text>
+                <Text style = {[cs.smallText, {color: cl}]}>{repeat}</Text>
             </View>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>Start Time:</Text>
+                <Text style = {[cs.smallText, {color: cl}]}>{startTime}</Text>
+            </View>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>End Time:</Text>
+                <Text style = {[cs.smallText, {color: cl}]}>{endTime}</Text>
+            </View>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>Availability: </Text>
+                <Text style = {[cs.smallText, {color: cl}]}>{avail.toString()}</Text>
+            </View>
+            </View>
+            </TouchableOpacity>
             </SwipeOut>
         );
     }
 
-    _onInviteMember = () => {
+    _onInviteMember = async (email) => {
+        let {project, profile} = this.state;
+        //check email
+        let invalid = validate({
+            email: email
+        }, inviteUserByEmailConstraints, {fullMessages: false});
 
+        if (invalid) {
+            Alert.alert('This is not a valid email address');
+            return;
+        }
+        try {
+            let status = await Network.inviteUser(project.projectId, profile.userId,
+                email);
+            if (status == 200) {
+                Alert.alert('The invitation has been sent');
+                await this._onRefresh(false);
+            } else if (status < 500){
+                Alert.alert('Cannot find the user');
+            } else {
+                Alert.alert('Internet Error ', status.toString());
+            }
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
     }
 
     _onCreateEvent = () => {
-
+        let {profile, project} = this.state;
+        this.props.navigation.push('CreateEvent', {
+            profile, project, 
+            refreshProject: this._onRefresh.bind(this),
+        });
     }
 
-    _onDeleteMember = async (memberId, userId) => {
-
+    _onDeleteMember = async (member, userId) => {
+        let {project, extraData} = this.state;
+        let memberId = member.userId;
+        try {
+            //for user experience, set state first
+            for (let key in project.memberId) {
+                let value = project.memberId[key];
+                if (value == memberId) {
+                    project.memberId.splice(key, 1);
+                    this.setState({project, extraData: !extraData});
+                    break;
+                }
+            }
+            //actually deleting the member
+            let status = await Network.deleteMember(project.projectId, 
+                memberId, userId);
+            if (status != 200) {
+                Alert.alert('Internet Error ' + status.toString());
+            }
+            await this._onRefresh(false);
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
     }
 
-    _onDeleteEvent = async (eventId, userId) => {
+    _onDeleteEvent = async (event, userId) => {
+        let {project, extraData} = this.state;
+        try {
+            //for user experience, set state first
+            for (var key in project.events) {
+                let value = project.events[key];
+                if (value.eventId == event.eventId) {
+                    project.events.splice(key, 1);
+                    this.setState({project, extraData: !extraData});
+                    break;
+                }
+            }
+            //actually delete the project
+            let status = await Network.deleteEvent(project.projectId, 
+                event.eventId, userId);
+            if (status == 200) {
+               await this._onRefresh(false);
+            } else {
+                Alert.alert('Internet Error ' + status.toString());
+            }
+        } catch(error) {
+            Alert.alert(error.toString());
+        }
+    }
+
+    _onVoteEvent = async (event, chosen, avail) => {
+        let {profile, project, extraData} = this.state;
+        try {
+            var status;
+            //unvote from this event
+            if (chosen) {
+                //for user experience, update state first
+                for (var key in project.events) {
+                    let value = project.events[key];
+                    if (event.eventId == value.eventId){
+                        let filtered = event.chosenId.filter((e) => {
+                            return e != profile.userId});
+                        project.events[key].chosenId = filtered;
+                        this.setState({project, extraData: !extraData});
+                        break;
+                    }
+                }
+                status = await Network.dropEvent(project.projectId, 
+                    event.eventId, profile.userId);
+            } else {
+                //vote for this event
+                if (avail == 0) {
+                    Alert.alert('This event is full');
+                    return;
+                }
+                //for user experience, update state first
+                for (var key in project.events) {
+                    let value = project.events[key];
+                    if (event.eventId == value.eventId) {
+                        project.events[key].chosenId.push(parseInt(profile.userId));
+                        this.setState({project, extraData: !extraData});
+                        break;
+                    }
+                }
+                status = await Network.voteEvent(project.projectId,
+                    event.eventId, profile.userId);
+            }
+            if (status != 200) {
+                Alert.alert('Internet Error ' + status.toString());
+            }
+            await this._onRefresh(false);
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
+    }
+
+    _onDeleteProject = async () => {
+        let {project, profile} = this.state;
+        try {
+            let status = await Network.deleteProject(project.projectId, profile.userId);
+            if (status == 200) {
+                this.state.refreshAll();
+                this.props.navigation.goBack();
+            }
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
+    }
+    
+    _onLeaveProject = async () => {
 
     }
 
@@ -224,7 +485,7 @@ export default class ProjectDeatail extends Component {
             if (status == 200) {
                 await this._onRefresh();
             } else {
-                Alert.alert('Error updating');
+                Alert.alert('Internet Error ', status.toString());
             }
         } catch (error) {
             Alert.alert(error.toString());
@@ -245,11 +506,12 @@ export default class ProjectDeatail extends Component {
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
                     title = 'Submit'
-                    onPress = {() => this._onUpdateProject({
-                        update:{
+                    onPress = {() => {
+                        this._onUpdateProject({
                             projectEndDate: tempProjectEndDate,
-                        }
-                    })}
+                        });
+                        this.setState({showEndDatePicker: false});
+                    }}
                 />
             </View>
             </View>
@@ -270,11 +532,12 @@ export default class ProjectDeatail extends Component {
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
                     title = 'Submit'
-                    onPress = {() => this._onUpdateProject({
-                        update:{
+                    onPress = {() => {
+                        this._onUpdateProject({
                             projectStartDate: tempProjectStartDate,
-                        }
-                    })}
+                        });
+                        this.setState({showStartDatePicker: false})
+                    }}
                 />
             </View>
             </View>
@@ -286,12 +549,12 @@ export default class ProjectDeatail extends Component {
         if(isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large'/>
+					<ActivityIndicator size = 'large' animating = {false}/>
 				</View>
 			);
         }
         let {project, ownerProfile, showStartDatePicker, showMembers,
-            showEndDatePicker, showEvents} = this.state;
+            showEndDatePicker, showEvents, isOwner} = this.state;
 
         let projectStartDate = new Date(project.projectStartDate);
         let projectEndDate = new Date(project.projectEndDate);
@@ -310,7 +573,7 @@ export default class ProjectDeatail extends Component {
                 keyboardShouldPersistTaps = 'never'
                 refreshControl = {
                     <RefreshControl
-                        onRefresh = {this._onRefresh.bind(this)}
+                        onRefresh = {() => this._onRefresh(true)}
                         refreshing = {isRefreshing}
                     />}
 			>
@@ -387,6 +650,53 @@ export default class ProjectDeatail extends Component {
                 </View>
             </TouchableWithoutFeedback>
             {events}
+            {isOwner ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Delete Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Delete Project',
+                            'Are you sure you want to delete this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'DELETE',
+                                    onPress: () => this._onDeleteProject(),
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
+            {!isOwner ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Leave Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Leave Project',
+                            'Are you sure you want to leave this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'LEAVE',
+                                    onPress: () => this._onLeaveProject(),
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
+            <View style = {cs.empty}></View>
             </ScrollView>
         )
     }
@@ -402,6 +712,10 @@ const arrowUp = (
 );
 
 const s = StyleSheet.create({
+    button: {
+		padding: 10,
+		alignItems: 'center',
+	},
     borderBottom: {
         borderBottomWidth: 1,
         borderBottomColor: '#e6e6e6',
@@ -438,10 +752,32 @@ const s = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
     },
+    eventItem: {
+        width: '100%',
+        backgroundColor: '#f2f2f2',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 5,
+        paddingLeft: 30,
+        paddingRight: 30,
+    },
+    event: {
+        padding: 10,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     button: {
         backgroundColor: '#f2f2f2',
         flexDirection: 'column',
         alignItems: 'center',
         padding: 10,
-    }
+    },
+    hint: {
+        backgroundColor: '#f2f2f2',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: 5,
+    },
 })

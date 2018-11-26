@@ -11,7 +11,7 @@ import Network from './common/GCNetwork';
 
 export default class CreateProject extends Component {
     static navigationOptions = {
-        title : 'Create Project'
+        title : 'Create a Project'
     }
 
     constructor(props) {
@@ -35,10 +35,11 @@ export default class CreateProject extends Component {
 
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         let {navigation} = this.props;
         const profile = navigation.getParam('profile', null);
-        if (profile) {
+        const refreshAll = navigation.getParam('refreshAll', null);
+        if (profile && refreshAll) {
             let today = new Date();
             today = today.toJSON();
             let project = {
@@ -48,12 +49,13 @@ export default class CreateProject extends Component {
                 projectDescription: '',
             }
             this.setState({
+                refreshAll,
                 project,
                 profile,
                 isLoading: false,
             });
         } else {
-            alert.alert('Something Bad Happened');
+            Alert.alert('Something went wrong');
             navigation.goBack();
         }
     }
@@ -118,7 +120,7 @@ export default class CreateProject extends Component {
             if (valid) {
                 let status = await Network.createProject(profile.userId, project);
                 if (status == 200) {
-                    Alert.alert('Success!');
+                    this.state.refreshAll();
                     this.props.navigation.goBack();
                 } else {
                     Alert.alert('Internet Error ' + status.toString());
@@ -132,6 +134,9 @@ export default class CreateProject extends Component {
 
     _onProjectStartDateChange = (date) => {
         let {project} = this.state;
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
         let dateString = date.toJSON();
         project.projectStartDate = dateString;
         this.setState({project});
@@ -139,6 +144,9 @@ export default class CreateProject extends Component {
 
     _onProjectEndDateChange = (date) => {
         let {project} = this.state;
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
         let dateString = date.toJSON();
         project.projectEndDate = dateString;
         this.setState({project});
@@ -165,7 +173,7 @@ export default class CreateProject extends Component {
                     date = {new Date(project.projectStartDate)}
                     onDateChange = {this._onProjectStartDateChange.bind(this)}
                     mode = 'date'
-                />  
+                /> 
             </View>
         );
     }
@@ -240,7 +248,7 @@ export default class CreateProject extends Component {
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.dateContainer}>
-                    <Text style = {cs.h5}>Start Date</Text>
+                    <Text style = {cs.normalText}>Start Date</Text>
                     <Text style = {cs.h5}>{projectStartDate.toDateString()}</Text>
                 </View>
                 </View>
@@ -254,7 +262,7 @@ export default class CreateProject extends Component {
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.dateContainer}>
-                    <Text style = {cs.h5}>End Date</Text>
+                    <Text style = {cs.normalText}>End Date</Text>
                     <Text style = {cs.h5}>{projectEndDate.toDateString()}</Text>
                 </View>
                 </View>
@@ -282,6 +290,7 @@ const s = StyleSheet.create({
         height: '100%',
     },
     contentContainer: {
+        paddingTop: 10,
         marginLeft: '10%',
         width: '80%',
     },

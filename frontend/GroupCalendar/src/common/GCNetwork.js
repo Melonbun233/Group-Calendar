@@ -88,7 +88,7 @@ export default class GCNetwork extends Component {
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
 	static async searchProfile(userId) {
-		let url = config.server.concat('/users/profile' + '?userId=' + userId);
+		let url = config.server.concat('/user/profile' + '?userId=' + userId);
 		try {
 			let response = await fetch(url, {
 				method: 'Get',
@@ -100,7 +100,7 @@ export default class GCNetwork extends Component {
 			let responseJson = await response.json();
 
 			return {
-				profile : responseJson,
+				profile : responseJson.profile,
 				status: response.status
 			}
 		} catch (error) {
@@ -173,7 +173,7 @@ export default class GCNetwork extends Component {
 				let responseJson = await response.json();
 				return {
 					status: response.status,
-					project: responseJson
+					project: responseJson.project,
 				};
 			}
 			
@@ -185,8 +185,8 @@ export default class GCNetwork extends Component {
 
 	//fetch all projects related to this user
 	static async fetchAllProjects(userId) {
+		var allProjects = [];
 		try {
-			var allProjects = [];
 			let response = await this.fetchProjectList(userId);
 			if (response.status == 200) {
 				let projectList = await Storage.getProjectList();
@@ -195,7 +195,7 @@ export default class GCNetwork extends Component {
 					if (response.status == 200) {
 						allProjects.push(response.project);
 					} else {
-						break;
+						continue;
 					}
 				}
 				await Storage.setAllProjects(allProjects);
@@ -212,6 +212,63 @@ export default class GCNetwork extends Component {
 			throw error;
 		}
 	}
+
+	static async fetchAllInvitations(userId) {
+		var allInvitations = [];
+		try {
+			let response = await this.fetchInvitationList(userId);
+			Alert.alert(JSON.stringify(response));
+			if (response.status == 200) {
+				let invitationList = await Storage.getInvitationList();
+				for (let i = 0; i < invitationList.length; i ++) {
+					response = await this.fetchProject(invitationList[i], userId);
+					if (response.status == 200) {
+						allInvitations.push(response.project);
+					} else {
+						continue;
+					}
+				}
+				await Storage.setAllInvitations(allInvitations);
+				if (allInvitations.length != invitationList.length) {
+					return 0;
+				}
+				return 200;
+			} else {
+				await Storage.setAllInvitations(allInvitations);
+				return response.status;
+			}
+		} catch (error) {
+			await Storage.setAllInvitations(allInvitations);
+			throw error;
+		}
+	}
+
+	static async fetchInvitationList(userId) {
+		let url = config.server.concat('/user/notification' + '?userId=' + 
+				userId);
+		Alert.alert(url);
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				credentials : 'include',
+			});
+
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				Alert.alert(JSON.stringify(responseJson));
+				await Storage.setInvitationList(responseJson);
+			}
+			
+			return {status: response.status};
+		} catch(error) {
+			throw Error('unable to fetch invitation list');
+		}
+	}
+
+	
 
 	static async updateProfile(update, userId) {
 		let url = config.server.concat('/user/profile');
@@ -258,16 +315,33 @@ export default class GCNetwork extends Component {
 
 	static async createProject(userId, project) {
 		let url = config.server.concat('/project');
+		project.projectOwnerId = userId;
 		try {
 			let response = await fetch (url, {
 				method : 'POST',
 				headers: {"Content-Type": "application/json"},
 				credentials : 'include',
 				body: JSON.stringify({userId, project}),
-			})
+			});
 			return response.status;
 		} catch (error) {
 			throw Error('unable to create project');
+		}
+	}
+
+	static async createEvent(projectId, userId, event) {
+		let url = config.server.concat('/project/events');
+		event = [event];
+		try {
+			let response = await fetch (url, {
+				method : 'POST',
+				headers: {"Content-Type": "application/json"},
+				credentials : 'include',
+				body: JSON.stringify({userId, projectId, event}),
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to craete project');
 		}
 	}
 
@@ -285,7 +359,7 @@ export default class GCNetwork extends Component {
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(userInfo),
 				credentials : 'include',
-			})
+			});
 			
 			if (response.status == 200) {
 				let responseJson = await response.json();
@@ -299,6 +373,130 @@ export default class GCNetwork extends Component {
 			return response.status;
 		} catch (error) {
 			throw Error('unable to verify user by google');
+		}
+	}
+
+	static async dropEvent(projectId, eventId, userId) {
+		eventId = [eventId];
+		let url = config.server.concat('/project/event/member');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+	}
+
+	static async voteEvent(projectId, eventId, userId){
+		eventId = [eventId];
+		let url = config.server.concat('/project/event/member');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to vote events');
+		}
+	}
+
+	static async deleteEvent(projectId, eventId, userId) {
+		eventId = [eventId];
+		let url = config.server.concat('/project/events');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+	}
+
+	static async deleteProject(projectId, userId) {
+		let url = config.server.concat('/project');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to delete the project');
+		}
+	}
+
+	static async deleteMember(projectId, memberId, userId) {
+		memberId = [memberId];
+		let url = config.server.concat('/project/members');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, memberId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to remove members');
+		}
+	}
+
+	static async inviteUser(projectId, userId, invitedEmail) {
+		let url = config.server.concat('/project/invite');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId, invitedEmail}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to invite user');
+		}
+	}
+
+	static async acceptInvitation(projectId, userId) {
+		let url = config.server.concat('/user/invite/accept');
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch(error) {
+			throw Error('unable to accept the invitation');
+		}
+	}
+
+	static async rejectInvitation(projectId, userId) {
+		let url = config.server.concat('/user/invite/decline');
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to reject the invitation');
 		}
 	}
 }

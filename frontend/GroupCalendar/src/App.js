@@ -6,12 +6,12 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button, AsyncStorage} from 'react-native';
 import MainPage from './MainPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
 import CreateProject from './CreateProject';
+import CreateEvent from './CreateEvent';
 import ChangePwd from './ChangePwd';
 import ProjectDetail from './ProjectDetail';
 import {createStackNavigator} from 'react-navigation';
@@ -33,6 +33,7 @@ const IntroStack = createStackNavigator(
 		Main: MainPage,
 		EditProfile: EditProfile,
 		CreateProject: CreateProject,
+		CreateEvent: CreateEvent,
 		ChangePwd: ChangePwd,
 		GoogleSignIn: GoogleSignInPwd,
 		ProjectDetail: ProjectDetail,
