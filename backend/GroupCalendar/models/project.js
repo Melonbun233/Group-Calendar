@@ -519,7 +519,7 @@ async function isEventInProject (projectId, eventId){
 
 async function isUserInInviteList (projectId, userId){
 	try{
-		var invitingProjects = await getInvitingProjects(userId);
+		var invitingProjects = await User.getInvitation(userId);
 	}catch (error){
 		throw error;
 	}
