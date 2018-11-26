@@ -228,6 +228,7 @@ async function inviteUser (req, res){
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
+	console.log(req.body);
 	console.log(invitedEmail);
 
 	//this part is optional
