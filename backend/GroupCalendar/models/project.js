@@ -519,7 +519,7 @@ async function isEventInProject (projectId, eventId){
 
 async function isUserInInviteList (projectId, userId){
 	try{
-		var invitingProjects = await User.getInvitation(userId);
+		var invitingProjects = await getInvitation(userId);
 	}catch (error){
 		throw error;
 	}
@@ -546,6 +546,21 @@ async function addUserInMembership (projectId, userId){
 	}
 }
 
+async function getInvitation (userId){
+	var query = "SELECT * FROM InviteList WHERE userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	var invitation = [];
+	for (var i = 0; i < result.length; i++){
+		invitation.push(result[i].userId);
+	}
+
+	return invitation;
+}
+
 
 
 module.exports = {
@@ -558,6 +573,7 @@ module.exports = {
 	getProject,
 	getEvents,
 	getMemberId,
+	getInvitation,
 	createEvents,
 	deleteEvents,
 	putProject,

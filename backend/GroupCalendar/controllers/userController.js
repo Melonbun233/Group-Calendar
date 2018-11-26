@@ -63,7 +63,7 @@ async function profileGet (req, res) {
 
 	try {
 		profile = await User.getProfile(req.param('userId'));
-		invitation = await User.getInvitation(req.param('userId'));
+		invitation = await Project.getInvitation(req.param('userId'));
 		profile.invitation = invitation;
 		return res.status(200).json({profile});
 	} catch (error) {
@@ -92,7 +92,7 @@ async function getProjectId (req, res){
 
 async function getNotification (req, res){
 	try{
-		var projectId = await User.getInvitation(req.param('userId'));
+		var projectId = await Project.getInvitation(req.param('userId'));
 		return res.status(200).json({projectId});
 	} catch (error) {
 		return res.status(400).json({error});
