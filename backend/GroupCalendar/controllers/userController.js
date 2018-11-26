@@ -92,8 +92,8 @@ async function getProjectId (req, res){
 
 async function getNotification (req, res){
 	try{
-		var projectIds = await Project.getInvitingProjects(req.param('userId'));
-		return res.status(200).json({projectIds});
+		var projectId = await Project.getInvitingProjects(req.param('userId'));
+		return res.status(200).json({projectId});
 	} catch (error) {
 		return res.status(400).json({error});
 	}
