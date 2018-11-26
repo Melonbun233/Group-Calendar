@@ -501,14 +501,14 @@ async function isEventInProject (projectId, eventId){
 		throw error;
 	});
 
+	console.log(result);
+
 	if (result.affectedRows == 0){
 		return false;
 	}
 
 	for(var i = 0; i < result.length; i++){
-		// console.log(result[i].userId);
 		if(result[i].eventId == eventId){
-			// console.log('dup');
 			return true;
 		}
 	}
