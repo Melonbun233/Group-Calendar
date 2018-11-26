@@ -342,10 +342,11 @@ async function deleteProject (projectId){
 async function addUserInEvents (projectId, eventIds, userId){
 
 	try {
-			var isDup = await isUserInEvents(eventIds[i], userId); 
-		} catch(error) {
-			throw error;
-		}
+		var isDup = await isUserInEvents(eventIds[i], userId); 
+	} catch(error) {
+		throw error;
+	}
+	console.log(isDup);
 
 	for (var i = 0; i < eventIds.length; i++){
 
@@ -356,7 +357,7 @@ async function addUserInEvents (projectId, eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
-		console.log(isdup);
+		
 		console.log(isValid);
 
 		if (isDup == false && isValid == true){
