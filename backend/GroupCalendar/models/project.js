@@ -340,6 +340,9 @@ async function deleteProject (projectId){
 }
 
 async function addUserInEvents (eventIds, userId){
+	console.log(eventIds);
+	console.log(eventIds[0]);
+
 	for (var x in eventIds){
 
 		console.log(x);
