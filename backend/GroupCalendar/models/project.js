@@ -424,8 +424,10 @@ async function isUserInEvents (eventId, userId){
 	if (result.affectedRows == 0){
 		return false;
 	}
+	console.log(result);
 
 	for(var i = 0; i < result.length; i++){
+		console.log(result[i]);
 		if(result[i] == userId){
 			return true;
 		}
