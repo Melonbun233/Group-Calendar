@@ -58,10 +58,13 @@ app.use(session({
 	secret: 'secret key',
 	//duration: how long the session will live in milliseconds
 	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
-  duration: 20 * 1000,
+  duration: 30 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
   // activeDuration: 5,
+  cookie: {
+    maxAge: 10 * 1000;
+  }
 }));
 
 app.use(function(req, res, next){
