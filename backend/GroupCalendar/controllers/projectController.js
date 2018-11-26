@@ -173,7 +173,7 @@ async function deleteProject (req, res){
 async function deleteEventMember (req, res){
  	var projectId = req.body.projectId;
  	var userId = req.body.userId;
- 	var eventIds = req.body.userId;
+ 	var eventIds = req.body.eventId;
  	var isValidMember;
 
  	try {
