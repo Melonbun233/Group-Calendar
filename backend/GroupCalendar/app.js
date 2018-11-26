@@ -37,7 +37,7 @@ function checkPath(path){
  * it will be added in the future
  */
 function uuidCheck(req){
-  console.log(req.headers.session);
+
   if(req.headers.session == null || req.headers.session == 'undefined'){
     return false;
   }
@@ -71,12 +71,10 @@ app.use(session({
 
 app.use(function(req, res, next){
   console.log(`path: ${req.path}`);
-  console.log(req.headers.session);
 
   if(checkPath(req.path)){
 
     if (uuidCheck(req)){
-      console.log(uuidCheck(req));
       next();
 
     }else{
