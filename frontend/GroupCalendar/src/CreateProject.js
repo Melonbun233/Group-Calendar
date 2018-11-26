@@ -38,7 +38,8 @@ export default class CreateProject extends Component {
     componentDidMount() {
         let {navigation} = this.props;
         const profile = navigation.getParam('profile', null);
-        if (profile) {
+        const refreshAll = navigation.getParam('refreshAll', null);
+        if (profile && refreshAll) {
             let today = new Date();
             today = today.toJSON();
             let project = {
@@ -48,6 +49,7 @@ export default class CreateProject extends Component {
                 projectDescription: '',
             }
             this.setState({
+                refreshAll,
                 project,
                 profile,
                 isLoading: false,
@@ -118,7 +120,7 @@ export default class CreateProject extends Component {
             if (valid) {
                 let status = await Network.createProject(profile.userId, project);
                 if (status == 200) {
-                    Alert.alert('Success!');
+                    this.state.refreshAll();
                     this.props.navigation.goBack();
                 } else {
                     Alert.alert('Internet Error ' + status.toString());
