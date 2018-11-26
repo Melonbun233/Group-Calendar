@@ -1,5 +1,5 @@
 var Project = require('../models/project');
-var User = require('../models/project');
+var User = require('../models/user');
 
 async function putEventOwner (req, res) {
 	try{
