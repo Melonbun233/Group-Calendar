@@ -9,6 +9,8 @@ var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
 //var sqlinjection = require('sql-injection');
 var session = require('client-sessions');
+// var session = require('express-sessions');
+
 var Promise = require('promise'); // npm install promise...
 
 /*----require routers-----------*/
@@ -38,6 +40,7 @@ function checkPath(path){
  */
 function uuidCheck(req){
   console.log(req.headers);
+  console.log(req.headers.cookie);
 
   if(req.headers.cookie == null || req.headers.cookie == 'undefined'){
     return false;
@@ -65,9 +68,9 @@ app.use(session({
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
   activeDuration: 30* 1000,
-  // cookie: {
-  //   maxAge: 10 * 1000,
-  // }
+  cookie: {
+    httpOnly: false,
+  }
 }));
 
 app.use(function(req, res, next){
