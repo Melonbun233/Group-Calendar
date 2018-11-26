@@ -63,7 +63,7 @@ app.use(session({
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
   // activeDuration: 5,
   cookie: {
-    maxAge: 10 * 1000;
+    maxAge: 10 * 1000,
   }
 }));
 
