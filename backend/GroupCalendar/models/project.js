@@ -517,6 +517,54 @@ async function isEventInProject (projectId, eventId){
 	return false;
 }
 
+async function isUserInInviteList (projectId, userId){
+	try{
+		var invitingProjects = await getInvitingProjects(userId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < invitingProjects.length; i++){
+		if (invitingProjects[i].projectId == projectId){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+async function getInvitingProjects (userId){
+	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
+	var invitingProjects = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (invitingProjects.length == 0){
+		throw "UserId" + userId + "does not exist in InviteList table";
+	}
+
+	// var projectIds = [];
+	// for (var i = 0; i < invitingProjects.length; i++){
+	// 	projectIds.push(invitingProjects[i].projectId);
+	// }
+
+	return invitingProjects;
+}
+
+async function addUserInMembership (projectId, userId){
+	query = "INSERT INTO Membership (projectId, userId) VALUES ('" + projectId + "', '" + userId + "')";
+	var result = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (result.length == 0){
+		throw "Err in ProjectDB: Membership";
+	}
+}
+
+
 
 module.exports = {
 	isOwner,
@@ -539,5 +587,9 @@ module.exports = {
 	addUserInInviteList,
 	deleteUserInInviteList,
 	deleteMembers,
+
+	isUserInInviteList,
+	getInvitingProjects,
+	addUserInMembership,
 
 }

@@ -91,11 +91,65 @@ async function getProjectId (req, res){
 
 async function getNotification (req, res){
 	try{
-		var projectIds = await User.getInvitingProjects(req.param('userId'));
+		var projectIds = await Project.getInvitingProjects(req.param('userId'));
 		return res.status(200).json({projectIds});
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+}
+
+async function acceptInvite (req, res){
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	try {
+		if(!(await Project.isUserInInviteList(projectId, userId))){
+			return res.status(400).send('You are not in this project InvitedList');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		await Project.deleteUserInInviteList(projectId, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		if(await Project.isUserInProject2(projectId, userId)){
+			return res.status(200).json();
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		await Project.addUserInMembership(projectId, userId)
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
+}
+
+async function declineInvite (req, res){
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	try {
+		if(!(await Project.isUserInInviteList(projectId, userId))){
+			return res.status(400).send('You are not in this project InvitedList');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	try {
+		await Project.deleteUserInInviteList(projectId, userId);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
+	return res.status(200).json();
 }
 
 module.exports = {
@@ -107,5 +161,7 @@ module.exports = {
 	profileUpdate,
 	getProjectId,
 	
-	getNotification
+	getNotification,
+	acceptInvite,
+	declineInvite,
 }

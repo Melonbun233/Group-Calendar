@@ -259,40 +259,6 @@ async function emailExist (userEmail){
 	}
 }
 
-async function isUserInInviteList (projectId, userId){
-	try{
-		var invitingProjects = await getInvitingProjects(userId);
-	}catch (error){
-		throw error;
-	}
-
-	for (var i = 0; i < invitingProjects.length; i++){
-		if (invitingProjects[i].projectId == projectId){
-			return true;
-		}
-	}
-
-	return false;
-}
-
-async function getInvitingProjects (userId){
-	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
-	var invitingProjects = await db.query(query)
-	.catch ( error => {
-		throw error;
-	})
-
-	if (invitingProjects.length == 0){
-		throw "UserId" + userId + "does not exist in InviteList table";
-	}
-
-	// var projectIds = [];
-	// for (var i = 0; i < invitingProjects.length; i++){
-	// 	projectIds.push(invitingProjects[i].projectId);
-	// }
-
-	return invitingProjects;
-}
 
 
 module.exports = {
@@ -308,8 +274,5 @@ module.exports = {
 	getProjectId,
 	getInvitation,
 	emailExist,
-
-	isUserInInviteList,
-	getInvitingProjects,
 
 }

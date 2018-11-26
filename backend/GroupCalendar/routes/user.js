@@ -26,5 +26,11 @@ router.get('/projects',
 router.get('/notification',
 	userController.getNotification);
 
+router.put('/invite/accept',
+	userController.acceptInvite);
+
+router.delete('/invite/decline',
+	userController.declineInvite);
+
 
 module.exports = router;
