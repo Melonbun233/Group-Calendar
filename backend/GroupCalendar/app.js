@@ -39,7 +39,7 @@ function checkPath(path){
 function uuidCheck(req){
   console.log(req.headers);
 
-  if(req.headers.session == null || req.headers.session == 'undefined'){
+  if(req.headers.cookie == null || req.headers.cookie == 'undefined'){
     return false;
   }
 
