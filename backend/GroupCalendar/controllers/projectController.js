@@ -125,9 +125,9 @@ async function deleteProject (req, res){
  	var userId = req.body.userId;
  	var eventIds = req.body.eventId;
  	var isValidMember;
- 	console.log(projectId);
- 	console.log(userId);
- 	console.log(eventIds);
+ 	// console.log(projectId);
+ 	// console.log(userId);
+ 	// console.log(eventIds);
 
  // 	try {
  // 		await Project.isUserInProject(projectId, userId);

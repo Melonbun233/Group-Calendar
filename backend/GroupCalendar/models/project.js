@@ -343,7 +343,7 @@ async function addUserInEvents (eventIds, userId){
 
 	for (var i = 0; i < eventIds.length; i++){
 
-		console.log(eventIds[i]);
+		// console.log(eventIds[i]);
 		var isDup;
 		try {
 			isDup = await isUserInEvents(eventIds[i], userId); 
@@ -380,7 +380,8 @@ async function deleteUserInEvents (events, userId){
 		.catch (error => {
 			throw error;
 		})
-
+		console.log(result);
+		
 		if (result.affectedRows == 0){
 			throw "Err in ProjectDB: Table MemberInEvents fails";
 		}
@@ -424,12 +425,11 @@ async function isUserInEvents (eventId, userId){
 	if (result.affectedRows == 0){
 		return false;
 	}
-	// console.log(result);
 
 	for(var i = 0; i < result.length; i++){
-		console.log(result[i].userId);
+		// console.log(result[i].userId);
 		if(result[i].userId == userId){
-			console.log('dup');
+			// console.log('dup');
 			return true;
 		}
 	}
