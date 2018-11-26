@@ -356,6 +356,8 @@ async function addUserInEvents (projectId, eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
+		console.log(isdup);
+		console.log(isValid);
 
 		if (isDup == false && isValid == true){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
@@ -380,6 +382,8 @@ async function deleteUserInEventsAll (projectId, userId){
 	})
 
 	for (var i = 0; i < result.length; i++){
+		console.log(result[i].eventId);
+
 		query = "DELETE FROM MemberInEvents WHERE eventId = '" + result[i].eventId + "' AND userId = '" + userId[i] + "'";
 		await ProjectDB.query(query)
 		.catch (error => {
