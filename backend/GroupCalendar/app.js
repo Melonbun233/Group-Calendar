@@ -40,7 +40,7 @@ function uuidCheck(session){
   if(session.uuid == null || session.uuid == 'undefined'){
     return false;
   } else {
-    console.log(session.expires);
+    console.log(session);
     if(session.expires < 1) {
       return false;
     }
