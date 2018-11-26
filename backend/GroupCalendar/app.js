@@ -40,9 +40,11 @@ function uuidCheck(req){
   if(req.headers.session == 'undefined'){
     return false;
   }
+
   if(req.session.uuid == null || req.session.uuid == 'undefined'){
     return false;
   }
+
   return true;
 
 }
@@ -68,14 +70,17 @@ app.use(session({
 
 app.use(function(req, res, next){
   console.log(`path: ${req.path}`);
-  
+  console.log(req.headers.session);
+
   if(checkPath(req.path)){
-    
+
     if (uuidCheck(req)){
       next();
+
     }else{
       res.status(401).send("expired session");
     } 
+
   }else{
     next();
   }
