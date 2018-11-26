@@ -88,7 +88,7 @@ export default class GCNetwork extends Component {
 	//search a specific user id
 	//this function is similar to fetchProfile, but this one returns the profile
 	static async searchProfile(userId) {
-		let url = config.server.concat('/users/profile' + '?userId=' + userId);
+		let url = config.server.concat('/user/profile' + '?userId=' + userId);
 		try {
 			let response = await fetch(url, {
 				method: 'Get',
@@ -100,7 +100,7 @@ export default class GCNetwork extends Component {
 			let responseJson = await response.json();
 
 			return {
-				profile : responseJson,
+				profile : responseJson.profile,
 				status: response.status
 			}
 		} catch (error) {
@@ -173,7 +173,7 @@ export default class GCNetwork extends Component {
 				let responseJson = await response.json();
 				return {
 					status: response.status,
-					project: responseJson
+					project: responseJson.project,
 				};
 			}
 			
@@ -195,6 +195,8 @@ export default class GCNetwork extends Component {
 					if (response.status == 200) {
 						allProjects.push(response.project);
 					} else {
+						let json = await response.json();
+						Alert.alert(JSON.stringify(json));
 						break;
 					}
 				}
@@ -258,16 +260,33 @@ export default class GCNetwork extends Component {
 
 	static async createProject(userId, project) {
 		let url = config.server.concat('/project');
+		project.projectOwnerId = userId;
 		try {
 			let response = await fetch (url, {
 				method : 'POST',
 				headers: {"Content-Type": "application/json"},
 				credentials : 'include',
 				body: JSON.stringify({userId, project}),
-			})
+			});
 			return response.status;
 		} catch (error) {
 			throw Error('unable to create project');
+		}
+	}
+
+	static async createEvent(projectId, userId, event) {
+		let url = config.server.concat('/project/events');
+		event = [event];
+		try {
+			let response = await fetch (url, {
+				method : 'POST',
+				headers: {"Content-Type": "application/json"},
+				credentials : 'include',
+				body: JSON.stringify({userId, projectId, event}),
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to craete project');
 		}
 	}
 
@@ -285,7 +304,7 @@ export default class GCNetwork extends Component {
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(userInfo),
 				credentials : 'include',
-			})
+			});
 			
 			if (response.status == 200) {
 				let responseJson = await response.json();
@@ -299,6 +318,85 @@ export default class GCNetwork extends Component {
 			return response.status;
 		} catch (error) {
 			throw Error('unable to verify user by google');
+		}
+	}
+
+	static async dropEvent(projectId, eventId, userId) {
+		eventId = [eventId];
+		let url = config.server.concat('/project/event/member');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+	}
+
+	static async voteEvent(projectId, eventId, userId){
+		eventId = [eventId];
+		let url = config.server.concat('/project/event/member');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to vote events');
+		}
+	}
+
+	static async deleteEvent(projectId, eventId, userId) {
+		eventId = [eventId];
+		let url = config.server.concat('/project/events');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, eventId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+	}
+
+	static async deleteMember(projectId, memberId, userId) {
+		memberId = [memberId];
+		let url = config.server.concat('/project/members');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, memberId, userId}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to remove members');
+		}
+	}
+
+	static async inviteUser(projectId, userId, invitedEmail) {
+		let url = config.server.concat('/project/invite');
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({projectId, userId, invitedEmail}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch (error) {
+			throw Error('unable to invite user');
 		}
 	}
 }

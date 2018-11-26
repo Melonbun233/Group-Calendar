@@ -179,6 +179,53 @@ export default class GCNetwork extends Component {
 		} catch (error) {
 			throw Error('unable to create project');
 		}
+    }
+    
+    static async createEvent(projectId, userId, event) {
+        try {
+            let project = allProjects[projectId - 1];
+            event.eventId = project.events.length + 1;
+            event.chosenId = [];
+            project.events.push(event);
+            return 200;
+        } catch (error) {
+            throw Error('unable to create event');  
+        }
+    }
+
+    static async dropEvent(projectId, eventId, userId) {
+		try {
+            let project = allProjects[projectId - 1];
+            for (var key in project.events) {
+                let event = project.events[key];
+                if (event.eventId == eventId) {
+                    let filtered = event.chosenId.filter(function(e){return e != userId});
+                    project.events[key].chosenId = filtered;
+                    allProjects[projectId-1] = project;
+                    break;
+                }
+            }
+			return 200;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+	}
+
+	static async voteEvent(projectId, eventId, userId){
+		try {
+            let project = allProjects[projectId - 1];
+            for (var key in project.events) {
+                let event = project.events[key];
+                if (event.eventId == eventId) {
+                    project.events[key].chosenId.push(parseInt(userId));
+                    allProjects[projectId - 1] = project;
+                    break;
+                }
+            }
+			return 200;
+		} catch (error) {
+			throw Error('unable to vote events');
+		}
 	}
 
 	//	Function used to verify a user by google authentication
@@ -205,6 +252,50 @@ export default class GCNetwork extends Component {
 		} catch (error) {
 			throw Error('unable to sign in');
 		}
+    }
+    
+    static async deleteEvent(projectId, eventId, userId) {
+		try {
+            let project = allProjects[projectId - 1];
+            for (var key in project.events) {
+                let event = project.events[key];
+                if (event.eventId == eventId) {
+                    project.events.splice(key, 1);
+                    allProjects[projectId - 1] = project;
+                    break;
+                }
+            }
+			return 200;
+		} catch (error) {
+			throw Error('unable to drop events');
+		}
+    }
+    
+    static async inviteUser(projectId, userId, invitedEmail) {
+		let url = config.server.concat('/project/invite');
+		try {
+			return 200;
+		} catch (error) {
+			throw Error('unable to invite user');
+		}
+    }
+    
+    static async deleteMember(projectId, memberId, userId) {
+		try {
+            let project = allProjects[projectId - 1];
+            for (let key in project.memberId) {
+                let id = project.memberId[key];
+                if (id == memberId) {
+                    project.memberId.splice(key, 1);
+                    allProjects[projectId - 1] = project;
+                    break;
+                }
+            }
+			return 200;
+		} catch (error) {
+            Alert.alert(error.toString());
+			throw Error('unable to remove members');
+		}
 	}
 }
 
@@ -227,9 +318,9 @@ var allProjects = [
                 eventLocation: 'test location',
                 eventDescription: 'start on 2018-10-20 pm 12.00',
                 eventRepeat: 'week',
-                limit: 10,
+                userLimit: 10,
                 color: 'aqua',
-                choosenId: [],
+                chosenId: [1],
             },
             {
                 eventId: 1,
@@ -239,9 +330,9 @@ var allProjects = [
                 eventLocation: 'test location',
                 eventDescription: 'start on 2018-10-20 pm 13.00',
                 eventRepeat: 'day',
-                limit: 2,
+                userLimit: 2,
                 color: 'aqua',
-                choosenId: [],
+                chosenId: [],
             },
             {
                 eventId: 3,
@@ -251,9 +342,9 @@ var allProjects = [
                 eventLocation: 'test location',
                 eventDescription: 'start on 2018-10-20 pm 12.00',
                 eventRepeat: 'week',
-                limit: 0,
+                userLimit: 0,
                 color: 'aqua',
-                choosenId: [],
+                chosenId: [],
             }
         ],
     },
@@ -274,20 +365,20 @@ var allProjects = [
                 eventLocation: 'test location',
                 eventDescription: 'start on 2018-10-20 pm 12.00',
                 eventRepeat: 'week',
-                limit: 5,
+                userLimit: 5,
                 color: 'red',
-                choosenId: [],
+                chosenId: [1],
             },
         ],
     },
     {
         projectId: 3,
         projectName: 'Sushi',
-        projectOwnerId: 1,
+        projectOwnerId: 2,
         projectDescription: 'This is a sushi',
         projectStartDate: '2018-11-01T00:00:00.000Z',
         projectEndDate:'2018-12-20T00:00:00.000Z',
-        memberId: [2],
+        memberId: [1],
         events:[
             {
                 eventId: 5,
@@ -297,9 +388,9 @@ var allProjects = [
                 eventLocation: 'test location',
                 eventDescription: 'start on 2018-10-20 pm 12.00',
                 eventRepeat: 'week',
-                limit: 2,
+                userLimit: 2,
                 color: 'blueviolet',
-                choosenId: [],
+                chosenId: [],
             },
         ],
     }

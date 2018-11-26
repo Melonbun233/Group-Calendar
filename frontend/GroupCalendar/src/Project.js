@@ -5,7 +5,7 @@
 
 import React, {Component} from 'react';
 import {TouchableWithoutFeedback, StyleSheet, Text, View, Button, Alert, 
-	RefreshControl, ActivityIndicator, FlatList, ScrollView} 
+	RefreshControl, ActivityIndicator, FlatList, ScrollView, TouchableOpacity} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import UserAvatar from 'react-native-user-avatar';
@@ -29,48 +29,26 @@ export default class Project extends Component {
 	async componentDidMount() {
 		try{
 			let profile = await Storage.getProfile();
-			this.setState({
-				profile
-			});
+			if (!profile) {
+				Alert.alert('Something went wrong');
+				this.props.onSessionOut();
+			}
+			this.setState({profile});
+			let allProjects = await Storage.getAllProjects();
 
-			await this._onRefresh();
+			if (allProjects) {
+				this.setState({
+					allProjects,
+				});
+			} else {
+				await this._onRefresh();
+			}
 			this.setState({
 				isLoading: false,
 			})
 		} catch (error) {
 			Alert.alert(JSON.stringify(error));
 		}
-	}
-
-	_onPressProject = (project) => {
-		let {profile} = this.state;
-		this.props.navigation.push('ProjectDetail', {project, profile});
-	}
-
-	_renderItem({item}) {
-		return (
-			<TouchableWithoutFeedback
-				testID = {item.projectName}
-				onPress = {() => this._onPressProject(item)}
-			>
-			<View style = {s.contentContainer}>
-				<View style = {s.project}>
-					<View style = {s.projectContent}>
-					<Text style = {cs.h4}>{item.projectName}</Text>
-					</View>
-					<View style = {s.projectContent}>
-					<Text style = {cs.normalText}>{item.projectDescription}</Text>
-					</View>
-				</View>
-				<View style = {s.avatar}>
-					<UserAvatar
-						size = '80'
-						name = {item.projectName}
-					/>
-				</View>
-			</View>
-			</TouchableWithoutFeedback>
-		);
 	}
 
 	async _onRefresh() {
@@ -98,13 +76,44 @@ export default class Project extends Component {
 		});
 	}
 
+	_onPressProject = (project) => {
+		let {profile} = this.state;
+		this.props.navigation.push('ProjectDetail', {project, profile});
+	}
+
+	_renderItem({item}) {
+		return (
+			<TouchableOpacity
+				testID = {item.projectName}
+				onPress = {() => this._onPressProject(item)}
+			>
+			<View style = {s.contentContainer}>
+				<View style = {s.project}>
+					<View style = {s.projectContent}>
+					<Text style = {cs.h4}>{item.projectName}</Text>
+					</View>
+					<View style = {s.projectContent}>
+					<Text style = {cs.normalText}>{item.projectDescription}</Text>
+					</View>
+				</View>
+				<View style = {s.avatar}>
+					<UserAvatar
+						size = '80'
+						name = {item.projectName}
+					/>
+				</View>
+			</View>
+			</TouchableOpacity>
+		);
+	}
+
 
 	render() {
 		let {isLoading, isRefreshing} = this.state;
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large' animating = {false}/>
+					<ActivityIndicator size = 'large'/>
 				</View>
 			);
 		}
@@ -131,7 +140,7 @@ export default class Project extends Component {
 					renderItem = {this._renderItem.bind(this)}
 					keyExtractor = {(item) => item.projectId.toString()}
 				/>
-				{allProjects.length == 0 ? emptyMsg : null}
+				{!allProjects || allProjects.length == 0 ? emptyMsg : null}
 				<View style = {[s.button]}>
 				<Button
 					style = {s.button}
