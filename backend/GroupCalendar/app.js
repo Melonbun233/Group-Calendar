@@ -68,13 +68,12 @@ app.use(session({
 
 app.use(function(req, res, next){
   console.log(`path: ${req.path}`);
-
+  
   if(checkPath(req.path)){
-    // console.log('uuidCheck');
+    
     if (uuidCheck(req)){
       next();
     }else{
-      // console.log(req.session.uuid);
       res.status(401).send("expired session");
     } 
   }else{
