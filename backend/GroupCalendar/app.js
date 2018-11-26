@@ -69,8 +69,8 @@ app.use(session({
 
 app.use(function(req, res, next){
   console.log(`path: ${req.path}`);
-  console.log(`path: ${req.header}`);
-  console.log(`path: ${req.session.cookie}`);
+  console.log(`header: ${req.header}`);
+  console.log(`cookie: ${req.session.cookie}`);
   if(checkPath(req.path)){
     // console.log('uuidCheck');
     if (uuidCheck(req.session)){
