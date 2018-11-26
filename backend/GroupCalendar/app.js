@@ -60,9 +60,9 @@ app.use(session({
 
 app.use(function(req, res, next){
   // console.log('middleware');
-  if(checkPath(req.path)){
+  if(checkPath(req.path) == true){
     // console.log('uuidCheck');
-    if (uuidCheck(req.session.uuid)){
+    if (uuidCheck(req.session.uuid) == true){
       next();
     }else{
       // console.log(req.session.uuid);
