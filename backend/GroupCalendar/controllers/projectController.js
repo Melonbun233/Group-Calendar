@@ -161,7 +161,7 @@ async function deleteProject (req, res){
 	// 	res.status(400).json({error});
 	// }
 	try {
-		await Project.addUserInEvents(eventIds, userId);
+		await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		return res.status(400).json({error});
 	}
