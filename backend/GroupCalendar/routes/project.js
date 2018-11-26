@@ -19,6 +19,36 @@ router.put('/event/owner', function(req, res){
 }); //done
 
 /**
+ * DELETE: 
+ * req: projectId, eventId, userId
+ *
+ * res: N/A
+ */
+router.delete('/event/member', function(req, res){
+	projectController.deleteEventMember(req, res);
+});
+
+/**
+ * DELETE: 
+ * req: projectId, userId
+ *
+ * res: N/A
+ */
+router.delete('/event/member/all', function(req, res){
+	projectController.deleteEventMemberAll(req, res);
+});
+
+/**
+ * POST: 
+ * req: projectId, eventId, userId
+ *
+ * res: N/A
+ */
+router.post('/event/member', function(req, res){
+	projectController.addEventMember(req, res);
+});
+
+/**
  * POST: 
  * req: projectId, userId, event(json)
  *
@@ -82,7 +112,7 @@ router.delete('/', function(req, res){
 });
 
 /**
- * DELETE: 
+ * POST: 
  * req: projectId, userId, invitedId
  *
  * res: end
@@ -90,6 +120,27 @@ router.delete('/', function(req, res){
 router.post('/invite', function(req, res){
 	projectController.inviteUser(req, res);
 });
+
+/**
+ * DELETE: 
+ * req: projectId, userId, invitedId
+ *
+ * res: end
+ */
+router.delete('/invite', function(req, res){
+	projectController.deleteInvitedUser(req, res);
+});
+
+/*
+	DELETE members in project
+	
+	req: projectId, userId[]
+*/
+router.delete('/members', function(req, res){
+	projectController.deleteMembers(req, res);
+})
+
+
 
 
 module.exports = router;

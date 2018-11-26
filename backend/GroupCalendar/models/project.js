@@ -22,6 +22,28 @@ async function isOwner (projectId, userId){
 	return true;
 }
 
+// check ProjectDB -> Projects
+async function isOwner2 (projectId, userId){
+	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
+	var project = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (project.length > 1){
+		throw "Multiple projects with same projectId, something's wrong";
+	} else if (project.length == 0){
+		throw "projectId " + projectId + " does not exist in Projects table";
+	}
+
+	if (project[0].projectOwnerId != userId){
+		// this change make it sense
+		return false;
+		// throw  'userId ' + userId + ' is not the owner of projectId ' + projectId;
+	}
+	return true;
+}
+
 async function putEventOwner (eventId, event){
 	for (var x in event){
 		var query = "UPDATE Events SET " + x + " = '" + event[x] + "' WHERE eventId = '" + eventId + "'";
@@ -100,7 +122,11 @@ async function deleteEvents (eventId){
 }
 
 async function isUserInProject (projectId, userId){
-	var memberId = await getMemberId(projectId);
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
 
 	for (var i = 0; i < memberId.length; i++){
 		if (memberId[i] == userId){
@@ -114,6 +140,43 @@ async function isUserInProject (projectId, userId){
 		throw "userId " + userId + " does not belong to projectId " + projectId;
 	}
 }
+
+async function isUserInProject2 (projectId, userId){
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < memberId.length; i++){
+		if (memberId[i] == userId){
+			return true;
+		}
+	}
+
+	try{
+		return (await isOwner2(projectId, userId));
+	} catch (error){
+		throw "userId " + userId + " does not belong to projectId " + projectId;
+	}
+}
+
+async function isMemberInProject (projectId, userId){
+	try{
+		var memberId = await getMemberId(projectId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < memberId.length; i++){
+		if (memberId[i] == userId){
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 async function getProject (projectId){
 	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
@@ -178,10 +241,6 @@ async function getMemberId (projectId){
 		throw error;
 	})
 
-	if (memberId.length == 0){
-		throw "projectId" + projectId + "does not exist in Membership table";
-	}
-
 	var memberIdArr = [];
 	for (var i = 0; i < memberId.length; i++){
 		memberIdArr.push(memberId[i].userId);
@@ -230,18 +289,7 @@ async function createProject (project, userId){
 		throw "Creating project was not successful, something wrong with ProjectDB";
 	}
 
-	var projectId = result.insertId;
-
-	query = "INSERT INTO Membership (projectId, userId) VALUES (" + projectId + ", " + userId + ")";
-	result = await ProjectDB.query(query)
-	.catch (error => {
-		throw error;
-	})
-	if (result.affectedRows == 0){
-		throw "Adding owner to Membership was not successful, something wrong with ProjectDB";
-	}
-
-	return projectId;
+	return result.insertId;
 }
 
 async function deleteProject (projectId){
@@ -291,11 +339,240 @@ async function deleteProject (projectId){
 
 }
 
+async function addUserInEvents (projectId, eventIds, userId){
+
+	try {
+		var isDup = await isUserInEvents(eventIds[i], userId); 
+	} catch(error) {
+		throw error;
+	}
+	// console.log(isDup);
+
+	for (var i = 0; i < eventIds.length; i++){
+
+		// console.log(eventIds[i]);
+
+		try {
+			var isValid = await isEventInProject(projectId, eventIds[i]); 
+		} catch(error) {
+			throw error;
+		}
+		
+		// console.log(isValid);
+
+		if (isDup == false && isValid == true){
+			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
+			var result = await ProjectDB.query(query)
+			.catch (error => {
+				throw error;
+			})
+
+			if (result.affectedRows == 0){
+				throw "Err in ProjectDB: Table MemberInEvents could not found";
+			}
+		}
+	}
+}
+
+async function deleteUserInEventsAll (projectId, userId){
+
+	var query = "SELECT eventId from EventList WHERE projectId = '" + projectId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	for (var i = 0; i < result.length; i++){
+		// console.log(result[i].eventId);
+
+		query = "DELETE FROM MemberInEvents WHERE eventId = '" + result[i].eventId + "' AND userId = '" + userId[i] + "'";
+		await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+	}
+
+}
+
+async function deleteUserInEvents (projectId, eventIds, userId){
+	for (var i = 0; i < eventIds.length; i++){
+		try {
+			var isValid = await isEventInProject(projectId, eventIds[i]); 
+		} catch(error) {
+			throw error;
+		}
+		if (isValid == true){
+			var query = "DELETE FROM MemberInEvents WHERE eventId = '" + eventIds[i] + "' AND userId = '" + userId + "'";
+			var result = await ProjectDB.query(query)
+			.catch (error => {
+				throw error;
+			})
+		}
+		
+		// if (result.affectedRows == 0){
+		// 	throw "The entry could not be found";
+		// }
+	}
+
+}
+
+async function addUserInInviteList (projectId, userId){
+	var query = "INSERT INTO InviteList (projectId, userId) VALUES ('" + projectId + "', '" + userId + "')";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		throw "Err in ProjectDB: Table MemberInEvents could not found";
+	}
+
+}
+
+async function deleteUserInInviteList (projectId, userId){
+	var query = "DELETE FROM InviteList WHERE projectId = '" + projectId + "' AND userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		throw "The entry could not be found";
+	}
+
+}
+
+async function isUserInEvents (eventId, userId){
+	var query = "SELECT userId FROM MemberInEvents WHERE eventId = '" + eventId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	if (result.affectedRows == 0){
+		return false;
+	}
+
+	for(var i = 0; i < result.length; i++){
+		if(result[i].userId == userId){
+			return true;
+		}
+	}
+	return false;
+
+}
+
+
+//userId[]
+async function deleteMembers(projectId, userId){
+	for (var i = 0; i < userId.length; i++){
+		var query = "DELETE FROM Membership WHERE projectId = '" + projectId + "' AND userId = '" + userId[i] + "'";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+		if (result.affectedRows == 0){
+			throw "No projectId " + projectId + " userId " + userId + " pair in Membership";
+		}
+	}
+
+	for (var i = 0; i < userId.length; i++){
+		var query = "SELECT eventId from EventList WHERE projectId = '" + projectId + "'";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+
+		for (var j = 0; j < result.length; j++){
+			query = "DELETE FROM MemberInEvents WHERE eventId = '" + result[j].eventId + "' AND userId = '" + userId[i] + "'";
+			await ProjectDB.query(query)
+			.catch (error => {
+				throw error;
+			})
+		}
+	}
+}
+
+async function isEventInProject (projectId, eventId){
+	console.log(projectId);
+	console.log(eventId);
+
+	var query = "SELECT eventId FROM EventList WHERE projectId = '" + projectId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	// console.log(result);
+
+	if (result.affectedRows == 0){
+		return false;
+	}
+
+	for(var i = 0; i < result.length; i++){
+		if(result[i].eventId == eventId){
+			return true;
+		}
+	}
+	return false;
+}
+
+async function isUserInInviteList (projectId, userId){
+	try{
+		var invitingProjects = await getInvitingProjects(userId);
+	}catch (error){
+		throw error;
+	}
+
+	for (var i = 0; i < invitingProjects.length; i++){
+		if (invitingProjects[i].projectId == projectId){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+async function getInvitingProjects (userId){
+	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
+	var invitingProjects = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (invitingProjects.length == 0){
+		throw "UserId" + userId + "does not exist in InviteList table";
+	}
+
+	// var projectIds = [];
+	// for (var i = 0; i < invitingProjects.length; i++){
+	// 	projectIds.push(invitingProjects[i].projectId);
+	// }
+
+	return invitingProjects;
+}
+
+async function addUserInMembership (projectId, userId){
+	query = "INSERT INTO Membership (projectId, userId) VALUES ('" + projectId + "', '" + userId + "')";
+	var result = await ProjectDB.query(query)
+	.catch ( error => {
+		throw error;
+	})
+
+	if (result.length == 0){
+		throw "Err in ProjectDB: Membership";
+	}
+}
+
+
 
 module.exports = {
 	isOwner,
+	isOwner2,
 	putEventOwner,
 	isUserInProject,
+	isUserInProject2,
+	isMemberInProject,
 	getProject,
 	getEvents,
 	getMemberId,
@@ -304,4 +581,15 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	addUserInEvents,
+	deleteUserInEvents,
+	deleteUserInEventsAll,
+	addUserInInviteList,
+	deleteUserInInviteList,
+	deleteMembers,
+
+	isUserInInviteList,
+	getInvitingProjects,
+	addUserInMembership,
+
 }

@@ -23,5 +23,14 @@ router.put('/profile',
 router.get('/projects',
 	userController.getProjectId);
 
+router.get('/notification',
+	userController.getNotification);
+
+router.put('/invite/accept',
+	userController.acceptInvite);
+
+router.delete('/invite/decline',
+	userController.declineInvite);
+
 
 module.exports = router;
