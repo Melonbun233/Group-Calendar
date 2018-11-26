@@ -248,7 +248,7 @@ async function inviteUser (req, res){
 		console.log(error);
 		return res.status(400).json({error});
 	}
-	console(result);
+	console.log(result);
 
 	if (result == null){
 		console.log('Could not find the user');
