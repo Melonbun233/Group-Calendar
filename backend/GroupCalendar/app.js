@@ -75,6 +75,7 @@ app.use(function(req, res, next){
   if(checkPath(req.path)){
 
     if (uuidCheck(req)){
+      console.log(uuidCheck(req));
       next();
 
     }else{
