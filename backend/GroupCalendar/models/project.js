@@ -350,7 +350,7 @@ async function addUserInEvents (eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
-		if (!isDup){
+		if (isDup == false){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
