@@ -495,6 +495,9 @@ async function deleteMembers(projectId, userId){
 }
 
 async function isEventInProject (projectId, eventId){
+	console.log(projectId);
+	console.log(eventId);
+	
 	var query = "SELECT eventId FROM EventList WHERE projectId = '" + projectId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
