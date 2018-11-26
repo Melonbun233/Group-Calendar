@@ -36,16 +36,15 @@ function checkPath(path){
  * uuid check would be more safer if server stores one copy in database
  * it will be added in the future
  */
-function uuidCheck(session){
-  if(session.uuid == null || session.uuid == 'undefined'){
+function uuidCheck(req){
+  if(req.headers.session == 'undefined'){
     return false;
-  } else {
-    console.log(session);
-    if(session.expires < 1) {
-      return false;
-    }
-    return true;
   }
+  if(req.session.uuid == null || req.session.uuid == 'undefined'){
+    return false;
+  }
+  return true;
+
 }
 
 
@@ -61,22 +60,18 @@ app.use(session({
   duration: 30 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
-  // activeDuration: 5,
-  cookie: {
-    maxAge: 10 * 1000,
-  }
+  activeDuration: 30 * 1000,
+  // cookie: {
+  //   maxAge: 10 * 1000,
+  // }
 }));
 
 app.use(function(req, res, next){
   console.log(`path: ${req.path}`);
-  // console.log(req.header);
-  console.log(`cookie: ${req.session.cookie}`);
-  console.log(`maxAge: ${req.session.cookie.maxAge}`);
 
   if(checkPath(req.path)){
     // console.log('uuidCheck');
-    if (uuidCheck(req.session)){
-      console.log(req.session.uuid);
+    if (uuidCheck(req)){
       next();
     }else{
       // console.log(req.session.uuid);
