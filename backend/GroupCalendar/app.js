@@ -61,10 +61,10 @@ app.use(session({
 	secret: 'secret key',
 	//duration: how long the session will live in milliseconds
 	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
-  duration: 60 * 60 * 1000,
+  duration: 60 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
-  activeDuration: 30 * 60 * 1000,
+  activeDuration: 30* 1000,
   // cookie: {
   //   maxAge: 10 * 1000,
   // }
