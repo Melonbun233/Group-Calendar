@@ -382,9 +382,9 @@ async function deleteUserInEvents (eventIds, userId){
 		})
 		console.log(result);
 		
-		if (result.affectedRows == 0){
-			throw "Could not find this entry";
-		}
+		// if (result.affectedRows == 0){
+		// 	throw "The entry could not be found";
+		// }
 	}
 
 }
