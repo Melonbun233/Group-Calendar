@@ -341,20 +341,18 @@ async function deleteProject (projectId){
 
 async function addUserInEvents (projectId, eventIds, userId){
 
-	for (var i = 0; i < eventIds.length; i++){
-
-		// console.log(eventIds[i]);
-		var isDup;
-		var isValid;
-		
-		try {
-			isDup = await isUserInEvents(eventIds[i], userId); 
+	try {
+			var isDup = await isUserInEvents(eventIds[i], userId); 
 		} catch(error) {
 			throw error;
 		}
 
+	for (var i = 0; i < eventIds.length; i++){
+
+		console.log(eventIds[i]);
+
 		try {
-			isValid = await isEventInProject(projectId, eventIds[i]); 
+			var isValid = await isEventInProject(projectId, eventIds[i]); 
 		} catch(error) {
 			throw error;
 		}
@@ -455,9 +453,7 @@ async function isUserInEvents (eventId, userId){
 	}
 
 	for(var i = 0; i < result.length; i++){
-		// console.log(result[i].userId);
 		if(result[i].userId == userId){
-			// console.log('dup');
 			return true;
 		}
 	}
