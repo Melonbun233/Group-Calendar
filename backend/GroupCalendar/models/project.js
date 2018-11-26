@@ -414,7 +414,7 @@ async function deleteUserInInviteList (projectId, userId){
 }
 
 async function isUserInEvents (eventId, userId){
-	var query = "SELECT FROM MemberInEvents WHERE eventId = '" + eventId + "' AND userId = '" + userId + "'";
+	var query = "SELECT * FROM MemberInEvents WHERE eventId = '" + eventId + "' AND userId = '" + userId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
 		throw error;
