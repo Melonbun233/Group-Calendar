@@ -249,7 +249,7 @@ async function inviteUser (req, res){
 	var invitedId = result.userId;
 
 	try {
-		if(await User.isUserInInviteList(projectId, invitedId)){
+		if(await Project.isUserInInviteList(projectId, invitedId)){
 			return res.status(200).json();;
 		}
 	} catch (error) {
@@ -276,8 +276,7 @@ async function inviteUser (req, res){
 }
 
 async function deleteInvitedUser (req, res){
-	var projectId = req.body.projectId;
-	var userId = req.body.userId;
+	
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
@@ -302,7 +301,7 @@ async function deleteInvitedUser (req, res){
 	var invitedId = result.userId;
 
 	try {
-		if(!(await User.isUserInInviteList(projectId, invitedId))){
+		if(!(await Project.isUserInInviteList(projectId, invitedId))){
 			return res.status(400).send('This user is not in the InvitedList');
 		}
 	} catch (error) {
