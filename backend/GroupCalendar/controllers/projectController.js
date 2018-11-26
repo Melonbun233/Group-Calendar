@@ -231,6 +231,7 @@ async function inviteUser (req, res){
 	//this part is optional
 	try {
 		if(!(await Project.isOwner2(projectId, userId))){
+			console.log('Only Project Owner can invite');
 			return res.status(400).send('Only Project Owner can invite');
 		}
 	} catch (error) {
@@ -242,8 +243,10 @@ async function inviteUser (req, res){
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+	console(result);
 	
 	if (result == null){
+		console.log('Could not find the user');
 			return res.status(400).send('Could not find the user');
 		}
 	var invitedId = result.userId;
@@ -259,6 +262,7 @@ async function inviteUser (req, res){
 	
 	try {
 		if(!(await Project.isUserInProject2(projectId, invitedId))){
+			console.log('Invited user has been in the project');
 			return res.status(400).send('Invited user has been in the project');
 		}
 	} catch (error) {
