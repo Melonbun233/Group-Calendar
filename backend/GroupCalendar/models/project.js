@@ -341,6 +341,9 @@ async function deleteProject (projectId){
 
 async function addUserInEvents (eventIds, userId){
 	for (var x in eventIds){
+
+		console.log(x);
+
 		try {
 			if (await isUserInEvents(x, userId)) {
 				continue;
