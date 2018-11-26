@@ -311,7 +311,14 @@ async function deleteInvitedUser (req, res){
 }
 
 
-
+async function deleteMembers(req, res){
+	try{
+		await Project.deleteMembers(req.body.projectId, req.body.userId);
+		res.status(200).end();
+	} catch (error) {
+		res.status(400).json({error});
+	}
+}
 
 
 module.exports = {
@@ -326,5 +333,6 @@ module.exports = {
 	deleteEventMember,
 	deleteEventMemberAll,
 	inviteUser,
-	deleteInvitedUser
+	deleteInvitedUser,
+	deleteMembers
 }

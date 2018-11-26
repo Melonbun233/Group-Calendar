@@ -438,6 +438,37 @@ async function isUserInEvents (eventId, userId){
 }
 
 
+//userId[]
+async function deleteMembers(projectId, userId){
+	for (var i = 0; i < userId.length; i++){
+		var query = "DELETE FROM Membership WHERE projectId = '" + projectId + "' AND userId = '" + userId[i] + "'";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+		if (result.affectedRows == 0){
+			throw "No projectId " + projectId + " userId " + userId + " pair in Membership";
+		}
+	}
+
+	for (var i = 0; i < userId.length; i++){
+		var query = "SELECT eventId from EventList WHERE projectId = '" + projectId + "'";
+		var result = await ProjectDB.query(query)
+		.catch (error => {
+			throw error;
+		})
+
+		for (var j = 0; j < result.length; j++){
+			query = "DELETE FROM MemberInEvents WHERE eventId = '" + result[j].eventId + "' AND userId = '" + userId[i] + "'";
+			await ProjectDB.query(query)
+			.catch (error => {
+				throw error;
+			})
+		}
+	}
+}
+
+
 module.exports = {
 	isOwner,
 	isOwner2,
@@ -458,5 +489,6 @@ module.exports = {
 	deleteUserInEventsAll,
 	addUserInInviteList,
 	deleteUserInInviteList,
+	deleteMembers,
 
 }
