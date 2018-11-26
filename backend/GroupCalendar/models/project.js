@@ -426,9 +426,9 @@ async function isUserInEvents (eventId, userId){
 	}
 	console.log(result);
 
-	for(var i = 0; i < result.length; i++){
+	for(var i = 0; i < result[0].length; i++){
 		console.log(result[i]);
-		if(result[i] == userId){
+		if(result[i].userId == userId){
 			return true;
 		}
 	}
