@@ -182,14 +182,12 @@ async function deleteEventMember (req, res){
  		return res.status(400).json({error});
  	}
 
- 	console.log("found user");
-
 	if(!isValidMember) {
 		return res.status(400).send('This user is not a valid member');
 	}
 
 	try {
-		await Project.deleteUserInEvents(eventIds, userId);
+		await Project.deleteUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		return res.status(400).json({error});
 	}
@@ -214,7 +212,7 @@ async function deleteEventMemberAll (req, res){
 	}
 
 	try {
-		await Project.deleteUserInEventsAll(userId);
+		await Project.deleteUserInEventsAll(projectId, userId);
 	} catch (error) {
 		return res.status(400).json({error});
 	}
@@ -314,6 +312,14 @@ async function deleteInvitedUser (req, res){
 
 
 async function deleteMembers(req, res){
+	try {
+		if(!(await Project.isOwner2(req.body.projectId, req.body.userId))){
+			return res.status(400).send('Only Project Owner can delete members');
+		}
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.userId);
 		res.status(200).end();
