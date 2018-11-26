@@ -153,13 +153,13 @@ async function deleteProject (req, res){
 		return res.status(400).send('This user is not a valid member');
 	}
 
-	try{
-		if(await Project.isUserInEvents(eventIds, userId)){
-			return res.status(400).send('This user has already been in the event')
-		}
-	}	catch (error) {
-		res.status(400).json({error});
-	}
+	// try{
+	// 	if(await Project.isUserInEvents(eventIds, userId)){
+	// 		return res.status(400).send('This user has already been in the event')
+	// 	}
+	// }	catch (error) {
+	// 	res.status(400).json({error});
+	// }
 	try {
 		await Project.addUserInEvents(eventIds, userId);
 	} catch (error) {
@@ -257,7 +257,8 @@ async function inviteUser (req, res){
 async function deleteInvitedUser (req, res){
 	var projectId = req.body.projectId;
 	var userId = req.body.userId;
-	var invitedId = req.body.invitedId;
+	var invitedEmail = req.body.invitedEmail;
+	var invitedId;
 
 	//this part is optional
 	try {
@@ -267,6 +268,17 @@ async function deleteInvitedUser (req, res){
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+
+	try{
+		var result = await User.getInfo(invitedEmail);
+	} catch (error) {
+		return res.status(400).json({error});
+	}
+	
+	if (result == null){
+			return res.status(400).send('Could not find the user');
+		}
+	var invitedId = result.userId;
 
 	try {
 		if(!(await User.isUserInInviteList(projectId, invitedId))){

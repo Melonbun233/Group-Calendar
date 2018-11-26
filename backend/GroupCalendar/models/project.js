@@ -414,7 +414,7 @@ async function deleteUserInInviteList (projectId, userId){
 }
 
 async function isUserInEvents (eventId, userId){
-	var query = "SELECT * FROM MemberInEvents WHERE eventId = '" + eventId + "' AND userId = '" + userId + "'";
+	var query = "SELECT userId FROM MemberInEvents WHERE eventId = '" + eventId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
 		throw error;
@@ -423,7 +423,13 @@ async function isUserInEvents (eventId, userId){
 	if (result.affectedRows == 0){
 		return false;
 	}
-	return true;
+
+	for(var x in result){
+		if(x == userId){
+			return true;
+		}
+	}
+	return false;
 
 }
 
