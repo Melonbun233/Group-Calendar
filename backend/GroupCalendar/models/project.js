@@ -375,7 +375,7 @@ async function deleteUserInEventsAll (userId){
 
 async function deleteUserInEvents (events, userId){
 	for (var i = 0; i < eventIds.length; i++){
-		var query = "DELETE FROM MemberInEvents WHERE eventId = '" + eventIds[i] + "' AND userId = '" + userId + "'";
+		var query = "DELETE FROM MemberInEvents WHERE (eventId = '" + eventIds[i] + "' AND userId = '" + userId + "')";
 		var result = await ProjectDB.query(query)
 		.catch (error => {
 			throw error;
@@ -383,7 +383,7 @@ async function deleteUserInEvents (events, userId){
 		console.log(result);
 		
 		if (result.affectedRows == 0){
-			throw "Err in ProjectDB: Table MemberInEvents fails";
+			throw "Could not find this entry";
 		}
 	}
 
