@@ -373,7 +373,7 @@ async function deleteUserInEventsAll (userId){
 
 }
 
-async function deleteUserInEvents (events, userId){
+async function deleteUserInEvents (eventIds, userId){
 	for (var i = 0; i < eventIds.length; i++){
 		var query = "DELETE FROM MemberInEvents WHERE (eventId = '" + eventIds[i] + "' AND userId = '" + userId + "')";
 		var result = await ProjectDB.query(query)
