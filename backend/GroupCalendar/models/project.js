@@ -344,15 +344,17 @@ async function addUserInEvents (projectId, eventIds, userId){
 	for (var i = 0; i < eventIds.length; i++){
 
 		// console.log(eventIds[i]);
-
+		var isDup;
+		var isValid;
+		
 		try {
-			var isDup = await isUserInEvents(eventIds[i], userId); 
+			isDup = await isUserInEvents(eventIds[i], userId); 
 		} catch(error) {
 			throw error;
 		}
 
 		try {
-			var isValid = await isEventInProject(projectId, eventIds[i]); 
+			isValid = await isEventInProject(projectId, eventIds[i]); 
 		} catch(error) {
 			throw error;
 		}
@@ -497,7 +499,7 @@ async function deleteMembers(projectId, userId){
 async function isEventInProject (projectId, eventId){
 	console.log(projectId);
 	console.log(eventId);
-	
+
 	var query = "SELECT eventId FROM EventList WHERE projectId = '" + projectId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
