@@ -343,23 +343,22 @@ async function addUserInEvents (eventIds, userId){
 	for (var x in eventIds){
 
 		console.log(x);
-
+		var isDup;
 		try {
-			if (await isUserInEvents(x, userId)) {
-				continue;
-			}
+			isDup = await isUserInEvents(x, userId); 
 		} catch(error) {
 			throw error;
 		}
+		if (!isDup){
+			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + x + "', '" + userId + "')";
+			var result = await ProjectDB.query(query)
+			.catch (error => {
+				throw error;
+			})
 
-		var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + x + "', '" + userId + "')";
-		var result = await ProjectDB.query(query)
-		.catch (error => {
-			throw error;
-		})
-
-		if (result.affectedRows == 0){
-			throw "Err in ProjectDB: Table MemberInEvents could not found";
+			if (result.affectedRows == 0){
+				throw "Err in ProjectDB: Table MemberInEvents could not found";
+			}
 		}
 	}
 }
