@@ -350,7 +350,7 @@ async function addUserInEvents (eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
-		if (!isDup){
+		if (isDup == false){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
@@ -424,9 +424,9 @@ async function isUserInEvents (eventId, userId){
 	if (result.affectedRows == 0){
 		return false;
 	}
-	console.log(result);
+	// console.log(result);
 
-	for(var i = 0; i < result[0].length; i++){
+	for(var i = 0; i < result.length; i++){
 		console.log(result[i].userId);
 		if(result[i].userId == userId){
 			console.log('dup');
