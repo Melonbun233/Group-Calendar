@@ -1,4 +1,4 @@
-const NodeMailerMocks = require('nodemailer');
+const Mailer = require('nodemailer');
 const MailController = require('../../controllers/mailController');
 
 /**
@@ -37,7 +37,9 @@ const transport = {
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
  		var text = "Successful Test";
- 		NodeMailerMocks.createTransport = jest.fn().mockImplementationOnce(() => {return transport});
+ 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+    return transport;
+  });
  		MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
@@ -46,7 +48,10 @@ const transport = {
  		var receiver = "123";
  		var subject = "Test";
  		var text = "Failure Test";
- 		NodeMailerMocks.createTransport = jest.fn().mockImplementationOnce(() => {return transportErr});
+ 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+    return transportErr;
+  });
+ 		// Mailer.createTransport = jest.fn().mockImplementationOnce(() => {return transportErr});
  		MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
