@@ -83,9 +83,9 @@ app.use(function(req, res, next){
       next();
 
     }else{
-      console.log("expired");
-
+      // console.log("expired");
       // res.status(401).send("expired session");
+      
       next();
 
     } 
