@@ -6,20 +6,8 @@ const Project = require('../models/project');
 /**
  * Mock List:
  *
- * Project:
- * isMemberInProject
- * addUserInEvents
- * deleteUserInEvents
- * deleteUserInEventsAll
- * isOwner2
- * isUserInProject2
- * addUserInInviteList
- * isUserInInviteList
- * deleteUserInInviteList
+ * ProjectDB.query
  */
-
-/*------------mocking user---------------*/
-// jest.mock('../../models/user');
 
 /**
  * Test List:
@@ -27,11 +15,19 @@ const Project = require('../models/project');
  * isOwner2
  * isUserInProject2
  * isMemberInProject
+ * isUserInInviteList
+ * addUserInMembership
  * addUserInEvents
  * deleteUserInEvents
  * deleteUserInEventsAll
  * addUserInInviteList
  * deleteUserInInviteList
+ *
+ * Inner functions:
+ * 
+ * isUserInEvents
+ * isEventInProject
+ * isEventAvailable
  */
 
 describe('Testing addEventMember', () => {

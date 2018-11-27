@@ -1,6 +1,5 @@
 var ProjectDB = require('../databases/ProjectDB');
 var CalendarDB = require('../databases/CalendarDB');
-var UserDB = require('../databases/UserDB');
 
 // check ProjectDB -> Projects
 async function isOwner (projectId, userId){
@@ -576,6 +575,8 @@ async function isEventAvailable (eventId){
 	.catch (error => {
 		throw error;
 	});
+	
+	console.log(result);
 
 	var userNum = result.length;
 
