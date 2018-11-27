@@ -22,7 +22,7 @@ describe('Testing sendEmail', () => {
 		var text = "Successful Test";
 		MailController(receiver, subject, text, text);
 		expect(getInfoSpy).toHaveBeenCalled();
-	}
+	})
 
 	describe('Testing by with err', () => {
 		var receiver = "123";
@@ -30,7 +30,7 @@ describe('Testing sendEmail', () => {
 		var text = "Failure Test";
 		MailController(receiver, subject, text, text);
 		expect(getInfoSpy).toHaveBeenCalled();
-	}
-}
+	})
+})
 
 		
