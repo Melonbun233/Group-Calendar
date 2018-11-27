@@ -13,6 +13,9 @@ var session = require('express-session');
 
 var Promise = require('promise'); // npm install promise...
 
+var fs = require('fs')
+var https = require('https')
+
 /*----require routers-----------*/
 var projectRouter = require('./routes/project');
 var userRouter = require('./routes/user');
@@ -47,7 +50,6 @@ function uuidCheck(req){
   return true;
 
 }
-
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -104,7 +106,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.listen(8080, '0.0.0.0');
+// app.listen(8080, '0.0.0.0');
+https.createServer({
+  key: fs.readFileSync('privatekey.pem'),
+  cert: fs.readFileSync('certificate.pem')
+}, app)
+.listen(8080, function () {
+  console.log('app listening on port 3000! Go to https://localhost:3000/')
+})
+
 
 
 
