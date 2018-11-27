@@ -608,6 +608,7 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	deleteMembers,
 	
 	//isUserInEvents
 	//isEventInProject
@@ -622,6 +623,5 @@ module.exports = {
 	deleteUserInEventsAll,
 	addUserInInviteList,
 	deleteUserInInviteList,
-	deleteMembers,
 
 }
