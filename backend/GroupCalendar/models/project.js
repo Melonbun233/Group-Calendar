@@ -449,9 +449,9 @@ async function isUserInEvents (eventId, userId){
 		throw error;
 	});
 
-	if (result.affectedRows == 0){
-		return false;
-	}
+	// if (result.affectedRows == 0){
+	// 	return false;
+	// }
 
 	for(var i = 0; i < result.length; i++){
 		if(result[i].userId == userId){
@@ -494,9 +494,6 @@ async function deleteMembers(projectId, userId){
 }
 
 async function isEventInProject (projectId, eventId){
-	console.log(projectId);
-	console.log(eventId);
-
 	var query = "SELECT eventId FROM EventList WHERE projectId = '" + projectId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
@@ -505,9 +502,9 @@ async function isEventInProject (projectId, eventId){
 
 	// console.log(result);
 
-	if (result.affectedRows == 0){
-		return false;
-	}
+	// if (result.affectedRows == 0){
+	// 	return false;
+	// }
 
 	for(var i = 0; i < result.length; i++){
 		if(result[i].eventId == eventId){
@@ -523,11 +520,11 @@ async function isUserInInviteList (projectId, userId){
 	}catch (error){
 		throw error;
 	}
-	console.log(invitingProjects);
+	// console.log(invitingProjects);
 
 	for (var i = 0; i < invitingProjects.length; i++){
 
-		console.log(invitingProjects[i]);
+		// console.log(invitingProjects[i]);
 
 		if (invitingProjects[i] == projectId){
 			return true;
@@ -581,6 +578,8 @@ module.exports = {
 	createProject,
 	deleteProject,
 	
+	//isUserInEvents
+	//isEventInProject
 	isOwner2,
 	isUserInProject2,
 	isMemberInProject,

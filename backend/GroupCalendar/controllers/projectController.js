@@ -251,7 +251,6 @@ async function inviteUser (req, res){
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
-	console.log(req.body);
 	console.log(invitedEmail);
 
 	//this part is optional
@@ -284,7 +283,8 @@ async function inviteUser (req, res){
 	}
 	try {
 		if(await Project.isUserInInviteList(projectId, invitedId)){
-			return res.status(302).json();;
+			console.log('Invited user has been in the InviteList');
+			return res.status(302).send('Invited user has been in the InviteList');;
 		}
 	} catch (error) {
 		console.log(error);
