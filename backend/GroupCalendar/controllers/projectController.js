@@ -277,7 +277,7 @@ async function inviteUser (req, res){
 	}
 
 	try {
-		await Project.addUserInInviteList(projectId, userId);
+		await Project.addUserInInviteList(projectId, invitedId);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({error});
