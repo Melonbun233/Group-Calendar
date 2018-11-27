@@ -123,7 +123,6 @@ export default class GCNetwork extends Component {
     
     static async fetchAllInvitations(userId) {
 		try {
-            this.fetchInvitationList(userId);
             await Storage.setAllInvitations(allProjects);
 			return 200;
 		} catch (error) {
@@ -131,14 +130,6 @@ export default class GCNetwork extends Component {
 		}
 	}
 
-	static async fetchInvitationList(userId) {
-		try {
-			await Storage.setInvitationList([1, 2, 3]);
-			return 200;
-		} catch(error) {
-			throw error;
-		}
-	}
 
 	static async updateProfile(update, userId) {
 		try {
@@ -387,10 +378,10 @@ var allProjects = [
             {
                 eventId: 0,
                 eventName: 'Weekly event 1',
-                eventStartTime: '2018-10-20T12:00:00.000Z',
-                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventStartTime: '2018-10-26T15:00:00.000Z',
+                eventEndTime: '2018-10-26T16:00:00.000Z',
                 eventLocation: 'test location',
-                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventDescription: 'start on 2018-10-26 am 6.00',
                 eventRepeat: 'week',
                 userLimit: 10,
                 color: 'aqua',
@@ -398,11 +389,11 @@ var allProjects = [
             },
             {
                 eventId: 1,
-                eventName: 'daily event 1',
-                eventStartTime: '2018-10-20T13:00:00.000Z',
-                eventEndTime: '2018-10-20T14:00:00.000Z',
+                eventName: 'Daily event 1',
+                eventStartTime: '2018-10-26T16:00:00.000Z',
+                eventEndTime: '2018-10-26T17:00:00.000Z',
                 eventLocation: 'test location',
-                eventDescription: 'start on 2018-10-20 pm 13.00',
+                eventDescription: 'start on 2018-10-26 am 7.00',
                 eventRepeat: 'day',
                 userLimit: 2,
                 color: 'aqua',
@@ -410,13 +401,13 @@ var allProjects = [
             },
             {
                 eventId: 3,
-                eventName: 'one time event 1',
-                eventStartTime: '2018-10-20T12:00:00.000Z',
-                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventName: 'One time event 1',
+                eventStartTime: '2018-10-26T14:00:00.000Z',
+                eventEndTime: '2018-10-26T15:00:00.000Z',
                 eventLocation: 'test location',
-                eventDescription: 'start on 2018-10-20 pm 12.00',
-                eventRepeat: 'week',
-                userLimit: 0,
+                eventDescription: 'start on 2018-10-26 am 8.00',
+                eventRepeat: 'none',
+                userLimit: 1,
                 color: 'aqua',
                 chosenId: [],
             }
@@ -434,10 +425,10 @@ var allProjects = [
             {
                 eventId: 4,
                 eventName: 'Weekly event 2',
-                eventStartTime: '2018-10-20T12:00:00.000Z',
-                eventEndTime: '2018-10-20T13:00:00.000Z',
+                eventStartTime: '2018-11-20T18:00:00.000Z',
+                eventEndTime: '2018-11-20T19:00:00.000Z',
                 eventLocation: 'test location',
-                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventDescription: 'start on 2018-11-20 am 10.00',
                 eventRepeat: 'week',
                 userLimit: 5,
                 color: 'red',
@@ -450,17 +441,17 @@ var allProjects = [
         projectName: 'Sushi',
         projectOwnerId: 2,
         projectDescription: 'This is a sushi',
-        projectStartDate: '2018-11-01T00:00:00.000Z',
-        projectEndDate:'2018-12-20T00:00:00.000Z',
+        projectStartDate: '2018-12-01T00:00:00.000Z',
+        projectEndDate:'2019-01-20T00:00:00.000Z',
         memberId: [1],
         events:[
             {
                 eventId: 5,
                 eventName: 'Weekly event 3',
-                eventStartTime: '2018-10-20T17:00:00.000Z',
-                eventEndTime: '2018-10-20T18:00:00.000Z',
+                eventStartTime: '2018-12-25T17:00:00.000Z',
+                eventEndTime: '2018-12-25T18:00:00.000Z',
                 eventLocation: 'test location',
-                eventDescription: 'start on 2018-10-20 pm 12.00',
+                eventDescription: 'start on 2018-12-25 am 9.00',
                 eventRepeat: 'week',
                 userLimit: 2,
                 color: 'blueviolet',
@@ -480,6 +471,7 @@ const testProfile1 = {
     userDescription: 'hello this is henry',
     userRegion: 'Canada',
     isAdmin: '1',
+    invitation: [],
 };
 
 const testProfile2 = {
@@ -492,6 +484,7 @@ const testProfile2 = {
     userDescription: 'hello this is alice',
     userRegion: 'Canada',
     isAdmin: '1',
+    invitation: [],
 };
 
 const testProfile3 = {
@@ -504,4 +497,5 @@ const testProfile3 = {
     userDescription: 'hello this is kyle',
     userRegion: 'Canada',
     isAdmin: '1',
+    invitation: [],
 };

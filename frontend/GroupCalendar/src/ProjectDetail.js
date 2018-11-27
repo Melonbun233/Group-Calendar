@@ -183,10 +183,19 @@ export default class ProjectDeatail extends Component {
         );
     }
 
+
     //get event flat list for rendering
     _renderEvents = () => {
         let {events} = this.state.project;
         let {isOwner, extraData} = this.state;
+
+        //sort events based on starting time
+        events.sort((a, b) => {
+            let dateA = new Date(a.eventStartTime);
+            let dateB = new Date(b.eventStartTime);
+            return (dateA.getTime() - dateB.getTime());
+        });
+
         return (
             <View>
             {isOwner ? 
@@ -312,12 +321,19 @@ export default class ProjectDeatail extends Component {
                 <Text style = {[cs.smallText, {color: cl}]}>{repeat}</Text>
             </View>
             <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>{item.eventDescription}</Text>
+            </View>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
                 <Text style = {[cs.smallText, {color: cl}]}>Start Time:</Text>
                 <Text style = {[cs.smallText, {color: cl}]}>{startTime}</Text>
             </View>
             <View style = {[s.eventItem, {backgroundColor: bg}]}>
                 <Text style = {[cs.smallText, {color: cl}]}>End Time:</Text>
                 <Text style = {[cs.smallText, {color: cl}]}>{endTime}</Text>
+            </View>
+            <View style = {[s.eventItem, {backgroundColor: bg}]}>
+                <Text style = {[cs.smallText, {color: cl}]}>Location: </Text>
+                <Text style = {[cs.smallText, {color: cl}]}>{item.eventLocation}</Text>
             </View>
             <View style = {[s.eventItem, {backgroundColor: bg}]}>
                 <Text style = {[cs.smallText, {color: cl}]}>Availability: </Text>
@@ -346,8 +362,10 @@ export default class ProjectDeatail extends Component {
             if (status == 200) {
                 Alert.alert('The invitation has been sent');
                 await this._onRefresh(false);
-            } else if (status < 500){
+            } else if (status == 404){
                 Alert.alert('Cannot find the user');
+            } else if (status == 400){
+                Alert.alert('')
             } else {
                 Alert.alert('Internet Error ', status.toString());
             }
@@ -362,31 +380,6 @@ export default class ProjectDeatail extends Component {
             profile, project, 
             refreshProject: this._onRefresh.bind(this),
         });
-    }
-
-    _onDeleteMember = async (member, userId) => {
-        let {project, extraData} = this.state;
-        let memberId = member.userId;
-        try {
-            //for user experience, set state first
-            for (let key in project.memberId) {
-                let value = project.memberId[key];
-                if (value == memberId) {
-                    project.memberId.splice(key, 1);
-                    this.setState({project, extraData: !extraData});
-                    break;
-                }
-            }
-            //actually deleting the member
-            let status = await Network.deleteMember(project.projectId, 
-                memberId, userId);
-            if (status != 200) {
-                Alert.alert('Internet Error ' + status.toString());
-            }
-            await this._onRefresh(false);
-        } catch (error) {
-            Alert.alert(error.toString());
-        }
     }
 
     _onDeleteEvent = async (event, userId) => {
@@ -406,6 +399,7 @@ export default class ProjectDeatail extends Component {
                 event.eventId, userId);
             if (status == 200) {
                await this._onRefresh(false);
+               await this.state.refreshAll(false);
             } else {
                 Alert.alert('Internet Error ' + status.toString());
             }
@@ -455,6 +449,7 @@ export default class ProjectDeatail extends Component {
                 Alert.alert('Internet Error ' + status.toString());
             }
             await this._onRefresh(false);
+            await this.state.refreshAll(false);
         } catch (error) {
             Alert.alert(error.toString());
         }
@@ -465,16 +460,37 @@ export default class ProjectDeatail extends Component {
         try {
             let status = await Network.deleteProject(project.projectId, profile.userId);
             if (status == 200) {
-                this.state.refreshAll();
+                this.state.refreshAll(false);
                 this.props.navigation.goBack();
             }
         } catch (error) {
             Alert.alert(error.toString());
         }
     }
-    
-    _onLeaveProject = async () => {
 
+    _onDeleteMember = async (member, userId) => {
+        let {project, extraData} = this.state;
+        let memberId = member.userId;
+        try {
+            //for user experience, set state first
+            for (let key in project.memberId) {
+                let value = project.memberId[key];
+                if (value == memberId) {
+                    project.memberId.splice(key, 1);
+                    this.setState({project, extraData: !extraData});
+                    break;
+                }
+            }
+            //actually deleting the member
+            let status = await Network.deleteMember(project.projectId, 
+                memberId, userId);
+            if (status != 200) {
+                Alert.alert('Internet Error ' + status.toString());
+            }
+            await this._onRefresh(false);
+        } catch (error) {
+            Alert.alert(error.toString());
+        }
     }
 
     _onUpdateProject = async (update) => {
@@ -554,7 +570,7 @@ export default class ProjectDeatail extends Component {
 			);
         }
         let {project, ownerProfile, showStartDatePicker, showMembers,
-            showEndDatePicker, showEvents, isOwner} = this.state;
+            showEndDatePicker, showEvents, isOwner, profile} = this.state;
 
         let projectStartDate = new Date(project.projectStartDate);
         let projectEndDate = new Date(project.projectEndDate);
@@ -687,7 +703,11 @@ export default class ProjectDeatail extends Component {
                                 },
                                 {
                                     text: 'LEAVE',
-                                    onPress: () => this._onLeaveProject(),
+                                    onPress: async () => {
+                                        await this._onDeleteMember(profile, profile.userId);
+                                        await this.state.refreshAll(false);
+                                        this.props.navigation.goBack();
+                                    },
                                     style: 'destructive',
                                 },
                             ],

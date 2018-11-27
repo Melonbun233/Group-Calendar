@@ -34,7 +34,6 @@ export default class Invitation extends Component {
 				Alert.alert('Something went wrong');
 				this.props.onSessionOut();
 			}
-
 			let status = await Network.fetchAllInvitations(profile.userId);
 			switch (status) {
 				case 200:
@@ -43,6 +42,13 @@ export default class Invitation extends Component {
 					Alert.alert('Not all invitations fetched');
 				}
 				break;
+				case 401: {
+					this.props.onSessionOut();
+				}
+				break;
+				case 404: {
+					this.props.onSessionOut();
+				}
 				default: Alert.alert('Internet Error ' + status.toString());
 			}
 			allInvitations = await Storage.getAllInvitations();
