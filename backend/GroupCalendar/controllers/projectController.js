@@ -267,7 +267,7 @@ async function inviteUser (req, res){
 
 	
 	try {
-		if(!(await Project.isUserInProject2(projectId, invitedId))){
+		if(await Project.isUserInProject2(projectId, invitedId)){
 			console.log('Invited user has been in the project');
 			return res.status(302).send('Invited user has been in the project');
 		}
