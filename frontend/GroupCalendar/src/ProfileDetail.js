@@ -1,37 +1,26 @@
 'use strict';
-/**
- * This page constructs the user profile
- */
+//this file is used for random user profile
 
 import React, {Component} from 'react';
 import UserAvatar from 'react-native-user-avatar';
-import {Platform, StyleSheet, Text, View, Button, Alert, TouchableWithoutFeedback,
+import {StyleSheet, Text, View, Button, Alert, TouchableWithoutFeedback,
 		ScrollView, RefreshControl, ActivityIndicator} from 'react-native';
 import cs from './common/CommonStyles';
-import Storage from './common/Storage';
 import Network from './common/GCNetwork';
 
-export default class Profile extends Component {
+export default class ProfileDetail extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//this only set to true when we have found the user id somehow changed
-			//when this is set to false, we will need to log in again
 			isRefreshing: false, 
 			isLoading: true,
 		};
-		this._onRefresh = this._onRefresh.bind(this);
-		this._onEditProfile = this._onEditProfile.bind(this);
-		this._onChangePwd = this._onChangePwd.bind(this);
 	}
 
 	async componentDidMount() {
 		try {
-			let profile = await Storage.getProfile();
-			//calculate age
-			let curr = new Date();
-			let userBirth = new Date(profile.userBirth);
-			let age = curr.getFullYear() - userBirth.getFullYear();
+            //let navigation = this
+			let profile = this.
 
 			this.setState ({
 				age,

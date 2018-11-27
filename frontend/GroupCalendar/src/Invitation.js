@@ -5,7 +5,7 @@
 
 import React, {Component} from 'react';
 import {AlertIOS, StyleSheet, Text, View, Button, Alert, 
-	RefreshControl, ActivityIndicator, FlatList, ScrollView, TouchableOpacity} 
+	RefreshControl, ActivityIndicator, FlatList, ScrollView, TouchableWithoutFeedback} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
@@ -46,9 +46,6 @@ export default class Invitation extends Component {
 					this.props.onSessionOut();
 				}
 				break;
-				case 404: {
-					this.props.onSessionOut();
-				}
 				default: Alert.alert('Internet Error ' + status.toString());
 			}
 			allInvitations = await Storage.getAllInvitations();
@@ -136,6 +133,14 @@ export default class Invitation extends Component {
 		}
 	}
 
+	_onPressProject(project) {
+		let {profile} = this.state;
+		let {projectId} = project;
+		this.props.navigation.push('ProjectDetail', {
+			projectId, profile, type: 'view',
+			refreshAll: this._onRefresh.bind(this)});
+	}
+
 	_renderItem({item}) {
 		let button = [{
 			backgroundColor: 'red',
@@ -147,10 +152,15 @@ export default class Invitation extends Component {
 			}
 		}];
 		return (
+			
 			<SwipeOut
                 right = {button}
                 autoClose = {true}
             >
+			<TouchableWithoutFeedback
+				testId = 'initationButton'
+				onPress = {() => this._onPressProject(item)}
+			>
 			<View style = {s.contentContainer}>
 				<View style = {s.project}>
 				<Text style = {[cs.smallText, {padding: 5}]}>Invitation from project</Text>
@@ -166,7 +176,9 @@ export default class Invitation extends Component {
 					/>
 				</View>
 			</View>
+			</TouchableWithoutFeedback>
 			</SwipeOut>
+			
 		);
 	}
 

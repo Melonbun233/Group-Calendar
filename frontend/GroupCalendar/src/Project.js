@@ -84,7 +84,7 @@ export default class Project extends Component {
 		let {profile} = this.state;
 		let {projectId} = project;
 		this.props.navigation.push('ProjectDetail', {
-			projectId, profile, 
+			projectId, profile, type: 'edit',
 			refreshAll: this._onRefresh.bind(this)});
 	}
 
@@ -173,7 +173,27 @@ export default class Project extends Component {
 				{ownerProjects.length != 0 ? 
 				<View style = {s.membership}>
 					<Text style = {[cs.h5, {fontStyle: "italic"}]}>You are the owner</Text>
-				</View> : null}
+					<View style = {[s.button]}>
+					<Button
+						testID = 'createProjectButton'
+						title = 'New'
+						color = '#66a3ff'
+						onPress = {() => navigation.push('CreateProject', {
+							profile, refreshAll: this._onRefresh.bind(this)})}
+					/>
+					</View>
+				</View> : 
+				<View style = {s.onlyButton}>
+					<View style = {[s.button]}>
+					<Button
+						testID = 'createProjectButton'
+						title = 'New'
+						color = '#66a3ff'
+						onPress = {() => navigation.push('CreateProject', {
+							profile, refreshAll: this._onRefresh.bind(this)})}
+					/>
+					</View>
+				</View> }
 				<FlatList
 					data = {ownerProjects}
 					renderItem = {this._renderItem.bind(this)}
@@ -192,16 +212,6 @@ export default class Project extends Component {
 					extraData = {extraData}
 				/>
 				{!allProjects || allProjects.length == 0 ? emptyMsg : null}
-				<View style = {[s.button]}>
-				<Button
-					style = {s.button}
-					testID = 'createProjectButton'
-					title = 'New Project'
-					color = '#66a3ff'
-					onPress = {() => navigation.push('CreateProject', {
-						profile, refreshAll: this._onRefresh.bind(this)})}
-				/>
-				</View>
 				<View style = {cs.empty}></View>
 			</ScrollView>
 		);
@@ -215,7 +225,6 @@ const s = StyleSheet.create({
 		height: '100%',
 	},
 	button: {
-		padding: 10,
 		alignItems: 'center',
 	},
 	contentContainer: {
@@ -233,14 +242,25 @@ const s = StyleSheet.create({
 	},
 	avatar: {
 		flex:1,
-		paddingRight: 30,
+		paddingTop: 5,
 	},
 	membership: {
 		padding: 10,
 		paddingLeft: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'flex-start',
+		justifyContent: 'space-between',
+		borderBottomWidth: 1,
+		borderColor: '#e6e6e6',
+		backgroundColor: '#f2f2f2',
+	},
+	onlyButton: {
+		padding: 10,
+		paddingTop: 5,
+		paddingBottom: 5,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
 		borderBottomWidth: 1,
 		borderColor: '#e6e6e6',
 		backgroundColor: '#f2f2f2',

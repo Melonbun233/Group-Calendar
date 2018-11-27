@@ -486,7 +486,7 @@ export default class GCNetwork extends Component {
 		let url = config.server.concat('/user/invite/decline');
 		try {
 			let response = await fetch(url, {
-				method: 'PUT',
+				method: 'DELETE',
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify({projectId, userId}),
 				credentials : 'include',

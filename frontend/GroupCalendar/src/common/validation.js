@@ -131,3 +131,7 @@ export const inviteUserByEmailConstraints = {
 		},
 	},
 }
+
+export const editProjectConstraints = {
+	
+}

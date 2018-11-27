@@ -113,6 +113,7 @@ export default class SignInPage extends Component {
 				case 200: {
 					this.setState({isLoading: false});
 					Storage.setSignInByGoogle('false');
+					this.password.focus();
 					//jump to main page
 					this.props.navigation.navigate('Main');
 				}

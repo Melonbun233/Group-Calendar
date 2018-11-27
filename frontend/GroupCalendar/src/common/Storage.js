@@ -141,6 +141,8 @@ export default class Storage extends Component {
             await AsyncStorage.removeItem('project');
             await AsyncStorage.removeItem('profile');
             await AsyncStorage.removeItem('signInByGoogle');
+            await AsyncStorage.removeItem('allInvitations');
+            await AsyncStorage.removeItem('invitationList');
         } catch (error) {
             throw error;
         }

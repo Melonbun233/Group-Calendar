@@ -10,7 +10,7 @@ import {TextField} from 'react-native-material-textfield';
 import validate from 'validate.js';
 import {changePwdConstraints} from './common/validation';
 
-export default class ChangePwd extends Component {
+export default class EditPwd extends Component {
     static navigationOptions = {
 		title: 'Change Password',
     }
@@ -65,11 +65,11 @@ export default class ChangePwd extends Component {
     }
 
     _onSubmitOldPwd = () => {
-        this.userNewPwdRef.focus();
+        this.userNewPwd.focus();
     }
 
     _onSubmitNewPwd = () => {
-        this.userNewPwdRef.blur();
+        this.userNewPwd.blur();
     }
 
     _onSubmit = async () => {
@@ -184,4 +184,4 @@ const s = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 	}
-})
+});
