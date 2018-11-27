@@ -5,14 +5,14 @@ async function putEventOwner (req, res) {
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	try{
 		await Project.putEventOwner(req.body.eventId, req.body.update);
 		res.status(200).json();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 
@@ -21,7 +21,7 @@ async function createEvents (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	var eventId;
@@ -29,7 +29,7 @@ async function createEvents (req, res){
 		eventId = await Project.createEvents(req.body.projectId, req.body.event);
 		res.status(200).json({eventId});
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 
@@ -37,14 +37,14 @@ async function deleteEvents (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 	
 	try{
 		await Project.deleteEvents(req.body.eventId);
 		res.status(200).json();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 
@@ -56,7 +56,7 @@ async function getProject (req, res) {
 	try{
 		await Project.isUserInProject(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	/* get project */
@@ -68,7 +68,7 @@ async function getProject (req, res) {
 		events = await Project.getEvents(projectId);
 		memberId = await Project.getMemberId(projectId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	/* add events to json project */
@@ -82,14 +82,14 @@ async function putProject(req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	try{
 		await Project.putProject(req.body.projectId, req.body.update);
 		res.status(200).json();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 
@@ -98,7 +98,7 @@ async function createProject (req, res){
 		var projectId = await Project.createProject(req.body.project, req.body.userId);
 		res.status(200).json({projectId});
 	} catch (error){
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 
@@ -106,14 +106,14 @@ async function deleteProject (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	try{
 		await Project.deleteProject(req.body.projectId);
 		res.status(200).json();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).end();
 	}
 }
 /**
@@ -132,20 +132,20 @@ async function deleteProject (req, res){
  // 	try {
  // 		await Project.isUserInProject(projectId, userId);
  // 	} catch (error) {
- // 		return res.status(400).json({error});
+ // 		return res.status(500).end();
  // 	}
 
 	// // this part is optional if owner could vote
 	// try {
 	// 	isValidMember = !(await Project.isOwner2(projectId, userId));
 	// } catch (error) {
-	// 	return res.status(400).json({error});
+	// 	return res.status(500).end();
 	// }
 
 	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
- 		return res.status(400).json({error});
+ 		return res.status(500).end();
  	}
 
 
@@ -158,12 +158,12 @@ async function deleteProject (req, res){
 	// 		return res.status(400).send('This user has already been in the event')
 	// 	}
 	// }	catch (error) {
-	// 	res.status(400).json({error});
+	// 	res.status(500).end();
 	// }
 	try {
 		await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -179,7 +179,7 @@ async function deleteEventMember (req, res){
  	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
- 		return res.status(400).json({error});
+ 		return res.status(500).end();
  	}
 
 	if(!isValidMember) {
@@ -189,7 +189,7 @@ async function deleteEventMember (req, res){
 	try {
 		await Project.deleteUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -204,7 +204,7 @@ async function deleteEventMemberAll (req, res){
  	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
- 		return res.status(400).json({error});
+ 		return res.status(500).end();
  	}
 
 	if(!isValidMember) {
@@ -214,7 +214,7 @@ async function deleteEventMemberAll (req, res){
 	try {
 		await Project.deleteUserInEventsAll(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -239,14 +239,14 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	try{
 		var result = await User.getInfo(invitedEmail);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 	console.log(result);
 
@@ -256,13 +256,17 @@ async function inviteUser (req, res){
 		}
 	var invitedId = result.userId;
 
+	if(invitedId == userId){
+		console.log('Could not invite yourself');
+		return res.status(400).send('Could not invite yourself');
+	}
 	try {
 		if(await Project.isUserInInviteList(projectId, invitedId)){
 			return res.status(302).json();;
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	
@@ -273,14 +277,14 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	try {
 		await Project.addUserInInviteList(projectId, invitedId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -299,13 +303,13 @@ async function deleteInvitedUser (req, res){
 			return res.status(400).send('Only Project Owner can delete invited user');
 		}
 	} catch (error) {
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	// try{
 	// 	var result = await User.getInfo(invitedEmail);
 	// } catch (error) {
-	// 	return res.status(400).json({error});
+	// 	return res.status(500).end();
 	// }
 
 	// if (result == null){
@@ -318,13 +322,13 @@ async function deleteInvitedUser (req, res){
 			return res.status(404).send('This user is not in the InvitedList');
 		}
 	} catch (error) {
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -338,14 +342,14 @@ async function deleteMembers(req, res){
 			return res.status(400).send('Only Project Owner can delete members');
 		}
 	} catch (error) {
-		return res.status(500).json({error});
+		return res.status(500).end();
 	}
 
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.userId);
 		res.status(200).end();
 	} catch (error) {
-		res.status(500).json({error});
+		res.status(500).end();
 	}
 }
 
