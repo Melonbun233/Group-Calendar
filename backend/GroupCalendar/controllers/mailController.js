@@ -21,7 +21,7 @@ function getMailInfo(receiver, subject, text, html) {
 }
 
 function sendEmail(receiver, subject, text, html) {
-    smtpTransport.sendMail(getMailInfo(receiver, subject, text), function(error, response){
+    smtpTransport.sendMail(getMailInfo(receiver, subject, text, html), function(error, response){
         if(error){
             console.log(error);
         }else{
