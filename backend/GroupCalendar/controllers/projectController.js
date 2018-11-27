@@ -131,9 +131,6 @@ async function deleteProject (req, res){
 		res.status(500).end();
 	}
 }
-/**
- * addEventMember will only accept the req from project members. Owner could not use this function
- */
 
  async function addEventMember (req, res){
  	var projectId = req.body.projectId;
@@ -178,14 +175,20 @@ async function deleteProject (req, res){
 	// }	catch (error) {
 	// 	res.status(500).end();
 	// }
+
 	try {
-		await Project.addUserInEvents(projectId, eventIds, userId);
+		var unrolledEvents = await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).end();
 	}
 
-	return res.status(200).json();
+	if (unrolledEvents.length == 0){
+		return res.status(200).json({unrolledEvents});
+	}
+
+	return res.status(202).json({unrolledEvents});
+	
 
 }
 
@@ -251,7 +254,6 @@ async function inviteUser (req, res){
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
-	console.log(req.body);
 	console.log(invitedEmail);
 
 	//this part is optional
@@ -284,7 +286,8 @@ async function inviteUser (req, res){
 	}
 	try {
 		if(await Project.isUserInInviteList(projectId, invitedId)){
-			return res.status(302).json();;
+			console.log('Invited user has been in the InviteList');
+			return res.status(302).send('Invited user has been in the InviteList');;
 		}
 	} catch (error) {
 		console.log(error);

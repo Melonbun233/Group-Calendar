@@ -4,7 +4,7 @@ var UserDB = require('../databases/UserDB');
 
 // check ProjectDB -> Projects
 async function isOwner (projectId, userId){
-var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
+	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
 	var project = await ProjectDB.query(query)
 	.catch ( error => {
 		throw error;
@@ -340,27 +340,34 @@ async function deleteProject (projectId){
 }
 
 async function addUserInEvents (projectId, eventIds, userId){
-
-	try {
-		var isDup = await isUserInEvents(eventIds[i], userId); 
-	} catch(error) {
-		throw error;
-	}
-	// console.log(isDup);
+	var unrolledEvents = [];
 
 	for (var i = 0; i < eventIds.length; i++){
 
 		// console.log(eventIds[i]);
+		try {
+			var isDup = await isUserInEvents(eventIds[i], userId); 
+		} catch(error) {
+			throw error;
+		}
 
 		try {
 			var isValid = await isEventInProject(projectId, eventIds[i]); 
 		} catch(error) {
 			throw error;
 		}
-		
-		// console.log(isValid);
 
-		if (isDup == false && isValid == true){
+		try {
+			var isAvailable = await isEventAvailable(eventIds[i]); 
+		} catch(error) {
+			throw error;
+		}
+		
+		if(!isAvailable){
+			unrolledEvents.push(eventIds[i]);
+		}
+
+		if (isDup == false && isValid == true && isAvailable == true){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
@@ -372,6 +379,7 @@ async function addUserInEvents (projectId, eventIds, userId){
 			}
 		}
 	}
+	return unrolledEvents;
 }
 
 async function deleteUserInEventsAll (projectId, userId){
@@ -401,7 +409,7 @@ async function deleteUserInEvents (projectId, eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
-		if (isValid == true){
+		if (isValid){
 			var query = "DELETE FROM MemberInEvents WHERE eventId = '" + eventIds[i] + "' AND userId = '" + userId + "'";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
@@ -449,9 +457,9 @@ async function isUserInEvents (eventId, userId){
 		throw error;
 	});
 
-	if (result.affectedRows == 0){
-		return false;
-	}
+	// if (result.affectedRows == 0){
+	// 	return false;
+	// }
 
 	for(var i = 0; i < result.length; i++){
 		if(result[i].userId == userId){
@@ -494,9 +502,6 @@ async function deleteMembers(projectId, userId){
 }
 
 async function isEventInProject (projectId, eventId){
-	console.log(projectId);
-	console.log(eventId);
-
 	var query = "SELECT eventId FROM EventList WHERE projectId = '" + projectId + "'";
 	var result = await ProjectDB.query(query)
 	.catch (error => {
@@ -505,9 +510,9 @@ async function isEventInProject (projectId, eventId){
 
 	// console.log(result);
 
-	if (result.affectedRows == 0){
-		return false;
-	}
+	// if (result.affectedRows == 0){
+	// 	return false;
+	// }
 
 	for(var i = 0; i < result.length; i++){
 		if(result[i].eventId == eventId){
@@ -523,11 +528,11 @@ async function isUserInInviteList (projectId, userId){
 	}catch (error){
 		throw error;
 	}
-	console.log(invitingProjects);
+	// console.log(invitingProjects);
 
 	for (var i = 0; i < invitingProjects.length; i++){
 
-		console.log(invitingProjects[i]);
+		// console.log(invitingProjects[i]);
 
 		if (invitingProjects[i] == projectId){
 			return true;
@@ -565,6 +570,29 @@ async function getInvitation (userId){
 	return invitation;
 }
 
+async function isEventAvailable (eventId){
+	var query = "SELECT userId FROM MemberInEvents WHERE eventId = '" + eventId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	var userNum = result.length;
+
+	var query = "SELECT userLimit FROM Events WHERE eventId = '" + eventId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	var userLimit = result.userLimit;
+
+	if(userNum >= userLimit){
+		return false;
+	}
+	return true;
+}
+
 
 
 module.exports = {
@@ -580,7 +608,11 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	deleteMembers,
 	
+	//isUserInEvents
+	//isEventInProject
+	//isEventAvailable
 	isOwner2,
 	isUserInProject2,
 	isMemberInProject,
@@ -591,6 +623,5 @@ module.exports = {
 	deleteUserInEventsAll,
 	addUserInInviteList,
 	deleteUserInInviteList,
-	deleteMembers,
 
 }
