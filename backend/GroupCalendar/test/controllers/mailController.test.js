@@ -10,14 +10,14 @@ const transportErr = {
 	sendMail: (data, callback) => {
 		const err = new Error('some error');
 		callback(err, null);
-	}
+	},
 	close: () => {
 	}
 }
 const transport = {
 	sendMail: (data, callback) => {
 		callback(null, null);
-	}
+	},
 	close: () => {
 	}
 }
