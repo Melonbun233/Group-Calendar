@@ -31,8 +31,10 @@ async function isOwner2 (projectId, userId){
 
 	if (project.length > 1){
 		throw "Multiple projects with same projectId, something's wrong";
-	} else if (project.length == 0){
-		throw "projectId " + projectId + " does not exist in Projects table";
+	} 
+	else if (project.length == 0){
+		// throw "projectId " + projectId + " does not exist in Projects table";
+		return false;
 	}
 
 	if (project[0].projectOwnerId != userId){
@@ -575,7 +577,7 @@ async function isEventAvailable (eventId){
 	.catch (error => {
 		throw error;
 	});
-	
+
 	console.log(result);
 
 	var userNum = result.length;

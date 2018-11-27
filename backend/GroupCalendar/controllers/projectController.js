@@ -264,7 +264,7 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(400).end();
+		return res.status(500).end();
 	}
 
 	try{
@@ -353,7 +353,7 @@ async function deleteInvitedUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(400).end();
+		return res.status(500).end();
 	}
 
 	// try{
