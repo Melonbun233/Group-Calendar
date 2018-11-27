@@ -29,7 +29,7 @@ router.get('/notification',
 router.put('/invite/accept',
 	userController.acceptInvite);
 
-router.put('/invite/decline',
+router.delete('/invite/decline',
 	userController.declineInvite);
 
 
