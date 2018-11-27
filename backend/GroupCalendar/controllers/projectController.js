@@ -56,12 +56,12 @@ async function getProject (req, res) {
 	var projectId = req.param('projectId');
 	var userId = req.param('userId');
 
-	try{
-		await Project.isUserInProject(projectId, userId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
+	// try{
+	// 	await Project.isUserInProject(projectId, userId);
+	// } catch (error) {
+	// 	console.log(error);
+	// 	return res.status(500).end();
+	// }
 
 	/* get project */
 	var project;
