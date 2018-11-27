@@ -5,6 +5,7 @@ async function putEventOwner (req, res) {
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -21,6 +22,7 @@ async function createEvents (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -37,6 +39,7 @@ async function deleteEvents (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 	
@@ -56,6 +59,7 @@ async function getProject (req, res) {
 	try{
 		await Project.isUserInProject(projectId, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -68,6 +72,7 @@ async function getProject (req, res) {
 		events = await Project.getEvents(projectId);
 		memberId = await Project.getMemberId(projectId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -82,6 +87,7 @@ async function putProject(req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -106,6 +112,7 @@ async function deleteProject (req, res){
 	try{
 		await Project.isOwner(req.body.projectId, req.body.userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -132,19 +139,22 @@ async function deleteProject (req, res){
  // 	try {
  // 		await Project.isUserInProject(projectId, userId);
  // 	} catch (error) {
- // 		return res.status(500).end();
+ // 		console.log(error);
+ // return res.status(500).end();
  // 	}
 
 	// // this part is optional if owner could vote
 	// try {
 	// 	isValidMember = !(await Project.isOwner2(projectId, userId));
 	// } catch (error) {
-	// 	return res.status(500).end();
+	// 	console.log(error);
+	// return res.status(500).end();
 	// }
 
 	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
+ 		console.log(error);
  		return res.status(500).end();
  	}
 
@@ -163,6 +173,7 @@ async function deleteProject (req, res){
 	try {
 		await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -179,6 +190,7 @@ async function deleteEventMember (req, res){
  	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
+ 		console.log(error);
  		return res.status(500).end();
  	}
 
@@ -189,6 +201,7 @@ async function deleteEventMember (req, res){
 	try {
 		await Project.deleteUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -204,6 +217,7 @@ async function deleteEventMemberAll (req, res){
  	try {
  		isValidMember = await Project.isUserInProject2(projectId, userId);
  	} catch (error) {
+ 		console.log(error);
  		return res.status(500).end();
  	}
 
@@ -214,6 +228,7 @@ async function deleteEventMemberAll (req, res){
 	try {
 		await Project.deleteUserInEventsAll(projectId, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -303,13 +318,15 @@ async function deleteInvitedUser (req, res){
 			return res.status(400).send('Only Project Owner can delete invited user');
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
 	// try{
 	// 	var result = await User.getInfo(invitedEmail);
 	// } catch (error) {
-	// 	return res.status(500).end();
+	// 	console.log(error);
+	// return res.status(500).end();
 	// }
 
 	// if (result == null){
@@ -322,12 +339,14 @@ async function deleteInvitedUser (req, res){
 			return res.status(404).send('This user is not in the InvitedList');
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
@@ -342,6 +361,7 @@ async function deleteMembers(req, res){
 			return res.status(400).send('Only Project Owner can delete members');
 		}
 	} catch (error) {
+		console.log(error);
 		return res.status(500).end();
 	}
 
