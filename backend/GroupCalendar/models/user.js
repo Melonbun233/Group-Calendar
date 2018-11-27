@@ -229,23 +229,17 @@ async function getProjectId (userId){
 		projectId.push(result[i].projectId);
 	}
 
-	return projectId;
-}
-
-
-async function getInvitation (userId){
-	var query = "SELECT * FROM InviteList WHERE userId = '" + userId + "'";
-	var result = await ProjectDB.query(query)
+	query = "SELECT projectId from Membership WHERE userId = '" + userId + "'";
+	result = await ProjectDB.query(query)
 	.catch (error => {
 		throw error;
 	})
 
-	var invitation = [];
 	for (var i = 0; i < result.length; i++){
-		invitation.push(result[i].projectId);
+		projectId.push(result[i].projectId);
 	}
 
-	return invitation;
+	return projectId;
 }
 
 async function emailExist (userEmail){

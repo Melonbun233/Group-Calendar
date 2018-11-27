@@ -19,7 +19,6 @@ async function isOwner (projectId, userId){
 	if (project[0].projectOwnerId != userId){
 		throw  'userId ' + userId + ' is not the owner of projectId ' + projectId;
 	}
-	return true;
 }
 
 // check ProjectDB -> Projects
@@ -569,11 +568,8 @@ async function getInvitation (userId){
 
 module.exports = {
 	isOwner,
-	isOwner2,
 	putEventOwner,
 	isUserInProject,
-	isUserInProject2,
-	isMemberInProject,
 	getProject,
 	getEvents,
 	getMemberId,
@@ -583,14 +579,17 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	
+	isOwner2,
+	isUserInProject2,
+	isMemberInProject,
+	isUserInInviteList,
+	addUserInMembership,
 	addUserInEvents,
 	deleteUserInEvents,
 	deleteUserInEventsAll,
 	addUserInInviteList,
 	deleteUserInInviteList,
 	deleteMembers,
-
-	isUserInInviteList,
-	addUserInMembership,
 
 }
