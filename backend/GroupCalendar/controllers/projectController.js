@@ -177,13 +177,18 @@ async function deleteProject (req, res){
 	// }
 
 	try {
-		await Project.addUserInEvents(projectId, eventIds, userId);
+		var unrolledEvents = await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).end();
 	}
 
-	return res.status(200).json();
+	if (unrolledEvents.length == 0){
+		return res.status(200).json({unrolledEvents});
+	}
+
+	return res.status(202).json({unrolledEvents});
+	
 
 }
 

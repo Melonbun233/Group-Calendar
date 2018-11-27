@@ -340,17 +340,16 @@ async function deleteProject (projectId){
 }
 
 async function addUserInEvents (projectId, eventIds, userId){
-
-	try {
-		var isDup = await isUserInEvents(eventIds[i], userId); 
-	} catch(error) {
-		throw error;
-	}
-	// console.log(isDup);
+	var unrolledEvents = [];
 
 	for (var i = 0; i < eventIds.length; i++){
 
 		// console.log(eventIds[i]);
+		try {
+			var isDup = await isUserInEvents(eventIds[i], userId); 
+		} catch(error) {
+			throw error;
+		}
 
 		try {
 			var isValid = await isEventInProject(projectId, eventIds[i]); 
@@ -364,7 +363,9 @@ async function addUserInEvents (projectId, eventIds, userId){
 			throw error;
 		}
 		
-		// console.log(isValid);
+		if(!isAvailable){
+			unrolledEvents.push(eventIds[i]);
+		}
 
 		if (isDup == false && isValid == true && isAvailable == true){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
@@ -378,6 +379,7 @@ async function addUserInEvents (projectId, eventIds, userId){
 			}
 		}
 	}
+	return unrolledEvents;
 }
 
 async function deleteUserInEventsAll (projectId, userId){
