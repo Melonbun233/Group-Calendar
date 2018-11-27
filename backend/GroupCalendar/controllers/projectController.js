@@ -323,8 +323,8 @@ async function inviteUser (req, res){
 
 	var receiver = invitedEmail;
 	var subject = '[Group Calendar]: New Project Invitation';
-	var text = `${userName} is inviting you to Project: ${projectName}.`;
-	Mail.sendEmail(receiver, subject, text, null);
+	var text = `${userName} is inviting you to the Project: "${projectName}".`;
+	Mail.sendEmail(receiver, subject, text, text);
 
 	return res.status(200).json();
 
