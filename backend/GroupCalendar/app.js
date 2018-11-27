@@ -39,12 +39,6 @@ function checkPath(path){
  * it will be added in the future
  */
 function uuidCheck(req){
-  console.log(req.headers);
-  console.log(req.headers.cookie);
-
-  if(req.headers.cookie == null || req.headers.cookie == 'undefined'){
-    return false;
-  }
 
   if(req.session.uuid == null || req.session.uuid == 'undefined'){
     return false;
@@ -62,13 +56,16 @@ app.use(express.json());
 app.use(session({
 	name: 'session',
 	secret: 'secret key',
+  resave: true,
+  saveUninitialized: false,
+
 	//duration: how long the session will live in milliseconds
 	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
   cookie: {
     httpOnly: false,
-    maxAge: 20 * 1000,
+    maxAge: 60 * 1000,
   }
 }));
 
@@ -78,6 +75,9 @@ app.use(function(req, res, next){
   if(checkPath(req.path)){
 
     if (uuidCheck(req)){
+      req.session._garbage = Date();
+      req.session.touch();
+      
       next();
 
     }else{
