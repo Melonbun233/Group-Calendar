@@ -88,7 +88,7 @@ export default StyleSheet.create({
 	},
 	//small
 	smallText: {
-		fontSize: 16,
+		fontSize: 14,
 		fontWeight: 'normal',
 		color: '#b3b3b3',
 	},

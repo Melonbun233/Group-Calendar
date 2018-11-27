@@ -10,6 +10,7 @@ import Project from './Project';
 import Invitation from './Invitation';
 import { GoogleSignin } from 'react-native-google-signin';
 import SvgUri from 'react-native-svg-uri';
+import Network from './common/GCNetwork';
 
 export default class MainPage extends Component {
 
@@ -21,8 +22,7 @@ export default class MainPage extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//calendar is the default content page
-			isLoading: false,
+			isLoading: true,
 			title: 'Calendar',
 			buttonColor: {
 				calendar: cs.blue,
@@ -34,6 +34,13 @@ export default class MainPage extends Component {
 		this._onSignOut = this._onSignOut.bind(this);
 		this._onSessionOut = this._onSessionOut.bind(this);
 		this._switchContent = this._switchContent.bind(this);
+	}
+
+	componentDidMount = async () => {
+		let profile = await Storage.getProfile();
+		await Network.fetchProfile(profile.userId);
+		profile = await Storage.getProfile();
+		this.setState({isLoading: false});
 	}
 
 	//this function is invoked on switch button press
@@ -87,7 +94,7 @@ export default class MainPage extends Component {
 					>
 						<View style = {s.switchButton}>
 						{calendarIcon}
-						<Text style = {[buttonColor.calendar, {paddingTop:4}]}>
+						<Text style = {[buttonColor.calendar, {paddingTop:4,fontSize:10}]}>
 						Calendar</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -97,7 +104,7 @@ export default class MainPage extends Component {
 					>
 						<View style = {s.switchButton}>
 						{projectIcon}
-						<Text style = {[buttonColor.project, {paddingTop:4}]}>
+						<Text style = {[buttonColor.project, {paddingTop:4,fontSize:10}]}>
 						Project</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -107,7 +114,7 @@ export default class MainPage extends Component {
 					>
 						<View style = {s.switchButton}>
 						{invitationIcon}
-						<Text style = {[buttonColor.invitation, {paddingTop:4}]}>
+						<Text style = {[buttonColor.invitation, {paddingTop:4,fontSize:10}]}>
 						Invitation</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -117,7 +124,7 @@ export default class MainPage extends Component {
 					>
 						<View style = {s.switchButton}>
 						{profileIcon}
-						<Text style = {[buttonColor.profile, {paddingTop:4}]}>
+						<Text style = {[buttonColor.profile, {paddingTop:4,fontSize:10}]}>
 						Me</Text>
 						</View>
 					</TouchableWithoutFeedback>
@@ -181,7 +188,11 @@ export default class MainPage extends Component {
 					onSessionOut = {this._onSessionOut.bind(this)}
 				/>);
 			case 'Invitation' :
-				return(<Invitation/>);
+				return(<Invitation
+					navigation = {this.props.navigation}
+					onSignOut = {this._onSignOut.bind(this)}
+					onSessionOut = {this._onSessionOut.bind(this)}
+				/>);
 			case 'Profile' :
 				return(<Profile 
 					onSignOut = {this._onSignOut.bind(this)}
@@ -209,7 +220,7 @@ export default class MainPage extends Component {
 
 	_onSessionOut = async () => {
 		await this._onSignOut();
-		Alert.alert('You have Expired the Session Time!');
+		Alert.alert('You have expired the session time', 'Please sign in again');
 	}
 }
 

@@ -4,9 +4,13 @@
  */
 
 import React, {Component} from 'react';
-import {Alert, StyleSheet, Text, View, Button, ActivityIndicator} from 'react-native';
+import {Alert, StyleSheet, Text, View, Button, ActivityIndicator,
+	TouchableWithoutFeedback} from 'react-native';
 import cs from './common/CommonStyles';
 import {Agenda} from 'react-native-calendars';
+import Storage from './common/Storage';
+import Network from './common/GCNetwork';
+import UserAvatar from 'react-native-user-avatar';
 
 export default class Calendar extends Component {
 	constructor(props) {
@@ -15,12 +19,72 @@ export default class Calendar extends Component {
 		this.state = {
 			isLoading: true,
 			isRefreshin: false,
-			items: {}
+			items: {},
+			profile: null,
+			allProjects: null,
 		};
 		this.agendaRef = this._updateRef.bind(this, 'agenda');
 	}
 
-	componentDidMount = () => {
+	componentDidMount = async () => {
+		try {
+			this._init();
+			let profile = await Storage.getProfile();
+			if (!profile) {
+				Alert.alert('Something went wrong');
+				this.props.onSessionOut();
+			}
+			this.setState({profile});
+			let allProjects = await Storage.getAllProjects();
+			if (allProjects) {
+				this.setState({allProjects});
+			} else {
+				await this._onRefresh(false);
+			}
+			this.setState({isLoading: false});
+		} catch (error) {
+			Alert.alert(error.toString());
+		}
+	}
+
+	//manually refresh today's agenda
+	_onRefresh = async (animating) => {
+		let {profile} = this.state;
+		let curr = new Date();
+		curr.setMilliseconds(0);
+		curr.setSeconds(0);
+		curr.setMinutes(0);
+		curr.setHours(0);
+		if(animating) {
+			this.setState({isRefreshing: true});
+		}
+		try {
+			let status = await Network.fetchAllProjects(profile.userId);
+			switch (status) {
+				case 200:
+				break;
+				case 0: {
+					Alert.alert('Not all projects fetched');
+				}
+				break;
+				case 401: {
+					this.props.onSessionOut();
+				}
+				break;
+				default: Alert.alert('Internet Error ' + status.toString());
+			}
+			let allProjects = await Storage.getAllProjects();
+			this.setState({allProjects});
+		} catch(error) {
+			Alert.alert(error.toString());
+		}
+		// let items = {};
+		// this.setState(items);
+		this._loadItemsForMonth({timestamp: curr.getTime()});
+		this.setState({isRefreshing: false});
+	}
+
+	_init = () => {
 		let curr = new Date();
 		curr = new Date(curr.getTime() - (curr.getTimezoneOffset() * 60000));
 		let today = this._getDateString(curr);
@@ -34,59 +98,178 @@ export default class Calendar extends Component {
 			today,
 			minDate,
 			maxDate,
-			isLoading : false
 		});
 	}
+	
 	_updateRef = (name, ref) => {
 		this[name] = ref;
 	}
+
+	_onPressEvent = (projectId) => {
+		let {profile} = this.state;
+		this.props.navigation.push('ProjectDetail', {
+			profile, projectId,
+			refreshAll: this._onRefresh.bind(this),
+		});
+	}
+
 	_renderItem = (item) => {
+		let {event} = item;
+		let period = this._getEventTime(event.eventStartTime, event.eventEndTime);
+		
 		return (
 			<View style = {s.item}>
-				<Text style = {[cs.h5, {color: '#fff'}]}>{item.text}</Text>
+			<TouchableWithoutFeedback
+				onPress = {() => this._onPressEvent(item.projectId)}
+			>
+			<View style = {[s.event, {backgroundColor: '#fff'}]}>
+			<View style = {[s.eventItem, {backgroundColor: '#fff'}]}>
+			<View style = {[s.event, {backgroundColor: '#fff'}]}>
+				<Text style = {[cs.smallText, s.eventMsg, {fontStyle: 'italic'}]}>
+				{period}
+				</Text>
+				<Text style = {[cs.normalText, s.eventMsg]}>
+				{event.eventName}
+				</Text>
+				<Text style = {[cs.normalText, s.eventMsg]}>
+				{event.eventLocation}
+				</Text>
+            </View>
+				<UserAvatar
+					size = {60}
+					name = {item.projectName}
+					style = {s.avatar}
+				/>
+            </View>
+			<View style = {[s.eventItem, {backgroundColor: '#fff'}]}>
+				<Text style = {[cs.h5, s.eventMsg, {color: '#e2e2e2'}]}>
+				{event.eventDescription}
+				</Text>
+			</View>
+
+            </View>
+			</TouchableWithoutFeedback>
 			</View>
 		);
 	}
+
+	_getEventTime (startTime, endTime) {
+		let startDate = new Date(startTime);
+		let endDate = new Date(endTime);
+		let startArray = startDate.toString().split(' ');
+		let endArray = endDate.toString().split(' ');
+        return (startArray[4].slice(0, 5) + ' - ' + endArray[4].slice(0, 5));
+    }
 	
 	_renderEmptyDate = () => {
 		return (
 			<View style = {s.emptyItem}>
-				<Text style = {cs.h5}>Empty</Text>
+				<View style = {s.empty}></View>
 			</View>
 		);
 	}
 
-	_renderEmptyData = () => {
-		return (
-			<View></View>
-		);
-	}
-
-	_loadItemsForMonth = (day) => {
+	_loadItemsForMonth = (date) => {
 		let {items} = this.state;
-		//Alert.alert(day);
-		for (let i = -20; i < 20; i ++){
-			const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-			const date = new Date(time);
-			const dateStr = this._getDateString(date);
+		//add 30 days events
+		for (let i = -30; i < 30; i ++) {
+			const tempDate = new Date(date.timestamp + i * 24 * 60 * 60 * 1000);
+			const dateStr = this._getDateString(tempDate);
 			items[dateStr] = [];
 		}
-		items['2018-11-22'] = [{text: 'Have a good dinner'}];
-		items['2018-11-23'] = [{text: 'No good dinner'}];
-		items['2018-11-25'] = [{text: 'Final'}];
-		this.setState({
-			items,
-		});
+		
+		this._loadAllEvents(date);
+		this.setState({items});
 	}
 
-	//simply delete all items
-	_onRefresh = () => {
-		this.setState({isRefreshing: true});
+	_loadAllEvents = (date) => {
+		let {allProjects, profile} = this.state;
+		if (!profile || !allProjects) {
+			return;
+		}
+		let {userId} = profile;
+		for (var key in allProjects) {
+			let project = allProjects[key];
+			for (var eventKey in project.events) {
+				let event = project.events[eventKey];
+				if (event.chosenId.includes(parseInt(userId))){
+					switch (event.eventRepeat) {
+					case 'none' : {
+						let time = (new Date(event.eventStartTime).getTime());
+						if (this._withinRange(time, date.timestamp, project)) {
+							this._setEvents([time], project, event);
+						}
+					}
+					break;
+					case 'week' : {
+						let times = [];
+						for (let i = 0; i < 8; i ++) {
+							let time = (new Date(event.eventStartTime).getTime()) + 
+								i * 7 * 24 * 60 * 60 * 1000;
+							if (this._withinRange(time, date.timestamp, project)){
+								times.push(time);
+							}
+						}
+						this._setEvents(times, project, event);
+					}
+					break;
+					case 'day' : {
+						let times = [];
+						for (let i = -30; i < 30; i ++) {
+							let time = (new Date(event.eventStartTime).getTime()) + 
+								i * 24 * 60 * 60 * 1000;
+							if (this._withinRange(time, date.timestamp, project)){
+								times.push(time);
+							}
+						}
+						this._setEvents(times, project, event);
+					}}
+				}
+			}
+		}
+	} 
+
+	_setEvents = (times, project, event) => {
 		let {items} = this.state;
-		items['2018-11-22'] = [{text: 'Have a good dinner'}];
-		items['2018-11-23'] = [{text: 'No good dinner'}];
-		items['2018-11-25'] = [{text: 'Final'}];
-		this.setState({items, isRefreshing: false});
+		let dateStr = null;
+		for (var key in times) {
+			let time = times[key];
+			let date = new Date(time);
+			date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+			let dateStr = this._getDateString(date);
+			if (items.hasOwnProperty(dateStr)) {
+				items[dateStr].push({
+					projectName: project.projectName,
+					projectId: project.projectId,
+					event,
+				});
+			} else {
+				items[dateStr] = [{
+					projectName: project.projectName,
+					projectId: project.projectId,
+					event,
+				}];
+			}
+		}
+		//sort by events start time
+		if (dateStr) {
+			items[dateStr].sort((a, b) => {
+				let eventStartTimeA = new Date(a.event.eventStartTime);
+				let eventStartTimeB = new Date(b.event.eventStartTime)
+				return (eventStartTimeA.getTime() - eventStartTimeB.getTime());
+			});
+		}
+		this.setState({items});
+	}
+
+	_withinRange(time, timeStamp, project){
+		let minTime = timeStamp - 30 * 24 * 60 * 60 * 1000;
+		let maxTime = timeStamp + 30 * 24 * 60 * 60 * 1000;
+		let projectMinTime = (new Date(project.projectStartDate).getTime());
+		let projectMaxTime = (new Date(project.projectEndDate).getTime());
+
+		return (time > minTime && time < maxTime && 
+				time > projectMinTime && time < projectMaxTime);
 	}
 
 	_getDateString = (date) => {
@@ -98,7 +281,7 @@ export default class Calendar extends Component {
 		if (isLoading) {
 			return (
 				<View style = {cs.container}>
-					<ActivityIndicator size = 'large' animation = 'false'/>
+					<ActivityIndicator size = 'large' animating = 'false'/>
 				</View>
 			);
 		}
@@ -114,7 +297,6 @@ export default class Calendar extends Component {
 				maxDate = {maxDate}
 				renderItem = {this._renderItem.bind(this)}
 				renderEmptyDate = {this._renderEmptyDate.bind(this)}
-				renderEmptyData = {this._renderEmptyData.bind(this)}
 				rowHasChanged={(r1, r2) => {return r1.text !== r2.text}}
 				refreshing={isRefreshing}
 				onRefresh={this._onRefresh.bind(this)}
@@ -129,19 +311,43 @@ export default class Calendar extends Component {
 
 const s = StyleSheet.create({
 	item: {
-		backgroundColor: '#66a3ff',
+		backgroundColor: '#fff',
 		flex: 1,
-		borderRadius: 3,
 		padding: 10,
 		marginRight: 10,
-		marginTop: 17
+		marginTop: 17,
+		borderRadius : 5,
 	},
 	emptyItem: {
-		backgroundColor: 'white',
+		borderRadius : 5,
 		flex: 1,
-		borderRadius: 3,
 		padding: 10,
 		marginRight: 10,
-		marginTop: 17
+		marginTop: 17,
+	},
+	empty: {
+		height: 20,
+		borderBottomWidth: 1,
+		borderBottomColor: '#e2e2e2',
+	},
+	eventItem: {
+        width: '100%',
+        backgroundColor: '#f2f2f2',
+        flexDirection: 'row',
+        alignItems: 'center',
+		justifyContent: 'space-between',
+		paddingLeft: 3,
+    },
+    event: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+	},
+	eventMsg: {
+		color: 'black', 
+		padding: 3,
+	},
+	avatar: {
+		marginRight: 20,	
 	}
 })
