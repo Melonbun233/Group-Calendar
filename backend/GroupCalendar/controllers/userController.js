@@ -37,8 +37,8 @@ async function userCreate (req, res) {
 	}
 	
 	try{
-		var userId = await User.createUser(req.body.user, req.body.profile);
-		res.status(200).json({userId});
+		var profile = await User.createUser(req.body.user, req.body.profile);
+		res.status(200).json({profile});
 	} catch (error) {
 		return res.status(400).json({ error });
 	}

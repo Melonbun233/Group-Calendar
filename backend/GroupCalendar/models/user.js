@@ -51,7 +51,9 @@ async function createUser (user, profile) {
 		throw err;
 	})
 
-	return userResult.insertId;
+	var res = await getProfile(userResult.insertId);
+
+	return res; // return profile
 }
 
 async function deleteUser (userId) {
