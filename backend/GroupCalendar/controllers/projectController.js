@@ -366,9 +366,10 @@ async function deleteMembers(req, res){
 	}
 
 	try{
-		await Project.deleteMembers(req.body.projectId, req.body.userId);
+		await Project.deleteMembers(req.body.projectId, req.body.memberId);
 		res.status(200).end();
 	} catch (error) {
+		console.log(error);
 		res.status(500).end();
 	}
 }
