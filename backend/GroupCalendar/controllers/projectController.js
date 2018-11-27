@@ -131,9 +131,6 @@ async function deleteProject (req, res){
 		res.status(500).end();
 	}
 }
-/**
- * addEventMember will only accept the req from project members. Owner could not use this function
- */
 
  async function addEventMember (req, res){
  	var projectId = req.body.projectId;
@@ -178,6 +175,7 @@ async function deleteProject (req, res){
 	// }	catch (error) {
 	// 	res.status(500).end();
 	// }
+
 	try {
 		await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {

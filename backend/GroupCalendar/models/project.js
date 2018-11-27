@@ -4,7 +4,7 @@ var UserDB = require('../databases/UserDB');
 
 // check ProjectDB -> Projects
 async function isOwner (projectId, userId){
-var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
+	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
 	var project = await ProjectDB.query(query)
 	.catch ( error => {
 		throw error;
@@ -357,10 +357,16 @@ async function addUserInEvents (projectId, eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
+
+		try {
+			var isAvailable = await isEventAvailable(eventIds[i]); 
+		} catch(error) {
+			throw error;
+		}
 		
 		// console.log(isValid);
 
-		if (isDup == false && isValid == true){
+		if (isDup == false && isValid == true && isAvailable == true){
 			var query = "INSERT INTO MemberInEvents (eventId, userId) VALUES ('" + eventIds[i] + "', '" + userId + "')";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
@@ -401,7 +407,7 @@ async function deleteUserInEvents (projectId, eventIds, userId){
 		} catch(error) {
 			throw error;
 		}
-		if (isValid == true){
+		if (isValid){
 			var query = "DELETE FROM MemberInEvents WHERE eventId = '" + eventIds[i] + "' AND userId = '" + userId + "'";
 			var result = await ProjectDB.query(query)
 			.catch (error => {
@@ -562,6 +568,29 @@ async function getInvitation (userId){
 	return invitation;
 }
 
+async function isEventAvailable (eventId){
+	var query = "SELECT userId FROM MemberInEvents WHERE eventId = '" + eventId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	var userNum = result.length;
+
+	var query = "SELECT userLimit FROM Events WHERE eventId = '" + eventId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	});
+
+	var userLimit = result.userLimit;
+
+	if(userNum >= userLimit){
+		return false;
+	}
+	return true;
+}
+
 
 
 module.exports = {
@@ -580,6 +609,7 @@ module.exports = {
 	
 	//isUserInEvents
 	//isEventInProject
+	//isEventAvailable
 	isOwner2,
 	isUserInProject2,
 	isMemberInProject,
