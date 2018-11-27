@@ -152,6 +152,7 @@ async function declineInvite (req, res){
 	var userId = req.body.userId;
 	try {
 		if(!(await Project.isUserInInviteList(projectId, userId))){
+			console.log('You are not in this project InvitedList');
 			return res.status(400).send('You are not in this project InvitedList');
 		}
 	} catch (error) {
