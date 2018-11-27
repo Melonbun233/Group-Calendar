@@ -1,5 +1,5 @@
 backend/GroupCalendar/*.pem
-backend/GroupCalendar/.csr
+backend/GroupCalendar/*.csr
 
 package-lock.json
 backend/GroupCalendar/bin/*.plist
