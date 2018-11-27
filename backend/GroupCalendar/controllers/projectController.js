@@ -1,5 +1,5 @@
 var Project = require('../models/project');
-var User = require('../models/project');
+var User = require('../models/user');
 
 async function putEventOwner (req, res) {
 	try{
@@ -228,47 +228,59 @@ async function inviteUser (req, res){
 	var invitedEmail = req.body.invitedEmail;
 	var invitedId;
 
+	console.log(req.body);
+	console.log(invitedEmail);
+
 	//this part is optional
 	try {
 		if(!(await Project.isOwner2(projectId, userId))){
+			console.log('Only Project Owner can invite');
 			return res.status(400).send('Only Project Owner can invite');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).json({error});
 	}
 
 	try{
 		var result = await User.getInfo(invitedEmail);
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).json({error});
 	}
-	
+	console.log(result);
+
 	if (result == null){
-			return res.status(400).send('Could not find the user');
+		console.log('Could not find the user');
+			return res.status(404).send('Could not find the user');
 		}
 	var invitedId = result.userId;
 
 	try {
-		if(await User.isUserInInviteList(projectId, invitedId)){
-			return res.status(200).json();;
+		if(await Project.isUserInInviteList(projectId, invitedId)){
+			return res.status(302).json();;
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).json({error});
 	}
 
 	
 	try {
-		if(!(await Project.isUserInProject2(projectId, invitedId))){
-			return res.status(400).send('Invited user has been in the project');
+		if(await Project.isUserInProject2(projectId, invitedId)){
+			console.log('Invited user has been in the project');
+			return res.status(302).send('Invited user has been in the project');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).json({error});
 	}
 
 	try {
-		await Project.addUserInInviteList(projectId, userId);
+		await Project.addUserInInviteList(projectId, invitedId);
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).json({error});
 	}
 
 	return res.status(200).json();
@@ -276,10 +288,10 @@ async function inviteUser (req, res){
 }
 
 async function deleteInvitedUser (req, res){
+	
 	var projectId = req.body.projectId;
 	var userId = req.body.userId;
-	var invitedEmail = req.body.invitedEmail;
-	var invitedId;
+	var invitedId = req.body.invitedId;
 
 	//this part is optional
 	try {
@@ -287,32 +299,32 @@ async function deleteInvitedUser (req, res){
 			return res.status(400).send('Only Project Owner can delete invited user');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
-	try{
-		var result = await User.getInfo(invitedEmail);
-	} catch (error) {
-		return res.status(400).json({error});
-	}
+	// try{
+	// 	var result = await User.getInfo(invitedEmail);
+	// } catch (error) {
+	// 	return res.status(400).json({error});
+	// }
 
-	if (result == null){
-			return res.status(400).send('Could not find the user');
-		}
-	var invitedId = result.userId;
+	// if (result == null){
+	// 		return res.status(400).send('Could not find the user');
+	// 	}
+	// var invitedId = result.userId;
 
 	try {
-		if(!(await User.isUserInInviteList(projectId, invitedId))){
-			return res.status(400).send('This user is not in the InvitedList');
+		if(!(await Project.isUserInInviteList(projectId, invitedId))){
+			return res.status(404).send('This user is not in the InvitedList');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	return res.status(200).json();
@@ -326,14 +338,14 @@ async function deleteMembers(req, res){
 			return res.status(400).send('Only Project Owner can delete members');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		return res.status(500).json({error});
 	}
 
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.userId);
 		res.status(200).end();
 	} catch (error) {
-		res.status(400).json({error});
+		res.status(500).json({error});
 	}
 }
 

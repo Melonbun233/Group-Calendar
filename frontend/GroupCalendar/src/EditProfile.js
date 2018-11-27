@@ -54,8 +54,9 @@ export default class EditProfile extends Component {
 		let {navigation} = this.props;
 		const editInfo = navigation.getParam('editInfo', null);
 		const userId = navigation.getParam('userId', null);
+		const refresh = navigation.getParam('refresh', null);
 		var items = [];
-		if (editInfo && userId) {
+		if (editInfo && userId && refresh) {
 			//get all keys
 			var i = 0;
 			for (key in editInfo) {
@@ -72,6 +73,7 @@ export default class EditProfile extends Component {
 				isUpdating: false,
 				data: items,
 				userId,
+				refresh,
 			});
 		} else {
 			Alert.alert('Something went wrong');
@@ -178,7 +180,7 @@ export default class EditProfile extends Component {
 			let status = await Network.updateProfile(update, userId);
 			switch(status) {
 				case 200: {
-					Alert.alert('Success!');
+					this.state.refresh(false);
 					this.props.navigation.goBack();
 				}
 				break;

@@ -8,7 +8,9 @@ var ProjectDB = require('./databases/ProjectDB');
 var CalendarDB = require('./databases/CalendarDB');
 var bodyParser = require('body-parser');
 //var sqlinjection = require('sql-injection');
-var session = require('client-sessions');
+// var session = require('client-sessions');
+var session = require('express-session');
+
 var Promise = require('promise'); // npm install promise...
 
 /*----require routers-----------*/
@@ -36,12 +38,14 @@ function checkPath(path){
  * uuid check would be more safer if server stores one copy in database
  * it will be added in the future
  */
-function uuidCheck(uuid){
-  if(uuid == null || uuid == 'undefined'){
+function uuidCheck(req){
+
+  if(req.session.uuid == null || req.session.uuid == 'undefined'){
     return false;
-  } else {
-    return true;
   }
+
+  return true;
+
 }
 
 
@@ -50,24 +54,36 @@ app.use(express.json());
 //app.use(sqlinjection);
 
 app.use(session({
-	cookieName: 'session',
+	name: 'session',
 	secret: 'secret key',
+  resave: true,
+  saveUninitialized: false,
+
 	//duration: how long the session will live in milliseconds
-	duration: 2 * 7 * 24 * 60 * 60 * 1000,
+	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
 	//activeDuration: allows users to lengthen their session by interacting with server
-	activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
+	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
+  cookie: {
+    httpOnly: false,
+    maxAge: 1 * 7 * 24 * 60 * 60 * 1000,
+  }
 }));
 
 app.use(function(req, res, next){
-  // console.log('middleware');
+  console.log(`path: ${req.path}`);
+
   if(checkPath(req.path)){
-    // console.log('uuidCheck');
-    if (uuidCheck(req.session.uuid)){
+
+    if (uuidCheck(req)){
+      req.session._garbage = Date();
+      req.session.touch();
+
       next();
+
     }else{
-      // console.log(req.session.uuid);
       res.status(401).send("expired session");
     } 
+
   }else{
     next();
   }

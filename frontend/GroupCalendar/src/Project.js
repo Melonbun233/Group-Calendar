@@ -196,7 +196,8 @@ export default class Project extends Component {
 					testID = 'createProjectButton'
 					title = 'New Project'
 					color = '#66a3ff'
-					onPress = {() => navigation.push('CreateProject', {profile})}
+					onPress = {() => navigation.push('CreateProject', {
+						profile, refreshAll: this._onRefresh.bind(this)})}
 				/>
 				</View>
 				<View style = {cs.empty}></View>

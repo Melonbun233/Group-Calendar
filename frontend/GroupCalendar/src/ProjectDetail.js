@@ -483,7 +483,6 @@ export default class ProjectDeatail extends Component {
             let status = await Network.updateProject(
                 project.projectId, profile.userId, update);
             if (status == 200) {
-                Alert.alert('Success');
                 await this._onRefresh();
             } else {
                 Alert.alert('Internet Error ', status.toString());

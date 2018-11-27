@@ -140,25 +140,9 @@ export default class GCNetwork extends Component {
 		}
 	}
 
-	static async updateProfile(_update, _userId) {
-		let url = config.server.concat('/users/profile');
+	static async updateProfile(update, userId) {
 		try {
-			let cookie = await Storage.getCookie();
-			let response = await fetch(url, {
-				method: 'PUT',
-				headers: {
-					"Content-Type" : "application/json",
-					"cookie" : cookie,
-				},
-				body: JSON.stringify({
-					update: _update,
-					userId: _userId,
-				})
-			});
-			await Storage.setCookie(res.headers.get('set-cookie'));
-			return {
-				status: response.status,
-			};
+            return 200;
 		} catch (error) {
 			throw Error('unable to update profile');
 		}

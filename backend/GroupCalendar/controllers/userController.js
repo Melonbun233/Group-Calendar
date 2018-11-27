@@ -1,5 +1,7 @@
 var User = require('../models/user.js');
+var Project = require('../models/project.js');
 var UidG = require('./uuidGenerator.js');
+// var Mailsys = require('./mailController.js');
 
 const {validationResult} = require('express-validator/check');
 
@@ -62,7 +64,7 @@ async function profileGet (req, res) {
 
 	try {
 		profile = await User.getProfile(req.param('userId'));
-		invitation = await User.getInvitation(req.param('userId'));
+		invitation = await Project.getInvitation(req.param('userId'));
 		profile.invitation = invitation;
 		return res.status(200).json({profile});
 	} catch (error) {
@@ -91,11 +93,13 @@ async function getProjectId (req, res){
 
 async function getNotification (req, res){
 	try{
-		var projectIds = await Project.getInvitingProjects(req.param('userId'));
-		return res.status(200).json({projectIds});
+		var projectId = await Project.getInvitation(req.param('userId'));
+		return res.status(200).json({projectId});
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+	// Mailsys.sendEmail('kylejoeca@gmail.com');
+
 }
 
 async function acceptInvite (req, res){

@@ -272,7 +272,6 @@ module.exports = {
 	login,
 	modifyProfile,
 	getProjectId,
-	getInvitation,
 	emailExist,
 
 }

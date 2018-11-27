@@ -128,7 +128,6 @@ export default class CreateEvent extends Component {
             if (valid) {
                 let status = await Network.createEvent(project.projectId, profile.userId, event);
                 if (status == 200) {
-                    Alert.alert('Success!');
                     this.state.refreshProject(false);
                     this.props.navigation.goBack();
                 } else {
