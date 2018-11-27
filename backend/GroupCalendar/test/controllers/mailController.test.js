@@ -1,10 +1,11 @@
-var httpMocks = require('node-mocks-http');
+const NodeMailerMocks = require('nodemailer');
 const MailController = require('../../controllers/mailController');
 
 /**
  * Mock List:
- *
+ *	NodeMailerMocks
  */
+jest.mock(NodeMailerMocks);
 
 /**
  * Test List:
