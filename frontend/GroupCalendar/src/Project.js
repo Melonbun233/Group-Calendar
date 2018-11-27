@@ -38,24 +38,22 @@ export default class Project extends Component {
 			let allProjects = await Storage.getAllProjects();
 
 			if (allProjects) {
-				this.setState({
-					allProjects,
-				});
+				this.setState({allProjects});
 			} else {
-				await this._onRefresh();
+				await this._onRefresh(false);
 			}
-			this.setState({
-				isLoading: false,
-			})
+			this.setState({isLoading: false,})
 		} catch (error) {
-			Alert.alert(JSON.stringify(error));
+			Alert.alert(error.toString());
 		}
 	}
 
-	async _onRefresh() {
+	async _onRefresh(animating) {
 		let {profile, extraData} = this.state;
 		var allProjects;
-		this.setState({isRefreshing: true});
+		if (animating) {
+			this.setState({isRefreshing: true});
+		}
 		try {
 			let status = await Network.fetchAllProjects(profile.userId);
 			allProjects = await Storage.getAllProjects();
@@ -64,6 +62,10 @@ export default class Project extends Component {
 				break;
 				case 0: {
 					Alert.alert('Not all projects fetched');
+				}
+				break;
+				case 401: {
+					this.props.onSessionOut();
 				}
 				break;
 				default: Alert.alert('Internet Error ' + status.toString());
@@ -163,7 +165,7 @@ export default class Project extends Component {
 				refreshControl = {
 				<RefreshControl
 					refreshing = {isRefreshing}
-					onRefresh = {this._onRefresh.bind(this)}
+					onRefresh = {() => this._onRefresh(true)}
 				/>
 				}
 			>

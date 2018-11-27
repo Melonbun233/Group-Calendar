@@ -57,7 +57,7 @@ app.use(session({
 	name: 'session',
 	secret: 'secret key',
   resave: true,
-  saveUninitialized: false,
+  saveUninitialized: true,
 
 	//duration: how long the session will live in milliseconds
 	// duration: 2 * 7 * 24 * 60 * 60 * 1000,
@@ -78,10 +78,16 @@ app.use(function(req, res, next){
       req.session._garbage = Date();
       req.session.touch();
 
+      console.log(req.session.cookie.maxAge);
+
       next();
 
     }else{
-      res.status(401).send("expired session");
+      // console.log("expired");
+      // res.status(401).send("expired session");
+      
+      next();
+
     } 
 
   }else{

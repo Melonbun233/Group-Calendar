@@ -120,7 +120,7 @@ export default class CreateProject extends Component {
             if (valid) {
                 let status = await Network.createProject(profile.userId, project);
                 if (status == 200) {
-                    this.state.refreshAll();
+                    this.state.refreshAll(false);
                     this.props.navigation.goBack();
                 } else {
                     Alert.alert('Internet Error ' + status.toString());

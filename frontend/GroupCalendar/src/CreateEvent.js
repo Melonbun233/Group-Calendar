@@ -113,8 +113,15 @@ export default class CreateEvent extends Component {
         let startTime = new Date(eventStartTime);
         let endTime = new Date(eventEndTime);
 
-        if(startTime.getTime() > endTime.getTime()){
+        if (startTime.getTime() > endTime.getTime()){
             Alert.alert('Start time cannot be smaller than End time');
+            return false;
+        }
+
+        if (endTime.getDate() != startTime.getDate() || 
+            endTime.getFullYear() != startTime.getFullYear() ||
+            endTime.getMonth() != startTime.getMonth()) {
+            Alert.alert('Event can only be in one day');
             return false;
         }
         return true;

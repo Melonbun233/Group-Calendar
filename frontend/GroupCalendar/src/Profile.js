@@ -63,10 +63,9 @@ export default class Profile extends Component {
 				break;
 				//fetch failed, probably user has expired the session
 				//we will log out
-				case 400:
-				case 404: this.props.onSessionOut();
+				case 401: this.props.onSessionOut();
 				break;
-				default: Alert.alert('HTTP ERROR ');
+				default: Alert.alert('HTTP ERROR ' + status.toString());
 			}
 		} catch(error) {
 			Alert.alert(error.toString());

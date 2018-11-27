@@ -214,10 +214,9 @@ export default class GCNetwork extends Component {
 	}
 
 	static async fetchAllInvitations(userId) {
-		var allInvitations = [];
+		let allInvitations = [];
 		try {
 			let response = await this.fetchInvitationList(userId);
-			Alert.alert(JSON.stringify(response));
 			if (response.status == 200) {
 				let invitationList = await Storage.getInvitationList();
 				for (let i = 0; i < invitationList.length; i ++) {
@@ -246,7 +245,6 @@ export default class GCNetwork extends Component {
 	static async fetchInvitationList(userId) {
 		let url = config.server.concat('/user/notification' + '?userId=' + 
 				userId);
-		Alert.alert(url);
 		try {
 			let response = await fetch(url, {
 				method: 'GET',
@@ -258,8 +256,7 @@ export default class GCNetwork extends Component {
 
 			if (response.status == 200) {
 				let responseJson = await response.json();
-				Alert.alert(JSON.stringify(responseJson));
-				await Storage.setInvitationList(responseJson);
+				await Storage.setInvitationList(responseJson.projectId);
 			}
 			
 			return {status: response.status};

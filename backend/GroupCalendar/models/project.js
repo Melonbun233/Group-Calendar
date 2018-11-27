@@ -523,9 +523,13 @@ async function isUserInInviteList (projectId, userId){
 	}catch (error){
 		throw error;
 	}
+	console.log(invitingProjects);
 
 	for (var i = 0; i < invitingProjects.length; i++){
-		if (invitingProjects[i].projectId == projectId){
+
+		console.log(invitingProjects[i]);
+
+		if (invitingProjects[i] == projectId){
 			return true;
 		}
 	}
