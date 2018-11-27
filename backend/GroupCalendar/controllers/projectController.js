@@ -264,7 +264,7 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(400).end();
 	}
 
 	try{
@@ -313,14 +313,14 @@ async function inviteUser (req, res){
 
 	// send email to notify
 
-	try{
-		var invitor = await User.getProfile(userId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
+	// try{
+	// 	var invitor = await User.getProfile(userId);
+	// } catch (error) {
+	// 	console.log(error);
+	// 	return res.status(500).end();
+	// }
 
-	var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
+	// var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
 
 	try{
 		var invitedProject = await Project.getProject(projectId);
@@ -333,7 +333,7 @@ async function inviteUser (req, res){
 
 	var receiver = invitedEmail;
 	var subject = '[Group Calendar]: New Project Invitation';
-	var text = `${userName} is inviting you to the Project: "${projectName}".`;
+	var text = `You are invited into the Project: "${projectName}". \nOpen the app and check it!`;
 	Mail.sendEmail(receiver, subject, text, text);
 
 	return res.status(200).json();
@@ -353,7 +353,7 @@ async function deleteInvitedUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(400).end();
 	}
 
 	// try{
@@ -396,7 +396,7 @@ async function deleteMembers(req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(400).end();
 	}
 	
 	try{
