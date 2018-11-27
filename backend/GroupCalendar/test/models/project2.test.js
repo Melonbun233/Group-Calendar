@@ -1,25 +1,14 @@
 var httpMocks = require('node-mocks-http');
-const ProjectController = require('../../controllers/ProjectController');
-const User = require('../../models/user');
 const Project = require('../models/project');
+const ProjectDB = require('../databases/ProjectDB');
+const CalendarDB = require('../databases/CalendarDB');
 
 /**
  * Mock List:
  *
- * Project:
- * isMemberInProject
- * addUserInEvents
- * deleteUserInEvents
- * deleteUserInEventsAll
- * isOwner2
- * isUserInProject2
- * addUserInInviteList
- * isUserInInviteList
- * deleteUserInInviteList
+ * ProjectDB.query
+ * CalendarDB.query
  */
-
-/*------------mocking user---------------*/
-// jest.mock('../../models/user');
 
 /**
  * Test List:
@@ -27,11 +16,19 @@ const Project = require('../models/project');
  * isOwner2
  * isUserInProject2
  * isMemberInProject
+ * isUserInInviteList
+ * addUserInMembership
  * addUserInEvents
  * deleteUserInEvents
  * deleteUserInEventsAll
  * addUserInInviteList
  * deleteUserInInviteList
+ *
+ * Inner functions:
+ * 
+ * isUserInEvents
+ * isEventInProject
+ * isEventAvailable
  */
 
 describe('Testing addEventMember', () => {

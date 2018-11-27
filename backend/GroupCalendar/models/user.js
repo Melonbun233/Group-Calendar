@@ -1,6 +1,7 @@
 var db = require('../databases/UserDB.js');
 var calen = require('./calendar.js');
-var ProjectDB = require('../databases/ProjectDB')
+var ProjectDB = require('../databases/ProjectDB');
+var Project = require('./project');
 
 
 async function getInfo (email) {
@@ -51,30 +52,50 @@ async function createUser (user, profile) {
 		throw err;
 	})
 
-	return userResult.insertId;
+	var res = await getProfile(userResult.insertId);
+
+	return res; // return profile
 }
 
-async function deleteUser (userId) {
-	var userQuery = "DELETE FROM Users WHERE userId = " + userId + ";";
-	var profileQuery = "DELETE FROM Profiles WHERE userId = " + userId + ";";
-	
-	await db.query(userQuery)
-	.then( async (result) => {
-		if (!result.affectedRows)
-		{
-			throw "The user has been deleted."
-		}
-		return await db.query(profileQuery)
+async function deleteUser (userEmail) {
+	var userId;
+	var query = "SELECT userId from Users WHERE userEmail = '" + userEmail + "'";
+	var result = await db.query(query)
+	.catch(error => {
+		throw error;
 	})
-	.then( (result) => {
-		if (!result.affectedRows)
-		{
-			throw "The user's profile has been deleted."
-		}
+	if (result.length != 0){
+		userId = result[0].userId;
+	} else {
+		throw "userEmail " + userEmail + " does not exist";
+	}
+
+	var userQuery = "DELETE FROM Users WHERE userEmail = '" + userEmail + "'";
+	var profileQuery = "DELETE FROM Profiles WHERE userEmail = '" + userEmail + "'";
+	await db.query(userQuery)
+	.then( async () => {
+		await db.query(profileQuery)
 	})
 	.catch( (err) => {
 		throw err;
 	})
+
+	var projectId = await getProjectId(userId)
+	.catch(error => {
+		throw error;
+	})
+	
+	for(var i = 0; i < projectId.length; i++){
+		try{
+			if ((await Project.isOwner(projectId[i], userId))){
+				await Project.deleteProject(projectId[i]);
+			} else {
+				await Project.deleteMembers(projectId[i], [userId]);
+			}
+		} catch (error){
+			throw error;
+		}
+	}
 }
 
 async function getProfile (userId) {
@@ -253,6 +274,23 @@ async function emailExist (userEmail){
 	}
 }
 
+async function isAdmin (userId){
+	var query = "SELECT isAdmin from Users WHERE userId = '" + userId + "'";
+	var result = await db.query(query)
+	.catch(error => {
+		throw error;
+	})
+
+	if (result.length != 0){
+		if (result[0].isAdmin){
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		throw "userId " + userId + " does not exist";
+	}
+}
 
 
 module.exports = {
@@ -267,5 +305,6 @@ module.exports = {
 	modifyProfile,
 	getProjectId,
 	emailExist,
+	isAdmin
 
 }

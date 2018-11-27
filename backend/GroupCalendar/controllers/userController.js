@@ -24,7 +24,7 @@ async function userUpdate (req, res){
 		return res.status(200).json();
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 };
 
@@ -33,29 +33,41 @@ async function userCreate (req, res) {
 		await User.emailExist(req.body.user.userEmail);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 	
 	try{
-		var userId = await User.createUser(req.body.user, req.body.profile);
-		res.status(200).json({userId});
+		var profile = await User.createUser(req.body.user, req.body.profile);
+		res.status(200).json({profile});
 	} catch (error) {
 		return res.status(400).json({ error });
 	}
 
 	var uuid = UidG.uuidCreate(req.body.user.email);
 	req.session.uuid = uuid;
+
+	console.log(res.body);
 	
 	return;
 };
 
 async function userDelete (req, res) {
+	console.log(req.body);
+	try{
+		var userIsAdmin = await User.isAdmin(req.body.userId);
+		if (!userIsAdmin){
+			return res.status(400).json({"error":"userId " + req.body.userId + " is not an administrator"});
+		}
+	} catch (error) {
+		return res.status(403).json({error});
+	}
+
 	try {
-		await User.deleteUser(req.body.userId);
+		await User.deleteUser(req.body.userEmail);
 		return res.status(200).end();
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(404).json({error});
 	}
 }
 
@@ -72,7 +84,7 @@ async function profileGet (req, res) {
 		return res.status(200).json({profile});
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 }
 
@@ -82,7 +94,7 @@ async function profileUpdate (req, res) {
 		return res.status(200).end();
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 }
 
@@ -93,7 +105,7 @@ async function getProjectId (req, res){
 		return res.status(200).json({projectId});
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 }
 
@@ -103,7 +115,7 @@ async function getNotification (req, res){
 		return res.status(200).json({projectId});
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 	// Mailsys.sendEmail('kylejoeca@gmail.com');
 
@@ -118,14 +130,14 @@ async function acceptInvite (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
@@ -134,14 +146,14 @@ async function acceptInvite (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
 		await Project.addUserInMembership(projectId, userId)
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	return res.status(200).json();
@@ -158,14 +170,14 @@ async function declineInvite (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	return res.status(200).json();
