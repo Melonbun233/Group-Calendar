@@ -42,11 +42,10 @@ export default class Invitation extends Component {
 					Alert.alert('Not all invitations fetched');
 				}
 				break;
-				case 401: {
+				default: {
+					Alert.alert('Internet Error ' + status.toString());
 					this.props.onSessionOut();
 				}
-				break;
-				default: Alert.alert('Internet Error ' + status.toString());
 			}
 			allInvitations = await Storage.getAllInvitations();
 			

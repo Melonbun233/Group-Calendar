@@ -51,7 +51,7 @@ export default class CreateEvent extends Component {
                 eventDescription: '',
                 eventLocation: '',
                 eventRepeat: 'none',
-                userLimit: 0,
+                userLimit: 5,
             };
             this.setState({
                 project,

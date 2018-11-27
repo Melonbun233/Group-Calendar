@@ -6,7 +6,7 @@
 import React, {Component} from 'react';
 import UserAvatar from 'react-native-user-avatar';
 import {Platform, StyleSheet, Text, View, Button, Alert, TouchableWithoutFeedback,
-		ScrollView, RefreshControl, ActivityIndicator} from 'react-native';
+		ScrollView, RefreshControl, ActivityIndicator, AlertIOS} from 'react-native';
 import cs from './common/CommonStyles';
 import Storage from './common/Storage';
 import Network from './common/GCNetwork';
@@ -32,7 +32,9 @@ export default class Profile extends Component {
 			let curr = new Date();
 			let userBirth = new Date(profile.userBirth);
 			let age = curr.getFullYear() - userBirth.getFullYear();
-
+			if (isNaN(age)) {
+				age = ' ';
+			}
 			this.setState ({
 				age,
 				profile,
@@ -63,10 +65,10 @@ export default class Profile extends Component {
 				break;
 				//fetch failed, probably user has expired the session
 				//we will log out
-				case 401: this.props.onSessionOut();
-				break;
-				default: Alert.alert('HTTP ERROR ' + status.toString());
-			}
+			default: {
+				Alert.alert('HTTP ERROR ' + status.toString());
+				this.props.onSessionOut();
+			}}
 		} catch(error) {
 			Alert.alert(error.toString());
 		}
@@ -109,6 +111,24 @@ export default class Profile extends Component {
 		}
 	}
 
+	_onDeleteUser = async (email) => {
+		let {profile} = this.state;
+		try {
+			let status = await Network.deleteUser(profile.userId, email);
+			switch (status) {
+				case 200 : Alert.alert('Success');
+				break;
+				case 400 : Alert.alert('You are NOT an admin!');
+				break;
+				case 404 : Alert.alert('Cannot find the user');
+				break;
+				default : Alert.alert('Internet Error ' + status.toString());
+			}
+		} catch (error) {
+			Alert.alert(error.toString());
+		}
+	}
+
 	render() { 
 		let {isLoading, isRefreshing} = this.state;
 		if (isLoading) {
@@ -119,7 +139,7 @@ export default class Profile extends Component {
 			);
 		}
 		let {userLastname, userFirstname, userDescription, userRegion, userGender,
-			userEmail, userBirth} = this.state.profile;
+			userEmail, userBirth, isAdmin} = this.state.profile;
 		let {age} = this.state;
 		return(
 			<View style = {[cs.container, s.content]}>
@@ -238,29 +258,53 @@ export default class Profile extends Component {
 						</Text>
 					</View>
 				</TouchableWithoutFeedback>
+				<View style = {s.allButtons}>
 				{/* change password */}
-					<View style = {[cs.container, cs.flowLeft]}>
-						<View style = {[cs.container, s.buttonContainer]}>
-							<Button 
-								testID = 'changePwdButton'
-								title = 'change password'
-								color = '#66a3ff'
-								onPress = {() => this._onChangePwd()}
-							/>
-						</View>
+					<View>
+						<Button 
+							testID = 'changePwdButton'
+							title = 'Change Password'
+							color = '#66a3ff'
+							onPress = {() => this._onChangePwd()}
+						/>
 					</View>
 				{/*log out button*/}
-					<View style = {[cs.container, cs.flowLeft]}>
-						<View style = {[cs.container, s.buttonContainer]}>
+					<View>
 							<Button 
 								testID = 'signOutButton'
-								title = 'Sign out'
+								title = 'Sign Out'
 								color = '#66a3ff'
 								onPress = {() => this.props.onSignOut()}
 							/>
-						</View>
 					</View>
-					<View style = {cs.empty}></View>
+				</View>
+				<View style = {cs.empty}></View>
+				{/* Delete user */}
+				{isAdmin == 1? 
+				<View style = {s.button}>
+					<Button 
+						testId = 'deleteUserButton'
+						title = 'DELETE A USER'
+						color = 'red'
+						onPress = {() =>{
+							AlertIOS.prompt(
+								'ADMIN : DELETE A USER',
+								'Enter the email of user you want to delete',
+								[
+									{
+										text: 'Cancel',
+									},
+									{
+										text: 'DELETE',
+										onPress: (email) => this._onDeleteUser(email),
+										style: 'destructive',
+									},
+								],
+							);
+						}}
+					/>
+				</View>	: null}
+				<View style = {cs.empty}></View>
 				</ScrollView>
 			</View> 
 		);
@@ -271,9 +315,21 @@ const s = StyleSheet.create({
 	content: {
 		width: '100%',
 	},
-	buttonContainer: {
-		width: 50,
-		height: 45,
+	allButtons: {
+		width: '100%',
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		padding: 10,
+		backgroundColor: '#f2f2f2',
+	},
+	button: {
+		padding: 10,
+		width: '100%',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		backgroundColor: '#f2f2f2',
 	},
 	generalContainer: {
 		alignItems: 'flex-start',

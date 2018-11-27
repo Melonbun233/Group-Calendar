@@ -11,6 +11,7 @@ import cs from './common/CommonStyles';
 import UserAvatar from 'react-native-user-avatar';
 import Network from './common/GCNetwork';
 import Storage from './common/Storage';
+import SvgUri from 'react-native-svg-uri';
 
 export default class Project extends Component {
 	constructor(props) {
@@ -64,11 +65,10 @@ export default class Project extends Component {
 					Alert.alert('Not all projects fetched');
 				}
 				break;
-				case 401: {
+				default: {
+					Alert.alert('Internet Error ' + status.toString());
 					this.props.onSessionOut();
 				}
-				break;
-				default: Alert.alert('Internet Error ' + status.toString());
 			}
 			this.setState({
 				allProjects,
@@ -173,26 +173,34 @@ export default class Project extends Component {
 				{ownerProjects.length != 0 ? 
 				<View style = {s.membership}>
 					<Text style = {[cs.h5, {fontStyle: "italic"}]}>You are the owner</Text>
-					<View style = {[s.button]}>
-					<Button
+					<TouchableOpacity 
+						style = {[s.button]}
 						testID = 'createProjectButton'
-						title = 'New'
-						color = '#66a3ff'
-						onPress = {() => navigation.push('CreateProject', {
-							profile, refreshAll: this._onRefresh.bind(this)})}
-					/>
-					</View>
+						onPress = {() => navigation.push('CreateProject', 
+							{
+								profile, 
+								refreshAll: this._onRefresh.bind(this)
+							})
+						}
+					>
+					<SvgUri width = {24} height = {24} 
+						source = {require('../img/create.svg')}/>
+					</TouchableOpacity>
 				</View> : 
 				<View style = {s.onlyButton}>
-					<View style = {[s.button]}>
-					<Button
+					<TouchableOpacity 
+						style = {[s.button]}
 						testID = 'createProjectButton'
-						title = 'New'
-						color = '#66a3ff'
-						onPress = {() => navigation.push('CreateProject', {
-							profile, refreshAll: this._onRefresh.bind(this)})}
-					/>
-					</View>
+						onPress = {() => navigation.push('CreateProject', 
+							{
+								profile, 
+								refreshAll: this._onRefresh.bind(this)
+							})
+						}
+					>
+					<SvgUri width = {24} height = {24} 
+						source = {require('../img/create.svg')}/>
+					</TouchableOpacity>
 				</View> }
 				<FlatList
 					data = {ownerProjects}
@@ -226,6 +234,7 @@ const s = StyleSheet.create({
 	},
 	button: {
 		alignItems: 'center',
+		paddingRight: 10,
 	},
 	contentContainer: {
 		flexDirection: 'row',

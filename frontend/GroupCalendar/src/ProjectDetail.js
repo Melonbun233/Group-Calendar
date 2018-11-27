@@ -465,7 +465,9 @@ export default class ProjectDeatail extends Component {
                 status = await Network.voteEvent(project.projectId,
                     event.eventId, profile.userId);
             }
-            if (status != 200) {
+            if (status == 202) {
+                Alert.alert('The event is full');
+            } else if (status != 200) {
                 Alert.alert('Internet Error ' + status.toString());
             }
             await this._onRefresh(false);
