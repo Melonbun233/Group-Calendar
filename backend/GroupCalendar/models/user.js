@@ -242,7 +242,7 @@ async function getInvitation (userId){
 
 	var invitation = [];
 	for (var i = 0; i < result.length; i++){
-		invitation.push(result[i].userId);
+		invitation.push(result[i].projectId);
 	}
 
 	return invitation;
