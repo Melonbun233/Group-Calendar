@@ -380,13 +380,6 @@ async function deleteInvitedUser (req, res){
 
 
 async function deleteMembers(req, res){
-	try {
-		await Project.isOwner(req.body.projectId, req.body.userId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
-
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.memberId);
 		res.status(200).end();
