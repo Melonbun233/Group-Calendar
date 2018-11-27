@@ -33,11 +33,12 @@ const transport = {
 
  	var getInfoSpy = jest.spyOn(MailController, 'sendEmail');
 
- 	spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
- 		return transport;
- 	});
-
  	test('Testing by without err', () => {
+ 		beforeEach(() =>{ 
+ 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 				return transport;
+ 			});
+ 		})
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
  		var text = "Successful Test";
@@ -45,11 +46,14 @@ const transport = {
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
 
- 	spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
- 		return transportErr;
- 	});
+ 	
  	test('Testing by with err', () => {
  		
+ 		beforeEach(() =>{ 
+ 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 				return transportErr;
+ 			});
+ 		})
 
  		var receiver = "123";
  		var subject = "Test";
