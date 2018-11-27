@@ -78,9 +78,12 @@ app.use(function(req, res, next){
       req.session._garbage = Date();
       req.session.touch();
 
+      console.log(req.session.cookie.maxAge);
+
       next();
 
     }else{
+      console.log("expired");
       res.status(401).send("expired session");
     } 
 
