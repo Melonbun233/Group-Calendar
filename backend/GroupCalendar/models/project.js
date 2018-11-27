@@ -519,13 +519,17 @@ async function isEventInProject (projectId, eventId){
 
 async function isUserInInviteList (projectId, userId){
 	try{
-		var invitingProjects = await getInvitingProjects(userId);
+		var invitingProjects = await getInvitation(userId);
 	}catch (error){
 		throw error;
 	}
+	console.log(invitingProjects);
 
 	for (var i = 0; i < invitingProjects.length; i++){
-		if (invitingProjects[i].projectId == projectId){
+
+		console.log(invitingProjects[i]);
+
+		if (invitingProjects[i] == projectId){
 			return true;
 		}
 	}
@@ -533,24 +537,6 @@ async function isUserInInviteList (projectId, userId){
 	return false;
 }
 
-async function getInvitingProjects (userId){
-	var query = "SELECT projectId FROM InviteList WHERE userId = '" + userId + "'";
-	var invitingProjects = await ProjectDB.query(query)
-	.catch ( error => {
-		throw error;
-	})
-
-	if (invitingProjects.length == 0){
-		throw "UserId" + userId + "does not exist in InviteList table";
-	}
-
-	// var projectIds = [];
-	// for (var i = 0; i < invitingProjects.length; i++){
-	// 	projectIds.push(invitingProjects[i].projectId);
-	// }
-
-	return invitingProjects;
-}
 
 async function addUserInMembership (projectId, userId){
 	query = "INSERT INTO Membership (projectId, userId) VALUES ('" + projectId + "', '" + userId + "')";
@@ -562,6 +548,21 @@ async function addUserInMembership (projectId, userId){
 	if (result.length == 0){
 		throw "Err in ProjectDB: Membership";
 	}
+}
+
+async function getInvitation (userId){
+	var query = "SELECT * FROM InviteList WHERE userId = '" + userId + "'";
+	var result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	var invitation = [];
+	for (var i = 0; i < result.length; i++){
+		invitation.push(result[i].projectId);
+	}
+
+	return invitation;
 }
 
 
@@ -576,6 +577,7 @@ module.exports = {
 	getProject,
 	getEvents,
 	getMemberId,
+	getInvitation,
 	createEvents,
 	deleteEvents,
 	putProject,
@@ -589,7 +591,6 @@ module.exports = {
 	deleteMembers,
 
 	isUserInInviteList,
-	getInvitingProjects,
 	addUserInMembership,
 
 }

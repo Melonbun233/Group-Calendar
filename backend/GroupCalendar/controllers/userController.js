@@ -1,5 +1,7 @@
 var User = require('../models/user.js');
+var Project = require('../models/project.js');
 var UidG = require('./uuidGenerator.js');
+// var Mailsys = require('./mailController.js');
 
 const {validationResult} = require('express-validator/check');
 
@@ -21,7 +23,8 @@ async function userUpdate (req, res){
 		await User.updateUser(req.body.userId, req.body.update.userPwd);
 		return res.status(200).json();
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 };
 
@@ -29,7 +32,8 @@ async function userCreate (req, res) {
 	try{
 		await User.emailExist(req.body.user.userEmail);
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 	
 	try{
@@ -50,7 +54,8 @@ async function userDelete (req, res) {
 		await User.deleteUser(req.body.userId);
 		return res.status(200).end();
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 }
 
@@ -62,11 +67,12 @@ async function profileGet (req, res) {
 
 	try {
 		profile = await User.getProfile(req.param('userId'));
-		invitation = await User.getInvitation(req.param('userId'));
+		invitation = await Project.getInvitation(req.param('userId'));
 		profile.invitation = invitation;
 		return res.status(200).json({profile});
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 }
 
@@ -75,7 +81,8 @@ async function profileUpdate (req, res) {
 		await User.modifyProfile(req.body.userId, req.body.update);
 		return res.status(200).end();
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 }
 
@@ -85,17 +92,21 @@ async function getProjectId (req, res){
 		console.log(projectId);
 		return res.status(200).json({projectId});
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 }
 
 async function getNotification (req, res){
 	try{
-		var projectIds = await Project.getInvitingProjects(req.param('userId'));
-		return res.status(200).json({projectIds});
+		var projectId = await Project.getInvitation(req.param('userId'));
+		return res.status(200).json({projectId});
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
+	// Mailsys.sendEmail('kylejoeca@gmail.com');
+
 }
 
 async function acceptInvite (req, res){
@@ -106,13 +117,15 @@ async function acceptInvite (req, res){
 			return res.status(400).send('You are not in this project InvitedList');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	try {
@@ -120,13 +133,15 @@ async function acceptInvite (req, res){
 			return res.status(200).json();
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	try {
 		await Project.addUserInMembership(projectId, userId)
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
@@ -140,13 +155,15 @@ async function declineInvite (req, res){
 			return res.status(400).send('You are not in this project InvitedList');
 		}
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
-		return res.status(400).json({error});
+		console.log(error);
+		return res.status(500).end();
 	}
 
 	return res.status(200).json();
