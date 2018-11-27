@@ -67,11 +67,10 @@ export default class Calendar extends Component {
 					Alert.alert('Not all projects fetched');
 				}
 				break;
-				case 401: {
+				default: {
+					Alert.alert('Internet Error ' + status.toString());
 					this.props.onSessionOut();
 				}
-				break;
-				default: Alert.alert('Internet Error ' + status.toString());
 			}
 			let allProjects = await Storage.getAllProjects();
 			this.setState({allProjects});
@@ -108,7 +107,7 @@ export default class Calendar extends Component {
 	_onPressEvent = (projectId) => {
 		let {profile} = this.state;
 		this.props.navigation.push('ProjectDetail', {
-			profile, projectId,
+			profile, projectId, type: 'edit',
 			refreshAll: this._onRefresh.bind(this),
 		});
 	}
@@ -142,7 +141,7 @@ export default class Calendar extends Component {
 				/>
             </View>
 			<View style = {[s.eventItem, {backgroundColor: '#fff'}]}>
-				<Text style = {[cs.h5, s.eventMsg, {color: '#e2e2e2'}]}>
+				<Text style = {[cs.h5, s.eventMsg, {color: '#c0c0c0'}]}>
 				{event.eventDescription}
 				</Text>
 			</View>

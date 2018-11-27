@@ -307,7 +307,15 @@ export default class GCNetwork extends Component {
 		} catch (error) {
 			throw Error('unable to delete the project');
 		}
-	}
+    }
+    
+    static async deleteUser(userId, email) {
+        try {
+            return 200;
+        } catch (error) {
+            throw error;
+        }
+    }
     
     static async inviteUser(projectId, userId, invitedEmail) {
 		let url = config.server.concat('/project/invite');

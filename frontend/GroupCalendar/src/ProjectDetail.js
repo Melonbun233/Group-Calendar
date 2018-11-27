@@ -27,6 +27,8 @@ export default class ProjectDeatail extends Component {
             showEndDatePicker: false,
             showMembers: false,
             extraData : false,
+            validDate: true,
+            showMore: false,
         }
     }
 
@@ -35,9 +37,10 @@ export default class ProjectDeatail extends Component {
         const projectId = navigation.getParam('projectId', null);
         const profile = navigation.getParam('profile', null);
         const refreshAll = navigation.getParam('refreshAll', null);
+        const type = navigation.getParam('type', null);
         var project;
         try {
-            if (projectId && profile && refreshAll) {
+            if (projectId && profile && refreshAll && type) {
                 let projectResponse = await Network.fetchProject(projectId, profile.userId);
                 if (projectResponse.status == 200) {
                     project = projectResponse.project;
@@ -54,6 +57,7 @@ export default class ProjectDeatail extends Component {
                         tempProjectStartDate: project.projectStartDate,
                         tempProjectEndDate: project.projectEndDate,
                         refreshAll,
+                        type
                     });
                     await this._fetchMembers();
 
@@ -112,16 +116,30 @@ export default class ProjectDeatail extends Component {
     }
 
     _onProjectStartDateChange = (date) => {
+        let {tempProjectStartDate, tempProjectEndDate} = this.state;
+        let endDate = new Date(tempProjectEndDate);
+        if (date.getTime() > endDate.getTime()) {
+            Alert.alert('Start date should be earlier than end date');
+            this.setState({tempProjectStartDate});
+            return;
+        }
         //let tempProjectEndDate 
         let dateString = date.toJSON();
-        let tempProjectStartDate = dateString;
-        this.setState({tempProjectStartDate});
+        tempProjectStartDate = dateString;
+        this.setState({tempProjectStartDate, validDate: true});
     }
 
     _onProjectEndDateChange = (date) => {
+        let {tempProjectStartDate, tempProjectEndDate} = this.state;
+        let startDate = new Date(tempProjectStartDate);
+        if (date.getTime() < startDate.getTime()) {
+            Alert.alert('End date should be later than start date');
+            this.setState({tempProjectEndDate});
+            return;
+        }
         let dateString = date.toJSON();
-        let tempProjectEndDate = dateString;
-        this.setState({tempProjectEndDate});
+        tempProjectEndDate = dateString;
+        this.setState({tempProjectEndDate, validDate: true});
     }
 
     //fetch members and set state
@@ -145,10 +163,10 @@ export default class ProjectDeatail extends Component {
 
     //get member flat list for rendering
     _renderMembers = () => {
-        let {members, isOwner, extraData} = this.state;
+        let {members, isOwner, extraData, type} = this.state;
         return (
             <View>
-            {isOwner ? 
+            {isOwner && type !== 'view'? 
             <View style = {[s.button, s.borderBottom]}>
                 <Button
                     title = 'Invite a new member'
@@ -187,7 +205,7 @@ export default class ProjectDeatail extends Component {
     //get event flat list for rendering
     _renderEvents = () => {
         let {events} = this.state.project;
-        let {isOwner, extraData} = this.state;
+        let {isOwner, extraData, type} = this.state;
 
         //sort events based on starting time
         events.sort((a, b) => {
@@ -198,7 +216,7 @@ export default class ProjectDeatail extends Component {
 
         return (
             <View>
-            {isOwner ? 
+            {isOwner && type !== 'view'? 
             <View style = {[s.button, s.borderBottom]}>
                 <Button
                     title = 'Create a new event'
@@ -266,7 +284,7 @@ export default class ProjectDeatail extends Component {
 
     _renderSingleEvent = ({item}) => {
         let {userId} = this.state.profile;
-        let {isOwner} = this.state;
+        let {isOwner, type} = this.state;
         let button = isOwner ? [{
             backgroundColor: 'red',
             underlayColor: 'red',
@@ -311,9 +329,11 @@ export default class ProjectDeatail extends Component {
                 right = {button}
                 style = {[s.borderBottom, s.borderTop]}
                 autoClose = {true}
+                disabled = {!isOwner || type === 'view'}
             >
             <TouchableOpacity
                 onPress = {() => this._onVoteEvent(item, chosen, avail)}
+                disabled = {type === 'view'}
             >
             <View style = {[s.event, {backgroundColor: bg}]}>
             <View style = {[s.eventItem, {backgroundColor: bg}]}>
@@ -364,8 +384,8 @@ export default class ProjectDeatail extends Component {
                 await this._onRefresh(false);
             } else if (status == 404){
                 Alert.alert('Cannot find the user');
-            } else if (status == 400){
-                Alert.alert('')
+            } else if (status == 302){
+                Alert.alert('You have already sent the invitation');
             } else {
                 Alert.alert('Internet Error ', status.toString());
             }
@@ -445,7 +465,9 @@ export default class ProjectDeatail extends Component {
                 status = await Network.voteEvent(project.projectId,
                     event.eventId, profile.userId);
             }
-            if (status != 200) {
+            if (status == 202) {
+                Alert.alert('The event is full');
+            } else if (status != 200) {
                 Alert.alert('Internet Error ' + status.toString());
             }
             await this._onRefresh(false);
@@ -560,6 +582,64 @@ export default class ProjectDeatail extends Component {
         );
     }
 
+    _renderMore = () => {
+        let {isOwner, type, profile} = this.state;
+        return (
+        <View>
+        {isOwner && type !== 'view' ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Delete Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Delete Project',
+                            'Are you sure you want to delete this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'DELETE',
+                                    onPress: () => this._onDeleteProject(),
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
+            {!isOwner && type !== 'view' ? 
+            <View style = {s.button}>
+                <Button
+                    title = 'Leave Project'
+                    onPress = {() => {
+                        AlertIOS.alert(
+                            'Leave Project',
+                            'Are you sure you want to leave this project?',
+                            [
+                                {
+                                    text: 'Cancel',
+                                },
+                                {
+                                    text: 'LEAVE',
+                                    onPress: async () => {
+                                        await this._onDeleteMember(profile, profile.userId);
+                                        await this.state.refreshAll(false);
+                                        this.props.navigation.goBack();
+                                    },
+                                    style: 'destructive',
+                                },
+                            ],
+                        );
+                    }}
+                    color = 'red'
+                />
+            </View> : null}
+            </View>
+        );
+    }
+
     render() {
         let {isLoading, isRefreshing} = this.state;
         if(isLoading) {
@@ -570,7 +650,7 @@ export default class ProjectDeatail extends Component {
 			);
         }
         let {project, ownerProfile, showStartDatePicker, showMembers,
-            showEndDatePicker, showEvents, isOwner, profile} = this.state;
+            showEndDatePicker, showEvents, isOwner, profile, type, showMore} = this.state;
 
         let projectStartDate = new Date(project.projectStartDate);
         let projectEndDate = new Date(project.projectEndDate);
@@ -582,6 +662,8 @@ export default class ProjectDeatail extends Component {
         let membersArrow = showMembers ? arrowUp : arrowDown;
         let events = showEvents ? this._renderEvents() : null;
         let eventsArrow = showEvents ? arrowUp : arrowDown;
+        let more = showMore ? this._renderMore() : null;
+        let moreArrow = showMore ? arrowUp : arrowDown;
 
         return (
             <ScrollView
@@ -593,10 +675,18 @@ export default class ProjectDeatail extends Component {
                         refreshing = {isRefreshing}
                     />}
 			>
+            <TouchableWithoutFeedback
+                testID = 'projectNameButton'
+                onPress = {() => this.props.navigation.push('EditProject', {
+                    project, profile, refresh: this._onRefresh.bind(this),
+                })}
+                disabled = {!isOwner || type === 'view'}
+            >
             <View style = {s.title}>
                 <Text style = {cs.h2}>{project.projectName}</Text>
                 <Text style = {[cs.h5, {paddingTop: 10}]}>{project.projectDescription}</Text>
             </View>
+            </TouchableWithoutFeedback>
             {/* project owner */}
             <TouchableWithoutFeedback>
             <View style = {[s.listContainer, s.borderBottom]}>
@@ -615,6 +705,7 @@ export default class ProjectDeatail extends Component {
                 onPress = {() => this.setState({
                     showStartDatePicker: ~showStartDatePicker
                 })}
+                disabled = {!isOwner || type === 'view'}
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
@@ -629,6 +720,7 @@ export default class ProjectDeatail extends Component {
                 onPress = {() => this.setState({
                     showEndDatePicker: ~showEndDatePicker
                 })}
+                disabled = {!isOwner || type === 'view'}
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
@@ -666,56 +758,24 @@ export default class ProjectDeatail extends Component {
                 </View>
             </TouchableWithoutFeedback>
             {events}
-            {isOwner ? 
-            <View style = {s.button}>
-                <Button
-                    title = 'Delete Project'
-                    onPress = {() => {
-                        AlertIOS.alert(
-                            'Delete Project',
-                            'Are you sure you want to delete this project?',
-                            [
-                                {
-                                    text: 'Cancel',
-                                },
-                                {
-                                    text: 'DELETE',
-                                    onPress: () => this._onDeleteProject(),
-                                    style: 'destructive',
-                                },
-                            ],
-                        );
-                    }}
-                    color = 'red'
-                />
-            </View> : null}
-            {!isOwner ? 
-            <View style = {s.button}>
-                <Button
-                    title = 'Leave Project'
-                    onPress = {() => {
-                        AlertIOS.alert(
-                            'Leave Project',
-                            'Are you sure you want to leave this project?',
-                            [
-                                {
-                                    text: 'Cancel',
-                                },
-                                {
-                                    text: 'LEAVE',
-                                    onPress: async () => {
-                                        await this._onDeleteMember(profile, profile.userId);
-                                        await this.state.refreshAll(false);
-                                        this.props.navigation.goBack();
-                                    },
-                                    style: 'destructive',
-                                },
-                            ],
-                        );
-                    }}
-                    color = 'red'
-                />
-            </View> : null}
+            {/* More */}
+            {type === 'view' ? null :
+                <TouchableWithoutFeedback
+                    onPress = {() => this.setState({
+                        showMore: ~showMore
+                    })}
+                >
+                    <View style = {[s.listContainer, s.borderBottom]}>
+                    <View style = {s.contentContainer}>
+                        <Text style = {cs.normalText}>More</Text>
+                        {moreArrow}
+                    </View>
+                    </View>
+                </TouchableWithoutFeedback>
+        
+            }
+            {more}
+            
             <View style = {cs.empty}></View>
             </ScrollView>
         )

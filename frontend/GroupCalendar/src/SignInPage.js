@@ -113,6 +113,7 @@ export default class SignInPage extends Component {
 				case 200: {
 					this.setState({isLoading: false});
 					Storage.setSignInByGoogle('false');
+					this.password.focus();
 					//jump to main page
 					this.props.navigation.navigate('Main');
 				}
@@ -201,7 +202,7 @@ export default class SignInPage extends Component {
 				<View style = {[cs.container, s.signUpContainer]}>
 					<Button 
 						testID = 'SignUpButton'
-						title = 'Sign up'
+						title = 'Sign Up'
 						color = '#66a3ff'
 						onPress = {() => this.props.navigation.push('SignUp')}
 					/>
@@ -315,6 +316,7 @@ const s = StyleSheet.create({
 		width: '80%',
 		height: 40,
 		backgroundColor: '#66a3ff',
+		borderRadius: 1,
 	},
 	buttonMsg: {
 		color : '#ffffff',

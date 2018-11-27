@@ -13,6 +13,7 @@ import {signUpConstraints} from './common/validation';
 
 export default class SignUpPage extends Component {
 	static navigationOptions = {
+		headerBackTitle: 'Back'
 	}
 
 	constructor(props) {
@@ -101,18 +102,13 @@ export default class SignUpPage extends Component {
 		switch (status) {
 			case 200: {
 				this.setState({isLoading: false});
-				await Storage.setProfile({
-					userEmail,
-					userLastname,
-					userFirstname,
-				});
 				await Storage.setSignInByGoogle('false');
 				this.props.navigation.navigate('Main');
 			}
 			break;
-			case 400: Alert.alert('Invalid Inputs');
+			case 400: Alert.alert('Email Already Used');
 			break;
-			default: Alert.alert('Internet Error', JSON.stringify(res.error));
+			default: Alert.alert('Internet Error ', status.toString());
 		}
 		this.setState({isLoading: false});
 	}
