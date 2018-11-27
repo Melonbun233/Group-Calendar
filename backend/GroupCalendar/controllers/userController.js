@@ -52,6 +52,7 @@ async function userCreate (req, res) {
 };
 
 async function userDelete (req, res) {
+	console.log(req.body);
 	try{
 		var userIsAdmin = await User.isAdmin(req.body.userId);
 		if (!userIsAdmin){
@@ -65,6 +66,7 @@ async function userDelete (req, res) {
 		await User.deleteUser(req.body.userEmail);
 		return res.status(200).end();
 	} catch (error) {
+		console.log(error);
 		return res.status(404).json({error});
 	}
 }
