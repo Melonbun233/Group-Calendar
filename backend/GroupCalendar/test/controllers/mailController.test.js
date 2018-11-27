@@ -6,7 +6,9 @@ const MailController = require('../../controllers/mailController');
  *	NodeMailerMocks
  */
 jest.mock('nodemailer');
-NodeMailerMocks.createTransport.sendMail = jest.fn();
+NodeMailerMocks.createTransport.sendMail = jest.fn().mockImplement(() =>{
+	return Promise.resolve();
+});
 NodeMailerMocks.createTransport.close = jest.fn();
 
 
