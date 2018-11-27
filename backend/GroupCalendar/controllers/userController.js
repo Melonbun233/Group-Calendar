@@ -45,6 +45,8 @@ async function userCreate (req, res) {
 
 	var uuid = UidG.uuidCreate(req.body.user.email);
 	req.session.uuid = uuid;
+
+	console.log(res.body);
 	
 	return;
 };
