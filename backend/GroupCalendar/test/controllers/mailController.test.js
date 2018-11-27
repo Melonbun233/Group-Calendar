@@ -12,6 +12,7 @@ const transportErr = {
 		callback(err, null);
 	},
 	close: () => {
+		return 0;
 	}
 }
 const transport = {
@@ -19,6 +20,7 @@ const transport = {
 		callback(null, null);
 	},
 	close: () => {
+		return 0;
 	}
 }
 
@@ -35,7 +37,7 @@ const transport = {
 
  	test('Testing by without err', () => {
  		beforeEach(() =>{ 
- 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
  				return transport;
  			});
  		})
@@ -50,7 +52,7 @@ const transport = {
  	test('Testing by with err', () => {
  		
  		beforeEach(() =>{ 
- 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
  				return transportErr;
  			});
  		})
