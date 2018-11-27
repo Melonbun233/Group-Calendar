@@ -382,10 +382,12 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	deleteMembers,
+
 	addEventMember,
 	deleteEventMember,
 	deleteEventMemberAll,
 	inviteUser,
 	deleteInvitedUser,
-	deleteMembers
+	
 }
