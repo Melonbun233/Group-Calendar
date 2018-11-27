@@ -229,6 +229,16 @@ async function getProjectId (userId){
 		projectId.push(result[i].projectId);
 	}
 
+	query = "SELECT projectId from Membership WHERE userId = '" + userId + "'";
+	result = await ProjectDB.query(query)
+	.catch (error => {
+		throw error;
+	})
+
+	for (var i = 0; i < result.length; i++){
+		projectId.push(result[i].projectId);
+	}
+
 	return projectId;
 }
 
