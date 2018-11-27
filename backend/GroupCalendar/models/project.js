@@ -19,7 +19,6 @@ async function isOwner (projectId, userId){
 	if (project[0].projectOwnerId != userId){
 		throw  'userId ' + userId + ' is not the owner of projectId ' + projectId;
 	}
-	return true;
 }
 
 // check ProjectDB -> Projects
