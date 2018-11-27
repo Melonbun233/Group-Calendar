@@ -106,7 +106,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// app.listen(8080, '0.0.0.0');
+app.listen(8000, '0.0.0.0');
 https.createServer({
   key: fs.readFileSync('privatekey.pem'),
   cert: fs.readFileSync('certificate.pem')
