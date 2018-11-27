@@ -583,7 +583,7 @@ async function isEventAvailable (eventId){
 	var userNum = result.length;
 
 	var query = "SELECT userLimit FROM Events WHERE eventId = '" + eventId + "'";
-	var result = await ProjectDB.query(query)
+	var result = await CalendarDB.query(query)
 	.catch (error => {
 		throw error;
 	});
