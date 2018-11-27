@@ -37,9 +37,12 @@ const transport = {
 
  	test('Testing by without err', () => {
  		beforeEach(() =>{ 
- 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
- 				return transport;
- 			});
+ 			// spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
+ 			// 	return transport;
+ 			// });
+ 			 spyOn(Mailer.prototype, 'sendMail').mockImplementationOnce(() => {
+ 			 	return transport;
+ 			 })
  		})
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
