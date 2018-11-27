@@ -41,7 +41,7 @@ const transport = {
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
  		var text = "Successful Test";
- 		await MailController.sendEmail(receiver, subject, text, text);
+ 		MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
 
@@ -56,7 +56,7 @@ const transport = {
  		var text = "Failure Test";
  		
  		// Mailer.createTransport = jest.fn().mockImplementationOnce(() => {return transportErr});
- 		await MailController.sendEmail(receiver, subject, text, text);
+ 		MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
  })
