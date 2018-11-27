@@ -5,7 +5,7 @@ const MailController = require('../../controllers/mailController');
  * Mock List:
  *	NodeMailerMocks
  */
-jest.mock(NodeMailerMocks);
+jest.mock('nodemailer');
 
 /**
  * Test List:
