@@ -1,4 +1,4 @@
-const Mailer = require('nodemailer');
+const Mailer = require('nodemailer/lib/mailer');
 const MailController = require('../../controllers/mailController');
 
 /**
@@ -37,7 +37,7 @@ const transport = {
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
  		var text = "Successful Test";
- 		spyOn(Mailer, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
     return transport;
   });
  		MailController.sendEmail(receiver, subject, text, text);
@@ -48,7 +48,7 @@ const transport = {
  		var receiver = "123";
  		var subject = "Test";
  		var text = "Failure Test";
- 		spyOn(Mailer, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
     return transportErr;
   });
  		// Mailer.createTransport = jest.fn().mockImplementationOnce(() => {return transportErr});
