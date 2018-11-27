@@ -5,7 +5,7 @@ const MailController = require('../../controllers/mailController');
  * Mock List:
  *	NodeMailerMocks
  */
-// jest.mock('nodemailer');
+jest.mock('nodemailer');
 const transportErr = {
 	sendMail: (data, callback) => {
 		const err = new Error('some error');
