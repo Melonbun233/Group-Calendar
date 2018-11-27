@@ -111,8 +111,8 @@ https.createServer({
   key: fs.readFileSync('privatekey.pem'),
   cert: fs.readFileSync('certificate.pem')
 }, app)
-.listen(8000, function () {
-  console.log('app listening on port 3000! Go to https://localhost:3000/')
+.listen(8080, function () {
+  console.log('app listening on port 8080')
 })
 
 
