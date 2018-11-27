@@ -304,7 +304,7 @@ async function inviteUser (req, res){
 	// send email to notify
 
 	try{
-		var invitor = await User.getInfo(userId);
+		var invitor = await User.getProfile(userId);
 	} catch (error) {
 		console.log(error);
 		return res.status(500).end();
