@@ -33,26 +33,30 @@ const transport = {
 
  	var getInfoSpy = jest.spyOn(MailController, 'sendEmail');
 
- 	describe('Testing by without err', () => {
+ 	spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 		return transport;
+ 	});
+
+ 	test('Testing by without err', () => {
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
  		var text = "Successful Test";
- 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
-    return transport;
-  });
- 		MailController.sendEmail(receiver, subject, text, text);
+ 		await MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
 
- 	describe('Testing by with err', () => {
+ 	spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
+ 		return transportErr;
+ 	});
+ 	test('Testing by with err', () => {
+ 		
+
  		var receiver = "123";
  		var subject = "Test";
  		var text = "Failure Test";
- 		spyOn(Mailer.prototype, 'sendMail').and.callFake(function (mailOptions, cb) {
-    return transportErr;
-  });
+ 		
  		// Mailer.createTransport = jest.fn().mockImplementationOnce(() => {return transportErr});
- 		MailController.sendEmail(receiver, subject, text, text);
+ 		await MailController.sendEmail(receiver, subject, text, text);
  		expect(getInfoSpy).toHaveBeenCalled();
  	})
  })
