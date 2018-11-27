@@ -57,7 +57,7 @@ async function createUser (user, profile) {
 	return res; // return profile
 }
 
-async function deleteUser (userId) {
+async function deleteUser (userEmail) {
 	var userId;
 	var query = "SELECT userId from Users WHERE userEmail = '" + userEmail + "'";
 	var result = await db.query(query)
