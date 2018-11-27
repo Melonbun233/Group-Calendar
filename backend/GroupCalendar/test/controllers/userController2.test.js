@@ -1,12 +1,16 @@
 var httpMocks = require('node-mocks-http');
-const ProjectController = require('../../controllers/projectController');
-const User = require('../../models/user');
+const UserController = require('../../controllers/userController');
 const Project = require('../models/project');
 
 /**
  * Mock List:
  *
- * getInvitingProjects
+ * getInvitation
+ * isUserInInviteList
+ * deleteUserInInviteList
+ * isUserInProject2
+ * addUserInMembership
+ * deleteUserInInviteList
  */
 
 /*------------mocking user---------------*/
@@ -16,6 +20,8 @@ const Project = require('../models/project');
  * Test List:
  *
  * getNotification
+ * acceptInvite
+ * declineInvite
  */
 
 describe('Testing addEventMember', () => {
