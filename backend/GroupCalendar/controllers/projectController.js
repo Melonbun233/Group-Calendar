@@ -1,5 +1,6 @@
 var Project = require('../models/project');
 var User = require('../models/user');
+var Mail = require('./mailController');
 
 async function putEventOwner (req, res) {
 	try{
@@ -152,11 +153,11 @@ async function deleteProject (req, res){
 	// }
 
 	try {
- 		isValidMember = await Project.isUserInProject2(projectId, userId);
- 	} catch (error) {
- 		console.log(error);
- 		return res.status(500).end();
- 	}
+		isValidMember = await Project.isUserInProject2(projectId, userId);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
 
 
 	if(!isValidMember) {
@@ -182,17 +183,17 @@ async function deleteProject (req, res){
 }
 
 async function deleteEventMember (req, res){
- 	var projectId = req.body.projectId;
- 	var userId = req.body.userId;
- 	var eventIds = req.body.eventId;
- 	var isValidMember;
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	var eventIds = req.body.eventId;
+	var isValidMember;
 
- 	try {
- 		isValidMember = await Project.isUserInProject2(projectId, userId);
- 	} catch (error) {
- 		console.log(error);
- 		return res.status(500).end();
- 	}
+	try {
+		isValidMember = await Project.isUserInProject2(projectId, userId);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
 
 	if(!isValidMember) {
 		return res.status(400).send('This user is not a valid member');
@@ -210,16 +211,16 @@ async function deleteEventMember (req, res){
 }
 
 async function deleteEventMemberAll (req, res){
- 	var projectId = req.body.projectId;
- 	var userId = req.body.userId;
- 	var isValidMember;
+	var projectId = req.body.projectId;
+	var userId = req.body.userId;
+	var isValidMember;
 
- 	try {
- 		isValidMember = await Project.isUserInProject2(projectId, userId);
- 	} catch (error) {
- 		console.log(error);
- 		return res.status(500).end();
- 	}
+	try {
+		isValidMember = await Project.isUserInProject2(projectId, userId);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
 
 	if(!isValidMember) {
 		return res.status(400).send('This user is not a valid member');
@@ -263,12 +264,11 @@ async function inviteUser (req, res){
 		console.log(error);
 		return res.status(500).end();
 	}
-	console.log(result);
 
 	if (result == null){
 		console.log('Could not find the user');
-			return res.status(404).send('Could not find the user');
-		}
+		return res.status(404).send('Could not find the user');
+	}
 	var invitedId = result.userId;
 
 	if(invitedId == userId){
@@ -283,7 +283,6 @@ async function inviteUser (req, res){
 		console.log(error);
 		return res.status(500).end();
 	}
-
 	
 	try {
 		if(await Project.isUserInProject2(projectId, invitedId)){
@@ -301,6 +300,31 @@ async function inviteUser (req, res){
 		console.log(error);
 		return res.status(500).end();
 	}
+
+	// send email to notify
+
+	try{
+		var invitor = await User.getInfo(userId);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
+
+	var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
+
+	try{
+		var invitedProject = await Project.getProject(projectId);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
+
+	var projectName = `${invitedProject.projectName}`;
+
+	var receiver = invitedEmail;
+	var subject = '[Group Calendar]: New Project Invitation';
+	var text = `${userName} is inviting you to Project: ${projectName}.`;
+	Mail.sendEmail(receiver, subject, text, null);
 
 	return res.status(200).json();
 

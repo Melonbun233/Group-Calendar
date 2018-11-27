@@ -569,11 +569,8 @@ async function getInvitation (userId){
 
 module.exports = {
 	isOwner,
-	isOwner2,
 	putEventOwner,
 	isUserInProject,
-	isUserInProject2,
-	isMemberInProject,
 	getProject,
 	getEvents,
 	getMemberId,
@@ -583,14 +580,17 @@ module.exports = {
 	putProject,
 	createProject,
 	deleteProject,
+	
+	isOwner2,
+	isUserInProject2,
+	isMemberInProject,
+	isUserInInviteList,
+	addUserInMembership,
 	addUserInEvents,
 	deleteUserInEvents,
 	deleteUserInEventsAll,
 	addUserInInviteList,
 	deleteUserInInviteList,
 	deleteMembers,
-
-	isUserInInviteList,
-	addUserInMembership,
 
 }
