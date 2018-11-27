@@ -1,6 +1,7 @@
 var User = require('../models/user.js');
 var Project = require('../models/project.js');
 var UidG = require('./uuidGenerator.js');
+var Mailsys = require('./mailController.js');
 
 const {validationResult} = require('express-validator/check');
 
@@ -97,6 +98,8 @@ async function getNotification (req, res){
 	} catch (error) {
 		return res.status(400).json({error});
 	}
+	// Mailsys.sendEmail('kylejoeca@gmail.com');
+
 }
 
 async function acceptInvite (req, res){

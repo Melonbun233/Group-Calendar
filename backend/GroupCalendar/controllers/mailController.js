@@ -4,27 +4,31 @@ var mailer = require("nodemailer");
 var smtpTransport = mailer.createTransport("SMTP",{
     service: "Gmail",
     auth: {
-        user: "gmail_id@gmail.com",
-        pass: "gmail_password"
+        user: "groupcalendar.talkingcode@gmail.com",
+        pass: "secretpw=ZZJ321"
     }
 });
 
-var mail = {
-    from: "Yashwant Chavan <from@gmail.com>",
-    to: "to@gmail.com",
-    subject: "Send Email Using Node.js",
-    text: "Node.js New world for me",
-    html: "<b>Node.js New world for me</b>"
+function getMailInfo(receiver) {
+    return {
+        from: "Group Calendar <groupcalendar.talkingcode@gmail.com>",
+        to: `${receiver}`,
+        subject: "Send Email Using Node.js",
+        text: "hi",
+        html: "<b>get email</b>"
+    }
 }
 
-smtpTransport.sendMail(mail, function(error, response){
-    if(error){
-        console.log(error);
-    }else{
-        console.log("Message sent: " + response.message);
-    }
+function sendEmail(receiver) {
+    smtpTransport.sendMail(getMailInfo(receiver), function(error, response){
+        if(error){
+            console.log(error);
+        }else{
+            console.log("Message sent: " + response.message);
+        }
 
-    smtpTransport.close();
-});
+        smtpTransport.close();
+    });
+}
 
 module.exports = sendEmail;
