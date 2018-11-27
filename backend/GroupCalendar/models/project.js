@@ -4,7 +4,7 @@ var UserDB = require('../databases/UserDB');
 
 // check ProjectDB -> Projects
 async function isOwner (projectId, userId){
-	var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
+var query = "SELECT * FROM Projects WHERE projectId = '" + projectId + "'";
 	var project = await ProjectDB.query(query)
 	.catch ( error => {
 		throw error;
@@ -17,8 +17,9 @@ async function isOwner (projectId, userId){
 	}
 
 	if (project[0].projectOwnerId != userId){
-		throw  'userId ' + userId + ' is not the owner of projectId ' + projectId;
+		return false;
 	}
+	return true;
 }
 
 // check ProjectDB -> Projects
@@ -121,11 +122,10 @@ async function deleteEvents (eventId){
 }
 
 async function isUserInProject (projectId, userId){
-	try{
-		var memberId = await getMemberId(projectId);
-	}catch (error){
+	var memberId = await getMemberId(projectId)
+	.catch(error => {
 		throw error;
-	}
+	})
 
 	for (var i = 0; i < memberId.length; i++){
 		if (memberId[i] == userId){
@@ -134,9 +134,10 @@ async function isUserInProject (projectId, userId){
 	}
 
 	try{
-		await isOwner(projectId, userId);
+		var userIsOwner = await isOwner(projectId, userId);
+		return userIsOwner;
 	} catch (error){
-		throw "userId " + userId + " does not belong to projectId " + projectId;
+		throw error;
 	}
 }
 

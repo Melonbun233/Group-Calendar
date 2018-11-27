@@ -4,27 +4,29 @@ var Mail = require('./mailController');
 
 async function putEventOwner (req, res) {
 	try{
-		await Project.isOwner(req.body.projectId, req.body.userId);
+		if ( !(await Project.isOwner(req.body.projectId, req.body.userId)) ){
+			return res.status(400).json({"error":"user is not owner"});
+		}
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(400).json({error});
 	}
 
 	try{
 		await Project.putEventOwner(req.body.eventId, req.body.update);
 		res.status(200).json();
 	} catch (error) {
-		res.status(500).end();
+		res.status(400).json({error});
 	}
 }
 
 // return eventId[]
 async function createEvents (req, res){
 	try{
-		await Project.isOwner(req.body.projectId, req.body.userId);
+		if ( !(await Project.isOwner(req.body.projectId, req.body.userId)) ){
+			return res.status(400).json({"error":"user is not owner"});
+		}
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(400).json({error});
 	}
 
 	var eventId;
@@ -38,10 +40,11 @@ async function createEvents (req, res){
 
 async function deleteEvents (req, res){
 	try{
-		await Project.isOwner(req.body.projectId, req.body.userId);
+		if ( !(await Project.isOwner(req.body.projectId, req.body.userId)) ){
+			return res.status(400).json({"error":"user is not owner"});
+		}
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(400).json({error});
 	}
 	
 	try{
@@ -58,10 +61,11 @@ async function getProject (req, res) {
 	var userId = req.param('userId');
 
 	// try{
-	// 	await Project.isUserInProject(projectId, userId);
+	// 	if ( !(await Project.isUserInProject(projectId, userId)) ){
+	// 		return res.status(400).json({"error":"user is not in project"});
+	// 	}
 	// } catch (error) {
-	// 	console.log(error);
-	// 	return res.status(500).end();
+	// 	return res.status(400).json({error});
 	// }
 
 	/* get project */
@@ -86,11 +90,13 @@ async function getProject (req, res) {
 
 async function putProject(req, res){
 	try{
-		await Project.isOwner(req.body.projectId, req.body.userId);
+		if ( !(await Project.isOwner(req.body.projectId, req.body.userId)) ){
+			return res.status(400).json({"error":"user is not owner"});
+		}
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(400).json({error});
 	}
+
 
 	try{
 		await Project.putProject(req.body.projectId, req.body.update);
@@ -111,10 +117,11 @@ async function createProject (req, res){
 
 async function deleteProject (req, res){
 	try{
-		await Project.isOwner(req.body.projectId, req.body.userId);
+		if ( !(await Project.isOwner(req.body.projectId, req.body.userId)) ){
+			return res.status(400).json({"error":"user is not owner"});
+		}
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(400).json({error});
 	}
 
 	try{
@@ -380,6 +387,15 @@ async function deleteInvitedUser (req, res){
 
 
 async function deleteMembers(req, res){
+	try {
+		if(!(await Project.isOwner(req.body.projectId, req.body.userId))){
+			return res.status(400).send('Only Project Owner can delete members');
+		}
+	} catch (error) {
+		console.log(error);
+		return res.status(500).end();
+	}
+	
 	try{
 		await Project.deleteMembers(req.body.projectId, req.body.memberId);
 		res.status(200).end();

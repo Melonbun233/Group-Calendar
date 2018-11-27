@@ -52,12 +52,20 @@ async function userCreate (req, res) {
 };
 
 async function userDelete (req, res) {
+	try{
+		var userIsAdmin = await User.isAdmin(req.body.userId);
+		if (!userIsAdmin){
+			return res.status(400).json({"error":"userId " + req.body.userId + " is not an administrator"});
+		}
+	} catch (error) {
+		return res.status(500).json({error});
+	}
+
 	try {
-		await User.deleteUser(req.body.userId);
+		await User.deleteUser(req.body.userEmail);
 		return res.status(200).end();
 	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
+		return res.status(404).json({error});
 	}
 }
 
