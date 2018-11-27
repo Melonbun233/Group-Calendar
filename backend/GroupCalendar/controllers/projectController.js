@@ -303,28 +303,28 @@ async function inviteUser (req, res){
 
 	// send email to notify
 
-	try{
-		var invitor = await User.getInfo(userId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
+	// try{
+	// 	var invitor = await User.getInfo(userId);
+	// } catch (error) {
+	// 	console.log(error);
+	// 	return res.status(500).end();
+	// }
 
-	var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
+	// var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
 
-	try{
-		var invitedProject = await Project.getProject(projectId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
+	// try{
+	// 	var invitedProject = await Project.getProject(projectId);
+	// } catch (error) {
+	// 	console.log(error);
+	// 	return res.status(500).end();
+	// }
 
-	var projectName = `${invitedProject.projectName}`;
+	// var projectName = `${invitedProject.projectName}`;
 
-	var receiver = invitedEmail;
-	var subject = '[Group Calendar]: New Project Invitation';
-	var text = `${userName} is inviting you to the Project: "${projectName}".`;
-	Mail.sendEmail(receiver, subject, text, text);
+	// var receiver = invitedEmail;
+	// var subject = '[Group Calendar]: New Project Invitation';
+	// var text = `${userName} is inviting you to the Project: "${projectName}".`;
+	// Mail.sendEmail(receiver, subject, text, text);
 
 	return res.status(200).json();
 
