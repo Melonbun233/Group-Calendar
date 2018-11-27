@@ -65,7 +65,7 @@ app.use(session({
 	// activeDuration: 1 * 7 * 24 * 60 * 60 * 1000,
   cookie: {
     httpOnly: false,
-    maxAge: 60 * 1000,
+    maxAge: 1 * 7 * 24 * 60 * 60 * 1000,
   }
 }));
 
@@ -77,7 +77,7 @@ app.use(function(req, res, next){
     if (uuidCheck(req)){
       req.session._garbage = Date();
       req.session.touch();
-      
+
       next();
 
     }else{
