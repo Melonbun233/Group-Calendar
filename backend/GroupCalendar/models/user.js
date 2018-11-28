@@ -292,16 +292,6 @@ async function isAdmin (userId){
 	}
 }
 
-async function search (email) {
-	try {
-		var userInfo = await getInfo(email)
-	} catch (error) {
-		throw error;
-	}
-
-	return userIndo.userId;	
-}
-
 
 module.exports = {
 	getInfo,
@@ -316,7 +306,4 @@ module.exports = {
 	getProjectId,
 	emailExist,
 	isAdmin,
-
-	search
-
 }

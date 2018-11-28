@@ -183,6 +183,23 @@ async function declineInvite (req, res){
 	return res.status(200).json();
 }
 
+async function search (req, res){
+
+	try {
+		var userInfo = await User.getInfo(req.param('userEmail'));
+	} catch (error) {
+		console.log(error);
+		return res.status(403).end();
+	}
+
+	if (userInfo == null || userInfo == 'undefined'){
+		return res.status(404).end();
+	}
+
+	return res.status(200).json(userInfo.userId);
+}
+
+
 module.exports = {
 	userInfoGet,
 	userUpdate,
@@ -195,4 +212,5 @@ module.exports = {
 	getNotification,
 	acceptInvite,
 	declineInvite,
+	search,
 }
