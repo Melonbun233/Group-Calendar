@@ -4,7 +4,7 @@ const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
-// jest.mock('../../databases/UserDB');
+jest.mock('../../databases/UserDB');
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
 

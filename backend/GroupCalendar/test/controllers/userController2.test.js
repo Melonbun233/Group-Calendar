@@ -1,6 +1,6 @@
 var httpMocks = require('node-mocks-http');
 const UserController = require('../../controllers/userController');
-const Project = require('../models/project');
+const Project = require('../../models/project');
 
 /**
  * Mock List:
@@ -14,7 +14,7 @@ const Project = require('../models/project');
  */
 
  /*------------mocking user---------------*/
-// jest.mock('../../models/user');
+jest.mock('../../databases/ProjectDB');
 
 /**
  * Test List:
@@ -294,5 +294,3 @@ describe('Testing declineInvite', () => {
 afterEach( () => {
 	jest.resetAllMocks();
 })
-
-
