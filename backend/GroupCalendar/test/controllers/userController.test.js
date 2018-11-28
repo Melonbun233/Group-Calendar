@@ -64,7 +64,7 @@ describe('Testing userController', () => {
 			mockEmailExist(1);
 			mockCreateUser(0);
 			await userController.userCreate(req, res);
-			expect(res.statusCode).toBe(403);
+			expect(res.statusCode).toBe(400);
 		})
 	})
 
