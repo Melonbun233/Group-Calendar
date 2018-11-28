@@ -10,7 +10,10 @@ describe('Testing userController', () => {
 	var req = httpMocks.createRequest({
 		body: {
 			projectId: 1,
-			userId: 1
+			userId: 1,
+			update: {
+				userPwd: "123"
+			}
 		},
 		param:{
 			projectId: 1,
@@ -52,7 +55,7 @@ describe('Testing userController', () => {
 			mockEmailExist(1);
 			mockCreateUser(0);
 			await userController.userCreate(req, res);
-			expect(res.statusCode).toBe(400);
+			expect(res.statusCode).toBe(403);
 		})
 	})
 
