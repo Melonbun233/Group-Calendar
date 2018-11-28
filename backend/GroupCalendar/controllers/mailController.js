@@ -1,7 +1,7 @@
 var mailer = require("nodemailer");
 
 // Use Smtp Protocol to send Email
-var smtpTransport = mailer.createTransport("SMTP",
+var smtpTransport = mailer.createTransport(
     {
     service: "gmail",
     auth: {
