@@ -499,7 +499,9 @@ describe('Testing models/project', () => {
 
 	describe('Testing getInvitation', async () => {
 		test('existing userId', async () => {
-			projectDbReturnUserId(3);
+			ProjectDB.query.mockImplementationOnce(() => {
+				return Promise.resolve([{projectId: 3}])
+			})
 			await Project.getInvitation(1)
 			.then(result => {
 				expect(result[0]).toBe(3);
