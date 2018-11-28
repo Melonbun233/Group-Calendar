@@ -335,11 +335,11 @@ describe('Testing addUserInEvents', () => {
 
 			CalendarDB.query = jest.fn()
 			.mockImplementationOnce(() => {
-				return Promise.resolve([{userLimit: 2}]);
+				return Promise.resolve({userLimit: 2});
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).toBe([]);
+			expect(result.length).toBe(0);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -358,11 +358,11 @@ describe('Testing addUserInEvents', () => {
 
 			CalendarDB.query = jest.fn()
 			.mockImplementationOnce(() => {
-				return Promise.resolve([{userLimit: 2}]);
+				return Promise.resolve({userLimit: 2});
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).toBe([]);
+			expect(result.length).toBe(0);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -381,11 +381,12 @@ describe('Testing addUserInEvents', () => {
 
 			CalendarDB.query = jest.fn()
 			.mockImplementationOnce(() => {
-				return Promise.resolve([{userLimit: 1}]);
+				return Promise.resolve({userLimit: 1});
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
 			expect(result).toContain(1);
+			expect(result.length).toBe(1);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -407,11 +408,11 @@ describe('Testing addUserInEvents', () => {
 
 			CalendarDB.query = jest.fn()
 			.mockImplementationOnce(() => {
-				return Promise.resolve([{userLimit: 2}]);
+				return Promise.resolve({userLimit: 2});
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).toBe([]);
+			expect(result.length).toBe(0);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
