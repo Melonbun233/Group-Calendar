@@ -212,7 +212,7 @@ function mockGetProfile(success){
 }
 
 function mockGetInvitaion(success){
-	User.getInvitation = jest.fn().mockImplementationOnce(() => {
+	Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 		if (success){
 			return Promise.resolve(1);
 		} else {
