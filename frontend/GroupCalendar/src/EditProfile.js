@@ -107,6 +107,9 @@ export default class EditProfile extends Component {
 			}
 			case 'userGender' : {
 				let gender = item[name];
+				if (gender == '') {
+					gender = 'Male';
+				}
 				return (
 					<View style = {s.contentContainer}>
 					<Picker 

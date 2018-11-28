@@ -30,7 +30,6 @@ export default class GoogleSignInPwd extends Component {
     componentDidMount = async() => {
         try{
             let profile = await Storage.getProfile();
-            Alert.alert(JSON.stringify(profile));
             let userId = profile.userId;
             this.setState({
                 isLoading: false,
@@ -52,7 +51,7 @@ export default class GoogleSignInPwd extends Component {
     }
 
     _onSubmitPwd = () => {
-        this.pwd = blur();
+        this.pwd.blur();
     }
 
     _onSubmit = async () => {

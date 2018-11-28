@@ -26,9 +26,7 @@ async function updateUser (userId, userPwd) {
 	.catch( (err) => {
 		throw err;
 	});
-
-	if (!result.affectedRows)
-		throw "No such userId";
+	
 };
 
 async function createUser (user, profile) {
