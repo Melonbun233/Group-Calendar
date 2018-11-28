@@ -120,7 +120,7 @@ describe('Testing isUserInProject2', () => {
 	// let isOwner2 = Project.isOwner2;
 	// let getMemberId = Project.getMemberId;
 
-	beforeEach(){
+	beforeEach(() => {
 		var isOwner2Spy = jest.spyOn(Project, 'isOwner2')
 		.mockImplementationOnce(() => {
 			return Promise.resolve(true);
@@ -134,7 +134,8 @@ describe('Testing isUserInProject2', () => {
 			return Promise.resolve([2, 3]);
 		});
 
-	}
+	})
+	
 	afterEach(()=> {
 		// Project.isOwner2 = isOwner2;
 		// Project.getMemberId = getMemberId;
