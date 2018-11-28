@@ -72,7 +72,6 @@ export default class Calendar extends Component {
 				}
 				break;
 				default: {
-					Alert.alert('Internet Error ' + status.toString());
 					this.props.onSessionOut();
 				}
 			}

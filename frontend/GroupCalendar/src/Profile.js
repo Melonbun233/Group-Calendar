@@ -73,8 +73,7 @@ export default class Profile extends Component {
 				//fetch failed, probably user has expired the session
 				//we will log out
 				default: {
-				Alert.alert('HTTP ERROR ' + status.toString());
-				this.props.onSessionOut();
+					this.props.onSessionOut();
 				}
 			}
 		} catch(error) {
