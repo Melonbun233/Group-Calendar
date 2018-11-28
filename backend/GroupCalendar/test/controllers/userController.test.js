@@ -96,6 +96,52 @@ describe('Testing userController', () => {
 			expect(res.statusCode).toBe(404);
 		})
 	})
+
+	describe('Testing profileGet', () => {
+		test('success', async () => {
+			var res = httpMocks.createResponse();
+			mockGetProfile(1);
+			mockGetInvitaion(1);
+			await User.profileGet(req, res);
+			expect(res.statusCode).toBe(200);
+		})
+		test('fail', async () => {
+			var res = httpMocks.createResponse();
+			mockGetProfile(0);
+			await User.profileGet(req, res);
+			expect(res.statusCode).toBe(403);
+		})
+	})
+
+	describe('Testing profileUpdate', () => {
+		test('success', async () => {
+			var res = httpMocks.createResponse();
+			mockModifyProfile(1);
+			await User.profileUpdate(req, res);
+			expect(res.statusCode).toBe(200);
+		})
+		test('fail', async () => {
+			var res = httpMocks.createResponse();
+			mockModifyProfile(0);
+			await User.profileUpdate(req, res);
+			expect(res.statusCode).toBe(403);
+		})
+	})
+
+	describe('Testing getProfileId', () => {
+		test('success', async () => {
+			var res = httpMocks.createResponse();
+			mockGetProfileId(1);
+			await User.getProfileId(req, res);
+			expect(res.statusCode).toBe(200);
+		})
+		test('fail', async () => {
+			var res = httpMocks.createResponse();
+			mockGetProfileId(0);
+			await User.getProfileId(req, res);
+			expect(res.statusCode).toBe(403);
+		})
+	})
 })
 
 function mockUpdateUser(success){
@@ -151,5 +197,45 @@ function mockDeleteUser(success){
 function mockUuidCreate(){
 	UidG.uuidCreate = jest.fn().mockImplementation(() => {
 		return 1;
+	})
+}
+
+function mockGetProfile(success){
+	User.getProfile = jest.fn().mockImplementationOnce(() => {
+		if (success){
+			return Promise.resolve({userId: 1});
+		} else {
+			return Promise.reject();
+		}
+	})
+}
+
+function mockGetInvitaion(success){
+	User.getInvitation = jest.fn().mockImplementationOnce(() => {
+		if (success){
+			return Promise.resolve({userId: 1});
+		} else {
+			return Promise.reject();
+		}
+	})
+}
+
+function mockModifyProfile(success){
+	User.modifyProfile = jest.fn().mockImplementationOnce(() => {
+		if (success){
+			return Promise.resolve();
+		} else {
+			return Promise.reject();
+		}
+	})
+}
+
+function mockGetProfileId(success){
+	User.getProfileId = jest.fn().mockImplementationOnce(() => {
+		if (success){
+			return Promise.resolve(1);
+		} else {
+			return Promise.reject();
+		}
 	})
 }
