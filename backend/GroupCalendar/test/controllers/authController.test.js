@@ -7,8 +7,6 @@ const Gverify = require('../../controllers/googleVerification')
 jest.mock('../../databases/UserDB');
 jest.mock('../../databases/ProjectDB');
 jest.mock('../../databases/CalendarDB');
-jest.mock('../../models/calendar');
-jest.mock('../../models/project');
 // jest.mock('../../models/user');
 
 // const db = require('../../databases/UserDB');

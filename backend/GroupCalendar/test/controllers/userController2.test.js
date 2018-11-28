@@ -2,6 +2,11 @@ var httpMocks = require('node-mocks-http');
 const UserController = require('../../controllers/userController');
 const Project = require('../../models/project');
 
+jest.mock('../../databases/UserDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
+
+
 /**
  * Mock List:
  *
@@ -13,8 +18,12 @@ const Project = require('../../models/project');
  * deleteUserInInviteList
  */
 
- /*------------mocking user---------------*/
-jest.mock('../../databases/ProjectDB');
+ const getInvitation = Project.getInvitation;
+ const isUserInInviteList = Project.isUserInInviteList;
+ const deleteUserInInviteList = Project.deleteUserInInviteList;
+ const isUserInProject2 = Project.isUserInProject2;
+ const addUserInMembership = Project.addUserInMembership;
+ const deleteUserInInviteList = Project.deleteUserInInviteList;
 
 /**
  * Test List:
@@ -289,8 +298,16 @@ describe('Testing declineInvite', () => {
 
 		})
 
+	})
 })
 
 beforeEach( () => {
-	jest.resetAllMocks();
-});
+
+	Project.getInvitation = getInvitation;
+	Project.isUserInInviteList = isUserInInviteList;
+	Project.deleteUserInInviteList = deleteUserInInviteList;
+	Project.isUserInProject2 = isUserInProject2;
+	Project.addUserInMembership = addUserInMembership;
+	Project.deleteUserInInviteList = deleteUserInInviteList;
+
+})
