@@ -589,7 +589,7 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterEach( () => {
+beforeEach( () => {
 	User.getInfo = getInfo;
 	User.createUser = createUser;
 	User.updateProfile = updateProfile;

@@ -49,7 +49,7 @@ async function authGoogle (req, res){
     return res.status(500).end();
   }
 
-  // console.log(userInfo);
+  console.log(userInfo);
 
   if(userInfo == null || userInfo == 'undefined'){
 
