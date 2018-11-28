@@ -170,7 +170,7 @@ describe('Testing isUserInProject2', () => {
 		test('err in 1', async () => {
 			ProjectDB.query = jest.fn()
 			.mockImplementationOnce(() => {
-				return Promise.reject();
+				return Promise.reject('err');
 			})
 
 			await Project.isUserInProject2(projectId, userId)
@@ -187,7 +187,7 @@ describe('Testing isUserInProject2', () => {
 				return Promise.resolve([{userId: 2}]);
 			})
 			.mockImplementationOnce(() => {
-				return Promise.reject();
+				return Promise.reject('err');
 			})
 
 			await Project.isUserInProject2(projectId, userId)
@@ -209,9 +209,10 @@ describe('Testing isUserInInviteList', () => {
 	describe('Testing without err', () => {
 
 		test('true', async () => {
-			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([1, 2]);
-			});
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{projectId: 1}]);
+			})
 
 			var result = await Project.isUserInInviteList(projectId, userId);
 			expect(result).toBe(true);
@@ -220,9 +221,10 @@ describe('Testing isUserInInviteList', () => {
 		})
 
 		test('false', async () => {
-			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([2, 3]);
-			});
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{projectId: 2}]);
+			})
 
 			var result = await Project.isUserInInviteList(projectId, userId);
 			expect(result).toBe(false);
@@ -234,9 +236,10 @@ describe('Testing isUserInInviteList', () => {
 
 	describe('Failure Test', () => {
 		test('err', async () => {
-			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
 				return Promise.reject('err');
-			});
+			})
 
 			await Project.isUserInInviteList(projectId, userId)
 			.catch(err => {
