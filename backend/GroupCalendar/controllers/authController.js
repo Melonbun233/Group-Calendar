@@ -82,10 +82,10 @@ async function authGoogle (req, res){
       return res.status(500).end();
     }
 
-    if(newUser == null || userInfo == 'undefined'){
-      console.log('Err: getInfo');
-      return res.status(500).end();
-    }
+    // if(newUser == null || userInfo == 'undefined'){
+    //   console.log('Err: getInfo');
+    //   return res.status(500).end();
+    // }
 
     // console.log('created new user');
     userId = newUser.userId;

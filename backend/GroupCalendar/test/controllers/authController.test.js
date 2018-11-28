@@ -138,12 +138,23 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing without err', () => {
 
-			test.only('Verified, no userInfo found, return 200', async () => {
+			test('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
-				mockGetInfo(true, false);
+				
+				User.getInfo = jest.fn()
+				.mockImplementationOnce(() => {
+					return Promise.resolve(null)
+				})
+				.mockImplementationOnce(() => {
+					return Promise.resolve({
+						userId: 1,
+						isAdmin: 0,
+						userEmail: 'jsmith@gmail.com',
+						userPwd: '123456'
+					});
+				});
 				mockCreateUser(true);
-				mockGetInfo(true, true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -310,9 +321,15 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfile(true);
-				mockUpdateProfile(false);
-
+				// mockUpdateProfile(true);
+				// mockUpdateProfile(false);
+				User.updateProfile = jest.fn()
+				.mockImplementationOnce(() => {
+					return Promise.resolve([]);
+				})
+				.mockImplementationOnce(() => {
+					return Promise.reject();
+				});
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
