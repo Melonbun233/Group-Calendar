@@ -226,6 +226,6 @@ describe('Testing login', () => {
 
 afterEach( () => {
 	UserDB.query = query;
-}
+})
 
 
