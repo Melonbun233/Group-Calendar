@@ -122,7 +122,7 @@ export default class GCNetwork extends Component {
 			});
 
 			if (response.status == 200) {
-				Alert.alert(JSON.stringify(responseJson));
+				let responseJson = await response.json();
 				return {
 					userId: responseJson,
 					status: response.status,
