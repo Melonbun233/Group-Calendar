@@ -58,22 +58,26 @@ describe('Testing userController', () => {
 
 	describe('Testing userDelete', () => {
 		test('isAdmin false', async () => {
+			var res = httpMocks.createResponse();
 			mockIsAdmin(0);
 			await userController.userDelete(req, res);
 			expect(res.statusCode).toBe(400);
 		})
 		test('isAdmin error', async () => {
+			var res = httpMocks.createResponse();
 			mockIsAdmin(-1);
 			await userController.userDelete(req, res);
 			expect(res.statusCode).toBe(403);
 		})
 		test('deleteUser success', async () => {
+			var res = httpMocks.createResponse();
 			mockIsAdmin(1);
 			mockDeleteUser(1);
 			await userController.userDelete(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('deleteUser fail', async () => {
+			var res = httpMocks.createResponse();
 			mockIsAdmin(1);
 			mockDeleteUser(0);
 			await userController.userDelete(req, res);
