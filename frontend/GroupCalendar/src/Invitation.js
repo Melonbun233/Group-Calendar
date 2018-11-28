@@ -4,13 +4,14 @@
  */
 
 import React, {Component} from 'react';
-import {AlertIOS, StyleSheet, Text, View, Button, Alert, 
+import {AlertIOS, StyleSheet, Text, View, Button, Alert,TouchableOpacity,
 	RefreshControl, ActivityIndicator, FlatList, ScrollView, TouchableWithoutFeedback} 
 	from 'react-native';
 import cs from './common/CommonStyles';
 import Network from './common/GCNetwork';
 import Storage from './common/Storage';
 import SwipeOut from 'react-native-swipeout';
+import SvgUri from 'react-native-svg-uri';
 
 export default class Invitation extends Component {
 	constructor(props) {
@@ -40,6 +41,10 @@ export default class Invitation extends Component {
 				break;
 				case 0: {
 					Alert.alert('Not all invitations fetched');
+				}
+				break;
+				case 401: {
+					this.props.onSessionOut();
 				}
 				break;
 				default: {
@@ -140,6 +145,24 @@ export default class Invitation extends Component {
 			refreshAll: this._onRefresh.bind(this)});
 	}
 
+	async _onSearchUser(email) {
+		try {
+			let response = await Network.searchUserByEmail(email);
+			switch (response.status) {
+				case 200: {
+					let userId = response.userId;
+					this.props.navigation.push('ProfileDetail', {userId});
+				}
+				break;
+				default: {
+					Alert.alert('Cannot find the user');
+				}
+			}
+		} catch (error) {
+			Alert.alert(error.toString());
+		}
+	}
+
 	_renderItem({item}) {
 		let button = [{
 			backgroundColor: 'red',
@@ -162,7 +185,7 @@ export default class Invitation extends Component {
 			>
 			<View style = {s.contentContainer}>
 				<View style = {s.project}>
-				<Text style = {[cs.smallText, {padding: 5}]}>Invitation from project</Text>
+				<Text style = {[cs.smallText, {padding: 5}]}>testInvitation from project</Text>
 				<Text style = {[cs.normalText, {padding: 5}]}>{item.projectName}</Text>
 				</View>
 				<View style = {s.button}>
@@ -208,6 +231,34 @@ export default class Invitation extends Component {
 				/>
 				}
 			>
+			<View style = {s.search}>
+					<TouchableOpacity 
+						style = {[s.button]}
+						testID = 'searchUserButton'
+						onPress = {() => {
+								AlertIOS.prompt(
+									'Enter user\'s email',
+									'Enter user\'s email to search',
+									[
+										{
+											text: 'Cancel',
+										},
+										{
+											text: 'OK',
+											onPress: (email) => {
+												this._onSearchUser(email);
+											}
+										}
+									],
+									'plain-text',
+									'',
+									'email-address',
+							);}}
+					>
+					<SvgUri width = {24} height = {24} 
+						source = {require('../img/search.svg')}/>
+					</TouchableOpacity>
+			</View>
 			<FlatList
 					data = {allInvitations}
 					renderItem = {this._renderItem.bind(this)}
@@ -250,5 +301,14 @@ const s = StyleSheet.create({
 	invitation: {
 		flex: 3,
 		flexDirection: 'column',
+	},
+	search: {
+		paddingRight: 10,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		borderBottomWidth: 1,
+		borderColor: '#e6e6e6',
+		backgroundColor: '#f2f2f2',
 	},
 })

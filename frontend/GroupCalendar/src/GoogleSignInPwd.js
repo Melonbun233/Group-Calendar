@@ -30,6 +30,7 @@ export default class GoogleSignInPwd extends Component {
     componentDidMount = async() => {
         try{
             let profile = await Storage.getProfile();
+            Alert.alert(JSON.stringify(profile));
             let userId = profile.userId;
             this.setState({
                 isLoading: false,
@@ -84,7 +85,7 @@ export default class GoogleSignInPwd extends Component {
                 }
                 break;
                 default: {
-                    Alert.alert('Internet Error');
+                    Alert.alert('Internet Error ' + status.toString());
                 }
             }
         } catch (error) {
