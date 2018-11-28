@@ -138,7 +138,7 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing without err', () => {
 
-			test('Verified, no userInfo found, return 200', async () => {
+			test.only('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
 				mockGetInfo(true, false);
