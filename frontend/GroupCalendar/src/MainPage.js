@@ -213,7 +213,6 @@ export default class MainPage extends Component {
 			//clean up async storage
 			await Storage.deleteAll();
 		} catch (error) {
-			Alert.alert('Something went wrong when signing out');
 		}
 		this.props.navigation.popToTop();
 	}
