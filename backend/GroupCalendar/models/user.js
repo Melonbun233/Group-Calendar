@@ -1,5 +1,4 @@
 var db = require('../databases/UserDB.js');
-var calen = require('./calendar.js');
 var ProjectDB = require('../databases/ProjectDB');
 var Project = require('./project');
 
@@ -26,7 +25,7 @@ async function updateUser (userId, userPwd) {
 	.catch( (err) => {
 		throw err;
 	});
-	
+
 };
 
 async function createUser (user, profile) {
