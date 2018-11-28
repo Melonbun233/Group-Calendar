@@ -225,15 +225,15 @@ describe('Testing projectController', () => {
 	})
 
 	describe('Testing deleteMembers', () => {
-		test('userId is not owner', async () => {
+		test('userId is not in project', async () => {
 			var res = httpMocks.createResponse();
-			mockIsOwner(0);
+			mockIsUserInProject(0);
 			await projectController.deleteMembers(req, res);
 			expect(res.statusCode).toBe(400);
 		})
-		test('isOwner error', async () => {
+		test('isUserInProject error', async () => {
 			var res = httpMocks.createResponse();
-			mockIsOwner(-1);
+			mockIsUserInProject(-1);
 			await projectController.deleteMembers(req, res);
 			expect(res.statusCode).toBe(500);
 		})
@@ -263,6 +263,16 @@ function mockIsOwner(isOwner){
 			return Promise.resolve(isOwner);
 		} else {
 			return Promise.reject('isOwner error');
+		}
+	})
+}
+
+function mockIsUserInProject(userInProject){
+	Project.isUserInProject = jest.fn().mockImplementationOnce(() => {
+		if (userInProject != -1){
+			return Promise.resolve(userInProject);
+		} else {
+			return Promise.reject('isUserInProject error');
 		}
 	})
 }
