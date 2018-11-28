@@ -107,7 +107,7 @@ describe('Testing userController', () => {
 		})
 		test('fail', async () => {
 			var res = httpMocks.createResponse();
-			mockGetProfile(0);
+			mockGetProfile(1);
 			mockGetInvitaion(0);
 			await userController.profileGet(req, res);
 			expect(res.statusCode).toBe(403);
