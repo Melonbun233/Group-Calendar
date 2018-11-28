@@ -8,6 +8,10 @@ jest.mock('../../databases/ProjectDB');
 var ProjectDB = require('../../databases/ProjectDB');
 ProjectDB.query = jest.fn();
 
+jest.mock('../../databases/CalendarDB');
+var CalendarDB = require('../../databases/CalendarDB');
+CalendarDB.query = jest.fn();
+
 jest.mock('../../models/project');
 var Project = require('../../models/project');
 Project.isOwner = jest.fn();
