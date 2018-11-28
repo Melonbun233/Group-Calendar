@@ -2,7 +2,7 @@ var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/projectController');
 // const User = require('../../models/user');
 const Project = require('../../models/project');
-const Mailer = require('../../controllers/mainController');
+const Mailer = require('../../controllers/mailController');
 
 jest.mock('../../databases/UserDB');
 jest.mock('../../databases/ProjectDB');
