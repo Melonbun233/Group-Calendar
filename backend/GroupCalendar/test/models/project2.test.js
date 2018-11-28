@@ -113,22 +113,41 @@ describe('Testing isOwner2', () => {
 
 describe('Testing isUserInProject2', () => {
 
-	var getInfoSpy = jest.spyOn(Project, 'isUserInProject2');
+	var getInfoSpy = jest.spyOn(Project, 'isUserInProject2')；
 
 	// mock list: getMemberId, isOwner2
-	let isOwner2 = Project.isOwner2;
-	let getMemberId = Project.getMemberId;
 
+	// let isOwner2 = Project.isOwner2;
+	// let getMemberId = Project.getMemberId;
+
+	beforeEach(){
+		var isOwner2Spy = jest.spyOn(Project, 'isOwner2')
+		.mockImplementationOnce(() => {
+			return Promise.resolve(true);
+		});
+
+		var getMemberIdSpy = jest.spyOn(Project, 'getMemberId')
+		.mockImplementationOnce(() => {
+			return Promise.resolve([1,2]);
+		})
+		.mockImplementationOnce(() => {
+			return Promise.resolve([2, 3]);
+		});
+
+	}
 	afterEach(()=> {
-		Project.isOwner2 = isOwner2;
-		Project.getMemberId = getMemberId;
+		// Project.isOwner2 = isOwner2;
+		// Project.getMemberId = getMemberId;
+
+		isOwner2Spy.mockRestore();
+		getMemberIdSpy.mockRestore();
 	})
 
 	describe('Testing without err', () => {
 
 		test('is member, true', async () => {
 
-			Project.getMemberId = jest.fn().mockImplementation(() => {
+			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([1,2]);
 			});
 
@@ -144,11 +163,11 @@ describe('Testing isUserInProject2', () => {
 				return Promise.resolve([2, 3]);
 			});
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(true);
 			});
 
-			var result = await Project.isOwner2(projectId, userId);
+			var result = await Project.isUserInProject2(projectId, userId);
 			expect(result).toBe(true);
 			expect(getInfoSpy).toHaveBeenCalled();
 
@@ -164,7 +183,7 @@ describe('Testing isUserInProject2', () => {
 				return Promise.resolve(false);
 			});
 
-			var result = await Project.isOwner2(projectId, userId);
+			var result = await Project.isUserInProject2(projectId, userId);
 			expect(result).toBe(false);
 			expect(getInfoSpy).toHaveBeenCalled();
 
