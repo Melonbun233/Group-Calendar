@@ -479,8 +479,8 @@ function mockVerify(isVerified){
 }
 
 function mockGetInfo(isPassed, isFound){
-	if (isPassed){
-		if (isFound){
+	if (isPassed == true){
+		if (isFound == true){
 			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
