@@ -1,11 +1,15 @@
 describe('Test Profile', () => {
-    beforeEach(async () => {
-        await device.reloadReactNative();
+
+    beforeAll(async () => {
         await element(by.id('UserEmail')).tap();
         await element(by.id('UserEmail')).typeText('test@mail.com');
         await element(by.id('UserPwd')).typeText('password');
         await element(by.id('AppSignInButton')).tap();
         await element(by.id('AppSignInButton')).tap();
+    });
+
+    beforeEach(async () => {
+        await device.reloadReactNative();
         await element(by.id('profileButton')).tap();
     });
 
@@ -51,7 +55,7 @@ describe('Test Profile', () => {
         await element(by.id('header-back')).tap();
     });
 
-    afterEach(async () => {
+    afterAll(async() => {
         await element(by.id('profileButton')).tap();
         await element(by.id('signOutButton')).tap();
     });

@@ -42,7 +42,7 @@ const transport = {
  			});
  			// Mailer.createTransport = jest.fn().mockReturnValueOnce(transport);
  		})
- 		var receiver = "yueruc@gmail.com";
+ 		var receiver = "test@mail.com";
  		var subject = "Test";
  		var text = "Successful Test";
  		MailController.sendEmail(receiver, subject, text, text);

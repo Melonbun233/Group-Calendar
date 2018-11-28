@@ -298,7 +298,7 @@ describe('Testing declineInvite', () => {
 	})
 })
 
-beforeEach( () => {
+afterEach( () => {
 
 	Project.getInvitation = getInvitation;
 	Project.isUserInInviteList = isUserInInviteList;
