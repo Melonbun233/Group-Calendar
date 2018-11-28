@@ -578,9 +578,10 @@ async function isEventAvailable (eventId){
 		throw error;
 	});
 
-	console.log(result);
-
 	var userNum = result.length;
+
+	console.log(`userNum: ${userNum}`);
+
 
 	var query = "SELECT userLimit FROM Events WHERE eventId = '" + eventId + "'";
 	var result = await CalendarDB.query(query)
@@ -589,6 +590,8 @@ async function isEventAvailable (eventId){
 	});
 
 	var userLimit = result.userLimit;
+
+	console.log(`userLimit: ${userLimit}`);
 
 	if(userNum >= userLimit){
 		return false;
