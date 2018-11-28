@@ -4,9 +4,17 @@ const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
-jest.mock('../../databases/UserDB');
-jest.mock('../../databases/ProjectDB');
-jest.mock('../../databases/CalendarDB');
+// jest.mock('../../databases/UserDB');
+// jest.mock('../../databases/ProjectDB');
+// jest.mock('../../databases/CalendarDB');
+// jest.mock('../../models/calendar');
+// jest.mock('../../models/project');
+jest.mock('../../models/user');
+User.getInfo.mockRestore();
+User.createUser.mockRestore();
+User.updateProfile.mockRestore();
+User.getProfileById.mockRestore();
+User.login.mockRestore();
 
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
