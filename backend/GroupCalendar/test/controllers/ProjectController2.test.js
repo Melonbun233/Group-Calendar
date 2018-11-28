@@ -448,7 +448,7 @@ describe('Testing inviteUser', () => {
 			})
 
 			Project.getProject = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve();
+				return Promise.resolve({projectName: 'test'});
 			})
 
 			var res = httpMocks.createResponse();
