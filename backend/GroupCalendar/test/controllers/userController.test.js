@@ -145,7 +145,7 @@ function mockDeleteUser(success){
 }
 
 function mockUuidCreate(){
-	UidG.uuidCreate = jest.fn().mockImplementationOnce(() => {
+	UidG.uuidCreate = jest.fn().mockImplementation(() => {
 		return 1;
 	})
 }
