@@ -6,7 +6,6 @@ jest.mock('../../databases/UserDB');
 jest.mock('../../databases/ProjectDB');
 jest.mock('../../databases/CalendarDB');
 
-
 /**
  * Mock List:
  *

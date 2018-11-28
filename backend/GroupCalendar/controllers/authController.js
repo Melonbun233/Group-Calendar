@@ -154,6 +154,8 @@ async function authApp (req, res){
   let email = req.body.userEmail;
   let pwd = req.body.userPwd;
   let err = false;
+
+  console.log(pwd);
   
   if(email == 'undefined' || pwd == 'undefined' || email == null || pwd == null){
     // console.log('empty post body');

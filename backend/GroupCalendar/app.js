@@ -85,10 +85,10 @@ app.use(function(req, res, next){
       next();
 
     }else{
-      // console.log("expired");
-      // res.status(401).send("expired session");
+      console.log("expired");
+      res.status(401).send("expired session");
       
-      next();
+      // next();
 
     } 
 

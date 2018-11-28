@@ -2,12 +2,16 @@ const Project = require('../models/project');
 const ProjectDB = require('../databases/ProjectDB');
 const CalendarDB = require('../databases/CalendarDB');
 
+jest.mock('../../databases/UserDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
+
 /**
  * Mock List:
  *
  * ProjectDB.query
- * CalendarDB.query
  */
+ const query = ProjectDB.query
 
 /**
  * Test List:
@@ -42,174 +46,154 @@ describe('Testing isOwner2', () => {
 
 		test('length = 0, false', async () => {
 
-			ProjectDB.query = jest.fn();
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			});
 
-			var res = httpMocks.createResponse();
-			await AuthController.authGoogle(req, res);
-			expect(res.statusCode).toBe(400);
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(false);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('not owner, false', async () => {
+
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([2]);
+			});
+
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(false);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('is owner, true', async () => {
+
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([1]);
+			});
+
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(true);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
 
 	})
+
+	describe('Failure Test', () => {
+		test('query err', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.isOwner2(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('length > 1', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([2, 3]);
+			});
+
+			await Project.isOwner2(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+			
+		})
+	})
 })
-describe('Testing verify', () => {
 
-	test('Mock test, true', async () => {
+describe('Testing isUserInProject2', () => {
 
-		var idToken = 'abc123';
+	var getInfoSpy = jest.spyOn(Project, 'isUserInProject2');
+	// mock list: getMemberId, isOwner2
+	let isOwner2 = Project.isOwner2;
+	let getMemberId = Project.getMemberId;
 
-		mockVerify(true);
-		await expect(Gverify.verify(idToken)).resolves.toBe('Verifed');
+	beforeEach(()=> {
 
 	})
 
-	test('Failure test, false', async () => {
+	describe('Testing without err', () => {
 
-		var idToken = 'abc123';
+		test('length = 0, false', async () => {
 
-		await expect(Gverify.verify(idToken)).rejects.not.toBeUndefined();
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			});
+
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(false);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('not owner, false', async () => {
+
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([2]);
+			});
+
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(false);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('is owner, true', async () => {
+
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([1]);
+			});
+
+			var result = await Project.isOwner2(projectId, userId);
+			expect(result).toBe(true);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
 
 	})
 
+	describe('Failure Test', () => {
+		test('query err', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.isOwner2(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('length > 1', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([2, 3]);
+			});
+
+			await Project.isOwner2(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	}
 })
 
-function mockVerify(isVerified){
-	if (isVerified){
-		// console.log('mockVerify: true');
-		Gverify.verify = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve('Verifed');
-		});
-	} else {
-		// console.log('mockVerify: false');
-		Gverify.verify = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
 
-function mockGetInfo(isPassed, isFound){
-	if (isPassed){
-		if (isFound){
-			User.getInfo = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve({
-					userId: 1,
-					isAdmin: 0,
-					userEmail: 'jsmith@gmail.com',
-					userPwd: '123456'
-				});
-			});
-		} else {
-			User.getInfo = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(null);
-			});
-		}
-	} else {
-		User.getInfo = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockGetInfoNoPwd(){
-	User.getInfo = jest.fn().mockImplementationOnce(() => {
-		return Promise.resolve({
-			userId: 1,
-			isAdmin: 0,
-			userEmail: 'jsmith@gmail.com',
-			userPwd: null
-		});
-	});
-}
-
-function mockCreateUser(isPassed){
-	if (isPassed){
-		User.createUser = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve([]);
-		});
-
-	} else {
-		User.createUser = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockUpdateProfile(isPassed){
-	if (isPassed){
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve([]);
-		});
-
-	} else {
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockUpdateProfileAll(isPassed){
-	if (isPassed){
-		User.updateProfile = jest.fn().mockImplementation(() => {
-			return Promise.resolve([]);
-		});
-
-	} else {
-		User.updateProfile = jest.fn().mockImplementation(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockGetProfileById(isPassed){
-	if (isPassed){
-		User.getProfileById = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve({
-				userId: 1,
-				userGender: 1,
-				userBirth: null,
-				userDescrption: null,
-				userAvarar: null,
-				userRegion: null,
-				userLastname: 'Smith',
-				userFirstname: 'Jackal',
-				isAdmin: 0,
-				userEmail: 'jsmith@gmail.com'
-			});
-		});
-	} else {
-		User.getProfileById = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockLogin(isPassed, isValid){
-	if (isPassed){
-		if (isValid){
-			User.login = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(1);
-			});
-		} else {
-			User.login = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(-1);
-			});
-		}
-	} else {
-		User.login = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-afterEach( () => {
-	User.getInfo = getInfo;
-	User.createUser = createUser;
-	User.updateProfile = updateProfile;
-	User.getProfileById = getProfileById;
-	User.login = login;
-
-	Gverify.verify = verify;
-})
+	afterEach( () => {
+		ProjectDB.query = query;
+	})
 
 
