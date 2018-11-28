@@ -54,7 +54,7 @@ describe('Testing getNotification', () => {
 
 	})
 
-	test('400', async() => {
+	test('403', async() => {
 
 		Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 			return Promise.reject();
@@ -62,7 +62,7 @@ describe('Testing getNotification', () => {
 
 		var res = httpMocks.createResponse();
 		await UserController.getNotification(req, res);
-		expect(res.statusCode).toBe(400);
+		expect(res.statusCode).toBe(403);
 		expect(getInfoSpy).toHaveBeenCalled();
 
 	})
@@ -204,7 +204,7 @@ describe('Testing acceptInvite', () => {
 			})
 
 			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(true);
+				return Promise.resolve(false);
 			})
 
 			Project.addUserInMembership = jest.fn().mockImplementationOnce(() => {
@@ -240,7 +240,7 @@ describe('Testing declineInvite', () => {
 			})
 
 			var res = httpMocks.createResponse();
-			await UserController.acceptInvite(req, res);
+			await UserController.declineInvite(req, res);
 			expect(res.statusCode).toBe(400);
 			expect(getInfoSpy).toHaveBeenCalled();
 
@@ -257,7 +257,7 @@ describe('Testing declineInvite', () => {
 			})
 			
 			var res = httpMocks.createResponse();
-			await UserController.acceptInvite(req, res);
+			await UserController.declineInvite(req, res);
 			expect(res.statusCode).toBe(200);
 			expect(getInfoSpy).toHaveBeenCalled();
 
@@ -273,7 +273,7 @@ describe('Testing declineInvite', () => {
 			})
 
 			var res = httpMocks.createResponse();
-			await UserController.acceptInvite(req, res);
+			await UserController.declineInvite(req, res);
 			expect(res.statusCode).toBe(403);
 			expect(getInfoSpy).toHaveBeenCalled();
 
@@ -290,7 +290,7 @@ describe('Testing declineInvite', () => {
 			})
 
 			var res = httpMocks.createResponse();
-			await UserController.acceptInvite(req, res);
+			await UserController.declineInvite(req, res);
 			expect(res.statusCode).toBe(403);
 			expect(getInfoSpy).toHaveBeenCalled();
 
