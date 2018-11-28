@@ -23,6 +23,9 @@ describe('Testing userController', () => {
 		param:{
 			projectId: 1,
 			userId: 1
+		},
+		session: {
+			uuid: ""
 		}
 	});
 
