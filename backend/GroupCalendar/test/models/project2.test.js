@@ -310,7 +310,7 @@ describe('Testing addUserInEvents', () => {
 		test('no loop, []', async () => {
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result.length).tobe(0);
+			expect(result).toBe([]);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -339,7 +339,7 @@ describe('Testing addUserInEvents', () => {
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).tobe([]);
+			expect(result).toBe([]);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -362,7 +362,7 @@ describe('Testing addUserInEvents', () => {
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).tobe([]);
+			expect(result).toBe([]);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -385,7 +385,7 @@ describe('Testing addUserInEvents', () => {
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).tobe([1]);
+			expect(result).toBe([1]);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -411,7 +411,7 @@ describe('Testing addUserInEvents', () => {
 			})
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).tobe([]);
+			expect(result).toBe([]);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
