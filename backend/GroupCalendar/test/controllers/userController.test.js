@@ -3,8 +3,10 @@ const userController = require('../../controllers/userController');
 
 jest.mock('../../models/user');
 jest.mock('../../models/project');
+jest.mock('../../controllers/uuidGenerator');
 var User = require('../../models/user');
 var Project = require('../../models/project');
+var UidG = require('../../controllers/uuidGenerator');
 
 describe('Testing userController', () => {
 	var req = httpMocks.createRequest({
@@ -139,5 +141,11 @@ function mockDeleteUser(success){
 		} else {
 			return Promise.reject();
 		}
+	})
+}
+
+function mockUuidCreate(){
+	UidG.uuidCreate = jest.fn().mockImplementationOnce(() => {
+		return 1;
 	})
 }
