@@ -32,5 +32,8 @@ router.put('/invite/accept',
 router.delete('/invite/decline',
 	userController.declineInvite);
 
+router.get('/search',
+	userController.search);
+
 
 module.exports = router;

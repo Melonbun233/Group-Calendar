@@ -4,7 +4,11 @@ const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
-// jest.mock('../../databases/UserDB');
+jest.mock('../../databases/UserDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
+// jest.mock('../../models/user');
+
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
 
@@ -138,9 +142,20 @@ describe('Testing authGoogle', () => {
 			test('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
-				mockGetInfo(true, false);
+				
+				User.getInfo = jest.fn()
+				.mockImplementationOnce(() => {
+					return Promise.resolve(null)
+				})
+				.mockImplementationOnce(() => {
+					return Promise.resolve({
+						userId: 1,
+						isAdmin: 0,
+						userEmail: 'jsmith@gmail.com',
+						userPwd: '123456'
+					});
+				});
 				mockCreateUser(true);
-				mockGetInfo(true, true);
 				mockGetProfileById(true);
 
 				var res = httpMocks.createResponse();
@@ -307,9 +322,15 @@ describe('Testing authGoogle', () => {
 
 				mockVerify(true);
 				mockGetInfo(true, true);
-				mockUpdateProfile(true);
-				mockUpdateProfile(false);
-
+				// mockUpdateProfile(true);
+				// mockUpdateProfile(false);
+				User.updateProfile = jest.fn()
+				.mockImplementationOnce(() => {
+					return Promise.resolve([]);
+				})
+				.mockImplementationOnce(() => {
+					return Promise.reject();
+				});
 
 				var res = httpMocks.createResponse();
 				await AuthController.authGoogle(req, res);
@@ -476,8 +497,8 @@ function mockVerify(isVerified){
 }
 
 function mockGetInfo(isPassed, isFound){
-	if (isPassed){
-		if (isFound){
+	if (isPassed == true){
+		if (isFound == true){
 			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
@@ -589,7 +610,7 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterEach( () => {
+beforeEach( () => {
 	User.getInfo = getInfo;
 	User.createUser = createUser;
 	User.updateProfile = updateProfile;
@@ -597,6 +618,13 @@ afterEach( () => {
 	User.login = login;
 
 	Gverify.verify = verify;
-})
+	// User.getInfo.mockReset();
+	// User.createUser.mockReset();
+	// User.updateProfile.mockReset();
+	// User.getProfileById.mockReset();
+	// User.login.mockReset();
+
+	// Gverify.verify.mockReset();
+});
 
 
