@@ -52,6 +52,7 @@ describe('Testing userController', () => {
 			var res = httpMocks.createResponse();
 			mockEmailExist(1);
 			mockCreateUser(1);
+			mockUuidCreate();
 			await userController.userCreate(req, res);
 			expect(res.statusCode).toBe(200);
 		})
