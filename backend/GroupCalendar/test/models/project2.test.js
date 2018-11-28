@@ -310,7 +310,7 @@ describe('Testing addUserInEvents', () => {
 		test('no loop, []', async () => {
 
 			var result = await Project.addUserInEvents(projectId, eventIds, userId);
-			expect(result).tobe([]);
+			expect(result.length).tobe(0);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
