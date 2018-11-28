@@ -5,24 +5,24 @@ const MailController = require('../../controllers/mailController');
  * Mock List:
  *	NodeMailerMocks
  */
-// jest.mock('nodemailer');
-// const transportErr = {
-// 	sendMail: (data, callback) => {
-// 		const err = new Error('some error');
-// 		callback(err, null);
-// 	},
-// 	close: () => {
-// 		return 0;
-// 	}
-// }
-// const transport = {
-// 	sendMail: (data, callback) => {
-// 		callback(null, null);
-// 	},
-// 	close: () => {
-// 		return 0;
-// 	}
-// }
+jest.mock('nodemailer');
+const transportErr = {
+	sendMail: (data, callback) => {
+		const err = new Error('some error');
+		callback(err, null);
+	},
+	close: () => {
+		return 0;
+	}
+}
+const transport = {
+	sendMail: (data, callback) => {
+		callback(null, null);
+	},
+	close: () => {
+		return 0;
+	}
+}
 
 
 /**
@@ -36,12 +36,12 @@ const MailController = require('../../controllers/mailController');
  	var getInfoSpy = jest.spyOn(MailController, 'sendEmail');
 
  	test('Testing by without err', () => {
- 		// beforeEach(() =>{ 
- 		// 	spyOn(Mailer, 'createTransport').and.callFake(() => {
- 		// 		return transport;
- 		// 	});
- 		// 	// Mailer.createTransport = jest.fn().mockReturnValueOnce(transport);
- 		// })
+ 		beforeEach(() =>{ 
+ 			spyOn(Mailer, 'createTransport').and.callFake(() => {
+ 				return transport;
+ 			});
+ 			// Mailer.createTransport = jest.fn().mockReturnValueOnce(transport);
+ 		})
  		var receiver = "test@mail.com";
  		var subject = "Test";
  		var text = "Successful Test";
@@ -52,11 +52,11 @@ const MailController = require('../../controllers/mailController');
  	
  	test('Testing by with err', () => {
  		
- 		// beforeEach(() =>{ 
- 		// 	spyOn(Mailer, 'createTransport').and.callFake(() => {
- 		// 		return transportErr;
- 		// 	});
- 		// })
+ 		beforeEach(() =>{ 
+ 			spyOn(Mailer, 'createTransport').and.callFake(() => {
+ 				return transportErr;
+ 			});
+ 		})
 
  		var receiver = "123";
  		var subject = "Test";
