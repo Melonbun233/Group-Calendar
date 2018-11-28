@@ -2,8 +2,8 @@ var mailer = require("nodemailer");
 
 // Use Smtp Protocol to send Email
 var smtpTransport = mailer.createTransport(
-{
-    service: "Gmail",
+    {
+    service: "gmail",
     auth: {
         user: "groupcalendar.talkingcode@gmail.com",
         pass: "secretpw=ZZJ321"
