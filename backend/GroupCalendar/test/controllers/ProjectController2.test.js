@@ -2,12 +2,12 @@ var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/ProjectController');
 // const User = require('../../models/user');
 const Project = require('../../models/project');
-const Mailer = require('../../controller/mainController');
+const Mailer = require('../../controllers/mainController');
 
 jest.mock('../../databases/UserDB');
 jest.mock('../../databases/ProjectDB');
 jest.mock('../../databases/CalendarDB');
-jest.mock('../../controller/mailController');
+jest.mock('../../controllers/mailController');
 
 Mailer.sendEmail = jest.fn();
 
