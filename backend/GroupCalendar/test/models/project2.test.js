@@ -58,7 +58,7 @@ describe('Testing isOwner2', () => {
 		test('not owner, false', async () => {
 
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([2]);
+				return Promise.resolve([{projectOwnerId: 2}]);
 			});
 
 			var result = await Project.isOwner2(projectId, userId);
@@ -128,7 +128,7 @@ describe('Testing isUserInProject2', () => {
 
 		test('is member, true', async () => {
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
+			Project.getMemberId = jest.fn().mockImplementation(() => {
 				return Promise.resolve([1,2]);
 			});
 
