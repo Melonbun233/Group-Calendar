@@ -108,7 +108,6 @@ describe('Testing projectController', () => {
 			mockDeleteEvents(0);
 			await projectController.deleteEvents(req, res);
 			expect(res.statusCode).toBe(403);			
-			expect(JSON.parse(res._getData())).toEqual({"error": "deleteEvents fail"});
 		})
 	})
 	describe('Testing getProject', () => {
@@ -216,7 +215,6 @@ describe('Testing projectController', () => {
 			mockDeleteProject(0);
 			await projectController.deleteProject(req, res);
 			expect(res.statusCode).toBe(403);			
-			expect(JSON.parse(res._getData())).toEqual({"error": "deleteProject fail"});
 		})
 	})
 
@@ -245,7 +243,7 @@ describe('Testing projectController', () => {
 			mockIsUserInProject(1);
 			mockDeleteMembers(0);
 			await projectController.deleteMembers(req, res);
-			expect(res.statusCode).toBe(400);			
+			expect(res.statusCode).toBe(403);			
 		})
 	})
 
