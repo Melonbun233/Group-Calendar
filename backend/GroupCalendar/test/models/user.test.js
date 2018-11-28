@@ -283,30 +283,6 @@ describe('Testing models/user', () => {
 		})
 	})
 
-	describe('Testing getInvitation', () => {
-		test('userId has mapping to invitation', async () => {
-			projectDbReturn(1);
-			await User.getInvitation(1)
-			.then( result => {
-				expect(result.length).toBe(1);
-			})
-		})
-		test('userId has no mapping to invitation', async () => {
-			projectDbReturn(0);
-			await User.getInvitation(1)
-			.then( result => {
-				expect(result.length).toBe(0);
-			})
-		})
-		test('projectDbErr', async () => {
-			projectDbErr();
-			await User.getInvitation(1)
-			.catch( error => {
-				expect(error).toBe('projectDbErr');
-			})
-		})
-	})
-
 	describe('Testing emailExist', () => {
 		test('Existing userEmail', async () => {
 			userDbReturn(1);
