@@ -204,11 +204,6 @@ describe('Testing isUserInInviteList', () => {
 	var getInfoSpy = jest.spyOn(Project, 'isUserInInviteList');
 
 	// mock getInvitation
-	let getInvitation = Project.getInvitation;
-
-	afterEach(() => {
-		Project.getInvitation = getInvitation;
-	})
 
 	describe('Testing without err', () => {
 
