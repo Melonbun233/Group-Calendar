@@ -11,7 +11,8 @@ jest.mock('../../databases/CalendarDB');
  *
  * ProjectDB.query
  */
- const query = ProjectDB.query
+ const p_query = ProjectDB.query;
+ const c_query = CalendarDB.query;
 
 /**
  * Test List:
@@ -298,11 +299,469 @@ describe('Testing addUserInMembership', () => {
 })
 
 
+describe('Testing addUserInEvents', () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'addUserInEvents');
+
+	describe('eventIds = []', () => {
+
+		var eventIds = [];
+
+		test('no loop, []', async () => {
+
+			var result = await Project.addUserInEvents(projectId, eventIds, userId);
+			expect(result).tobe([]);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+
+	describe('eventIds = [1]', () => {
+
+		var eventIds = [1];
+
+		test('dup, valid, available, []', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userLimit: 2}]);
+			})
+
+			var result = await Project.addUserInEvents(projectId, eventIds, userId);
+			expect(result).tobe([]);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, invalid, available, []', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userLimit: 2}]);
+			})
+
+			var result = await Project.addUserInEvents(projectId, eventIds, userId);
+			expect(result).tobe([]);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, valid, inavailable, [1]', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userLimit: 1}]);
+			})
+
+			var result = await Project.addUserInEvents(projectId, eventIds, userId);
+			expect(result).tobe([1]);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, valid, available, []', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve({affectedRows: 1});
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userLimit: 2}]);
+			})
+
+			var result = await Project.addUserInEvents(projectId, eventIds, userId);
+			expect(result).tobe([]);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+	})
+
+	describe('Failure Test', () => {
+
+		var eventIds = [1];
+
+		test('err in 1', async () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.addUserInEvents(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, err in 2', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			await Project.addUserInMembership(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, valid, err in 3', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			await Project.addUserInMembership(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, valid, err in 4', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+			
+
+			await Project.addUserInMembership(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('undup, valid, available, err in 5', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 10}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			CalendarDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userLimit: 2}]);
+			})
+
+			await Project.addUserInMembership(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+	})
+})
+
+describe('Testing deleteUserInEvents', () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'deleteUserInEvents');
+
+	var eventIds = [1];
+
+	describe('Testing without err', () => {
+
+		test('valid', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			})
+
+			var result = await Project.deleteUserInEvents(projectId, eventIds, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('invalid', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 2}]);
+			})
+
+			var result = await Project.deleteUserInEvents(projectId, eventIds, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+	})
+
+	describe('Failure Test', () => {
+		test('err in 1', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.deleteUserInEvents(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('valid, err in 2', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.deleteUserInEvents(projectId, eventIds, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+})
+
+describe('Testing deleteUserInEventsAll', () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'deleteUserInEventsAll');
+
+	describe('Testing without err', () => {
+
+		test('valid', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			})
+
+			var result = await Project.deleteUserInEventsAll(projectId, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+	describe('Failure Test', () => {
+		test('err in 1', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.deleteUserInEventsAll(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{eventId: 1}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.deleteUserInEventsAll(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+})
+
+
+describe('Testing addUserInInviteList', () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'addUserInInviteList');
+
+	describe('Testing without err', () => {
+
+		test('valid', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve({affectedRows: 1});
+			})
+
+			var result = await Project.addUserInInviteList(projectId, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+	describe('Failure Test', () => {
+		test('err in 1', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.addUserInInviteList(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve({affectedRows: 0});
+			})
+
+			await Project.addUserInInviteList(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+})
+
+
+describe('Testing deleteUserInInviteList', () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'deleteUserInInviteList');
+
+	describe('Testing without err', () => {
+
+		test('valid', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve({affectedRows: 1});
+			})
+
+			var result = await Project.deleteUserInInviteList(projectId, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+	describe('Failure Test', () => {
+		test('err in 1', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
+
+			await Project.deleteUserInInviteList(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2', async () => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve({affectedRows: 0});
+			})
+
+			await Project.deleteUserInInviteList(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+})
+
+
+
+
 
 
 
 afterEach( () => {
-	ProjectDB.query = query;
+	ProjectDB.query = p_query;
+	CalendarDB.query = c_query;
 })
 
 
