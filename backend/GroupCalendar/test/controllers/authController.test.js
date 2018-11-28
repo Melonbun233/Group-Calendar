@@ -5,6 +5,9 @@ const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
 jest.mock('../../databases/UserDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
+
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
 
@@ -135,7 +138,7 @@ describe('Testing authGoogle', () => {
 
 		describe('Testing without err', () => {
 
-			test('Verified, no userInfo found, return 200', async () => {
+			test.only('Verified, no userInfo found, return 200', async () => {
 
 				mockVerify(true);
 				mockGetInfo(true, false);
@@ -476,8 +479,8 @@ function mockVerify(isVerified){
 }
 
 function mockGetInfo(isPassed, isFound){
-	if (isPassed){
-		if (isFound){
+	if (isPassed == true){
+		if (isFound == true){
 			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({
 					userId: 1,
@@ -589,7 +592,7 @@ function mockLogin(isPassed, isValid){
 	}
 }
 
-afterEach( () => {
+beforeEach( () => {
 	User.getInfo = getInfo;
 	User.createUser = createUser;
 	User.updateProfile = updateProfile;
@@ -597,6 +600,13 @@ afterEach( () => {
 	User.login = login;
 
 	Gverify.verify = verify;
-})
+	// User.getInfo.mockReset();
+	// User.createUser.mockReset();
+	// User.updateProfile.mockReset();
+	// User.getProfileById.mockReset();
+	// User.login.mockReset();
+
+	// Gverify.verify.mockReset();
+});
 
 

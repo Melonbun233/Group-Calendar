@@ -305,6 +305,5 @@ module.exports = {
 	modifyProfile,
 	getProjectId,
 	emailExist,
-	isAdmin
-
+	isAdmin,
 }
