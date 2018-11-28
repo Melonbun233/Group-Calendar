@@ -13,6 +13,9 @@ describe('Testing userController', () => {
 			userId: 1,
 			update: {
 				userPwd: "123"
+			},
+			user: {
+				userEmail: "123@gmail.com"
 			}
 		},
 		param:{
