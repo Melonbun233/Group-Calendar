@@ -1,7 +1,7 @@
 var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/ProjectController');
 // const User = require('../../models/user');
-const Project = require('../models/project');
+const Project = require('../../models/project');
 
 /**
  * Mock List:
