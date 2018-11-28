@@ -37,7 +37,7 @@ const transport = {
 
  	test('Testing by without err', () => {
  		beforeEach(() =>{ 
- 			spyOn(Mailer, 'createTransport').and.callFake(function (cb) {
+ 			spyOn(Mailer, 'createTransport').and.callFake(() => {
  				return transport;
  			});
  		})
@@ -52,7 +52,7 @@ const transport = {
  	test('Testing by with err', () => {
  		
  		beforeEach(() =>{ 
- 			spyOn(Mailer, 'createTransport').and.callFake(function (cb) {
+ 			spyOn(Mailer, 'createTransport').and.callFake(() => {
  				return transportErr;
  			});
  		})
