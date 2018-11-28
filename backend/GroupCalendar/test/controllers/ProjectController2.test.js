@@ -2,6 +2,7 @@ var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/projectController');
 // const User = require('../../models/user');
 const Project = require('../../models/project');
+const User = require('../../models/user');
 const Mailer = require('../../controllers/mailController');
 
 jest.mock('../../databases/UserDB');
@@ -25,6 +26,9 @@ Mailer.sendEmail = jest.fn();
  * deleteUserInInviteList
  * isUserInInviteList
  * getProject
+ *
+ * User:
+ * getInfo
  */
 
  const isMemberInProject = Project.isMemberInProject;
@@ -38,6 +42,7 @@ Mailer.sendEmail = jest.fn();
  const isUserInInviteList = Project.isUserInInviteList;
  const getProject = Project.getProject;
 
+ const getInfo = User.getInfo;
 
 /**
  * Test List:
@@ -346,7 +351,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve(null);
 			})
 
@@ -363,7 +368,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 1});
 			})
 
@@ -380,7 +385,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -401,7 +406,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -426,7 +431,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -476,7 +481,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
 			})
 
@@ -493,7 +498,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -514,7 +519,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -539,7 +544,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -568,7 +573,7 @@ describe('Testing inviteUser', () => {
 				return Promise.resolve(true);
 			})
 
-			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+			User.getInfo = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve({userId: 2});
 			})
 
@@ -732,6 +737,8 @@ afterEach( () => {
 	Project.deleteUserInInviteList = deleteUserInInviteList;
 	Project.isUserInInviteList = isUserInInviteList;
 	Project.getProject = getProject;
+
+	User.getInfo = getInfo;
 })
 
 
