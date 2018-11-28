@@ -2,6 +2,14 @@ var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/ProjectController');
 // const User = require('../../models/user');
 const Project = require('../../models/project');
+const Mailer = require('../../controller/mainController');
+
+jest.mock('../../databases/UserDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
+jest.mock('../../controller/mailController');
+
+Mailer.sendEmail = jest.fn();
 
 /**
  * Mock List:
@@ -16,17 +24,19 @@ const Project = require('../../models/project');
  * addUserInInviteList
  * deleteUserInInviteList
  * isUserInInviteList
+ * getProject
  */
 
-// const isMemberInProject = Project.isMemberInProject;
-// const addUserInEvents = Project.addUserInEvents;
-// const deleteUserInEvents = Project.deleteUserInEvents;
-// const deleteUserInEventsAll = Project.deleteUserInEventsAll;
-// const isOwner2 = Project.isOwner2;
-// const isUserInProject2 = Project.isUserInProject2;
-// const addUserInInviteList = Project.addUserInInviteList;
-// const deleteUserInInviteList = Project.deleteUserInInviteList;
-// const isUserInInviteList = Project.isUserInInviteList;
+ const isMemberInProject = Project.isMemberInProject;
+ const addUserInEvents = Project.addUserInEvents;
+ const deleteUserInEvents = Project.deleteUserInEvents;
+ const deleteUserInEventsAll = Project.deleteUserInEventsAll;
+ const isOwner2 = Project.isOwner2;
+ const isUserInProject2 = Project.isUserInProject2;
+ const addUserInInviteList = Project.addUserInInviteList;
+ const deleteUserInInviteList = Project.deleteUserInInviteList;
+ const isUserInInviteList = Project.isUserInInviteList;
+ const getProject = Project.getProject;
 
 
 /**
@@ -38,41 +48,100 @@ const Project = require('../../models/project');
  * inviteUser
  * deleteInvitedUser
  */
+//
 
 describe('Testing addEventMember', () => {
 
 	var getInfoSpy = jest.spyOn(ProjectController, 'addEventMember');
 
-	describe('Testing by invalid req', () => {
+	var req = httpMocks.createRequest({
+		body: {
+			projectId: '1',
+			userId: '1',
+			eventId: '[1, 2]'
+		}
+	});
 
-		var req = httpMocks.createRequest({
-			session: {
-				uuid: null
-			},
-			body: {
-				idToken: 'undefined',
-				accessToken: '123abc',
-				user: 
-				{ photo: 'https://example.com/photo.jpg',
-				familyName: 'Smith',
-				name: 'Jackal Smith',
-				pwd: '123456',
-				email: 'jsmith@gmail.com',
-				id: '12345',
-				givenName: 'Jackal' },
-				accessTokenExpirationDate: 3599.8298959732056,
-				serverAuthCode: null,
-				scopes: [] 
-			}
-		});
+	describe('Testing without err', () => {
 
-		test('Unverifed; return 400', async () => {
+		
 
-			mockVerify(false);
+		test('invalid, 400', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
 
 			var res = httpMocks.createResponse();
-			await AuthController.authGoogle(req, res);
+			await ProjectController.addEventMember(req, res);
 			expect(res.statusCode).toBe(400);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('valid, all rolled, 200', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.addUserInEvents = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.addEventMember(req, res);
+			expect(res.statusCode).toBe(200);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('valid, some unrolled, 202', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.addUserInEvents = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([2, 3]);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.addEventMember(req, res);
+			expect(res.statusCode).toBe(202);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+	describe('Testing with err', () => {
+
+		test('err in 1, 403', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.addEventMember(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2, 403', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.addUserInEvents = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.addEventMember(req, res);
+			expect(res.statusCode).toBe(403);
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
@@ -80,163 +149,589 @@ describe('Testing addEventMember', () => {
 	})
 })
 
-describe('Testing verify', () => {
 
-	test('Mock test, true', async () => {
+describe('Testing deleteEventMember', () => {
 
-		var idToken = 'abc123';
+	var getInfoSpy = jest.spyOn(ProjectController, 'deleteEventMember');
 
-		mockVerify(true);
-		await expect(Gverify.verify(idToken)).resolves.toBe('Verifed');
+	var req = httpMocks.createRequest({
+		body: {
+			projectId: '1',
+			userId: '1',
+			eventId: '[1, 2]'
+		}
+	});
+
+	describe('Testing without err', () => {
+
+		test('invalid, 400', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMember(req, res);
+			expect(res.statusCode).toBe(400);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('valid, 200', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.deleteUserInEvents = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMember(req, res);
+			expect(res.statusCode).toBe(200);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		describe('Testing with err', () => {
+
+			test('err in 1, 403', async () => {
+
+				Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+					return Promise.reject('err');
+				})
+
+				var res = httpMocks.createResponse();
+				await ProjectController.deleteEventMember(req, res);
+				expect(res.statusCode).toBe(403);
+				expect(getInfoSpy).toHaveBeenCalled();
+
+			})
+
+			test('err in 2, 403', async () => {
+
+				Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+					return Promise.resolve(true);
+				})
+
+				Project.deleteUserInEvents = jest.fn().mockImplementationOnce(() => {
+					return Promise.reject('err');
+				})
+
+				var res = httpMocks.createResponse();
+				await ProjectController.deleteEventMember(req, res);
+				expect(res.statusCode).toBe(403);
+				expect(getInfoSpy).toHaveBeenCalled();
+
+			})
+			
+		})
 
 	})
-
-	test('Failure test, false', async () => {
-
-		var idToken = 'abc123';
-
-		await expect(Gverify.verify(idToken)).rejects.not.toBeUndefined();
-
-	})
-	
 })
 
-function mockisMemberInProject(isVerified){
-	if (isVerified){
-		// console.log('mockVerify: true');
-		Gverify.verify = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve('Verifed');
-		});
-	} else {
-		// console.log('mockVerify: false');
-		Gverify.verify = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
 
-function mockaddUserInEvents(isPassed, isFound){
-	if (isPassed){
-		if (isFound){
-			User.getInfo = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve({
-					userId: 1,
-					isAdmin: 0,
-					userEmail: 'jsmith@gmail.com',
-					userPwd: '123456'
-				});
-			});
-		} else {
-			User.getInfo = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(null);
-			});
+describe('Testing deleteEventMemberAll', () => {
+
+	var getInfoSpy = jest.spyOn(ProjectController, 'deleteEventMemberAll');
+
+	var req = httpMocks.createRequest({
+		body: {
+			projectId: '1',
+			userId: '1',
+			eventId: '[1, 2]'
 		}
-	} else {
-		User.getInfo = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
-
-function mockGetInfoNoPwd(){
-	User.getInfo = jest.fn().mockImplementationOnce(() => {
-		return Promise.resolve({
-			userId: 1,
-			isAdmin: 0,
-			userEmail: 'jsmith@gmail.com',
-			userPwd: null
-		});
 	});
-}
 
-function mockCreateUser(isPassed){
-	if (isPassed){
-		User.createUser = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve([]);
-		});
+	describe('Testing without err', () => {
 
-	} else {
-		User.createUser = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
+		test('invalid, 400', async () => {
 
-function mockUpdateProfile(isPassed){
-	if (isPassed){
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve([]);
-		});
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
 
-	} else {
-		User.updateProfile = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMemberAll(req, res);
+			expect(res.statusCode).toBe(400);
+			expect(getInfoSpy).toHaveBeenCalled();
 
-function mockUpdateProfileAll(isPassed){
-	if (isPassed){
-		User.updateProfile = jest.fn().mockImplementation(() => {
-			return Promise.resolve([]);
-		});
+		})
 
-	} else {
-		User.updateProfile = jest.fn().mockImplementation(() => {
-			return Promise.reject();
-		});
-	}
-}
+		test('valid, 200', async () => {
 
-function mockGetProfileById(isPassed){
-	if (isPassed){
-		User.getProfileById = jest.fn().mockImplementationOnce(() => {
-			return Promise.resolve({
-				userId: 1,
-				userGender: 1,
-				userBirth: null,
-				userDescrption: null,
-				userAvarar: null,
-				userRegion: null,
-				userLastname: 'Smith',
-				userFirstname: 'Jackal',
-				isAdmin: 0,
-				userEmail: 'jsmith@gmail.com'
-			});
-		});
-	} else {
-		User.getProfileById = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
 
-function mockLogin(isPassed, isValid){
-	if (isPassed){
-		if (isValid){
-			User.login = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(1);
-			});
-		} else {
-			User.login = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(-1);
-			});
+			Project.deleteUserInEventsAll = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMemberAll(req, res);
+			expect(res.statusCode).toBe(200);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+	describe('Testing with err', () => {
+
+		test('err in 1, 403', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMemberAll(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2, 403', async () => {
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.deleteUserInEventsAll = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteEventMemberAll(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+	})
+
+})
+
+describe('Testing inviteUser', () => {
+
+	var getInfoSpy = jest.spyOn(ProjectController, 'inviteUser');
+
+	var req = httpMocks.createRequest({
+		body: {
+			projectId: '1',
+			userId: '1',
+			invitedEmail: 'test@mail.com'
 		}
-	} else {
-		User.login = jest.fn().mockImplementationOnce(() => {
-			return Promise.reject();
-		});
-	}
-}
+	});
+
+	describe('Testing without err', () => {
+
+		test('is not owner, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user not found, 404', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(null);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(404);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user found, inviting self, 400', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 1});
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(400);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user found, user in invitelist, 302', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(302);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user found, user in project, 302', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(302);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user found, valid, 200', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.addUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			Project.getProject = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(200);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
+
+
+	describe('Testing with err', () => {
+
+		test('err in 1, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 3, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 4, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 5, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.addUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+		})
+
+		test('err in 6, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.getInfo = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve({userId: 2});
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.isUserInProject2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			Project.addUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			Project.getProject = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.inviteUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+		})
+
+	})
+})
+
+describe('Testing deleteInvitedUser', () => {
+
+	var getInfoSpy = jest.spyOn(ProjectController, 'deleteInvitedUser');
+
+	var req = httpMocks.createRequest({
+		body: {
+			projectId: '1',
+			userId: '1',
+			invitedId: '2'
+		}
+	});
+
+	describe('Testing without err', () => {
+
+		test('is not owner, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user not in invitelist, 404', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(false);
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(404);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('owner, user in invitelist, 200', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.deleteUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve();
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(200);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+	})
+
+	describe('Testing with err', () => {
+
+		test('err in 1, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 2, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+
+		test('err in 3, 403', async () => {
+
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.isUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve(true);
+			})
+
+			Project.deleteUserInInviteList = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			})
+
+			var res = httpMocks.createResponse();
+			await ProjectController.deleteInvitedUser(req, res);
+			expect(res.statusCode).toBe(403);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+		
+	})
+})
+
 
 afterEach( () => {
-	User.getInfo = getInfo;
-	User.createUser = createUser;
-	User.updateProfile = updateProfile;
-	User.getProfileById = getProfileById;
-	User.login = login;
-
-	Gverify.verify = verify;
+	Project.isMemberInProject = isMemberInProject;
+	Project.addUserInEvents = addUserInEvents;
+	Project.deleteUserInEvents = deleteUserInEvents;
+	Project.deleteUserInEventsAll = deleteUserInEventsAll;
+	Project.isOwner2 = isOwner2;
+	Project.isUserInProject2 = isUserInProject2;
+	Project.addUserInInviteList = addUserInInviteList;
+	Project.deleteUserInInviteList = deleteUserInInviteList;
+	Project.isUserInInviteList = isUserInInviteList;
+	Project.getProject = getProject;
 })
 
 
