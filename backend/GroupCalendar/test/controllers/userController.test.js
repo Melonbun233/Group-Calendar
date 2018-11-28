@@ -128,17 +128,17 @@ describe('Testing userController', () => {
 		})
 	})
 
-	describe('Testing getProfileId', () => {
+	describe('Testing getProjectId', () => {
 		test('success', async () => {
 			var res = httpMocks.createResponse();
-			mockGetProfileId(1);
-			await userController.getProfileId(req, res);
+			mockGetProjectId(1);
+			await userController.getProjectId(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('fail', async () => {
 			var res = httpMocks.createResponse();
-			mockGetProfileId(0);
-			await userController.getProfileId(req, res);
+			mockGetProjectId(0);
+			await userController.getProjectId(req, res);
 			expect(res.statusCode).toBe(403);
 		})
 	})
@@ -213,7 +213,7 @@ function mockGetProfile(success){
 function mockGetInvitaion(success){
 	User.getInvitation = jest.fn().mockImplementationOnce(() => {
 		if (success){
-			return Promise.resolve({userId: 1});
+			return Promise.resolve(1);
 		} else {
 			return Promise.reject();
 		}
@@ -230,8 +230,8 @@ function mockModifyProfile(success){
 	})
 }
 
-function mockGetProfileId(success){
-	User.getProfileId = jest.fn().mockImplementationOnce(() => {
+function mockGetProjectId(success){
+	User.getProjectId = jest.fn().mockImplementationOnce(() => {
 		if (success){
 			return Promise.resolve(1);
 		} else {
