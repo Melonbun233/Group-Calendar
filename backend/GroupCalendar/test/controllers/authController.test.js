@@ -4,7 +4,7 @@ const User = require('../../models/user');
 const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
-jest.mock('../../databases/UserDB');
+// jest.mock('../../databases/UserDB');
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
 
@@ -12,12 +12,12 @@ jest.mock('../../databases/UserDB');
 // jest.mock('../../controllers/googleVerification');
 const verify = Gverify.verify;
 /*------------mocking user---------------*/
-// jest.mock('../../models/user');
-const getInfo = User.getInfo;
-const createUser = User.createUser;
-const updateProfile = User.updateProfile;
-const getProfileById = User.getProfileById;
-const login = User.login;
+jest.mock('../../models/user');
+// const getInfo = User.getInfo;
+// const createUser = User.createUser;
+// const updateProfile = User.updateProfile;
+// const getProfileById = User.getProfileById;
+// const login = User.login;
 
 describe('Testing authGoogle', () => {
 
@@ -590,13 +590,14 @@ function mockLogin(isPassed, isValid){
 }
 
 beforeEach( () => {
-	User.getInfo = getInfo;
-	User.createUser = createUser;
-	User.updateProfile = updateProfile;
-	User.getProfileById = getProfileById;
-	User.login = login;
+	// User.getInfo = getInfo;
+	// User.createUser = createUser;
+	// User.updateProfile = updateProfile;
+	// User.getProfileById = getProfileById;
+	// User.login = login;
 
-	Gverify.verify = verify;
-})
+	// Gverify.verify = verify;
+	jest.resetAllMocks();
+});
 
 
