@@ -168,9 +168,10 @@ describe('Testing isUserInProject2', () => {
 
 	describe('Failure Test', () => {
 		test('err in 1', async () => {
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.reject('err');
-			});
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.reject();
+			})
 
 			await Project.isUserInProject2(projectId, userId)
 			.catch(err => {
@@ -181,13 +182,13 @@ describe('Testing isUserInProject2', () => {
 		})
 
 		test('err in 2', async () => {
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([1, 2]);
-			});
-
-			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
 				return Promise.reject();
-			});
+			})
 
 			await Project.isUserInProject2(projectId, userId)
 			.catch(err => {
