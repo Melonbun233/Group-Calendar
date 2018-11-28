@@ -1,10 +1,11 @@
-const Project = require('../../models/project');
+const Project_ = require('../../models/project');
 const ProjectDB = require('../../databases/ProjectDB');
 const CalendarDB = require('../../databases/CalendarDB');
 
 jest.mock('../../databases/UserDB');
 jest.mock('../../databases/ProjectDB');
 jest.mock('../../databases/CalendarDB');
+const Project = new Project_();
 
 /**
  * Mock List:
