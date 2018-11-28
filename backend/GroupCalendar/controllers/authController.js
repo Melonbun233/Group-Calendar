@@ -18,7 +18,7 @@ async function authGoogle (req, res){
   if(idToken == 'undefined' || email == 'undefined' || 
     userFirstname == 'undefined'){
     console.log('req is not valid');
-   return res.status(400).send('Can\'t find your google id token or profile information');
+  return res.status(400).send('Can\'t find your google id token or profile information');
 
 }
 
@@ -154,12 +154,14 @@ async function authApp (req, res){
   let email = req.body.userEmail;
   let pwd = req.body.userPwd;
   let err = false;
-
-  console.log(`pwd:${pwd}`);
   
   if(email == 'undefined' || pwd == 'undefined' || email == null || pwd == null){
     // console.log('empty post body');
     return res.status(400).send('Empty email or password');
+  }
+
+  if(pwd.length < 6){
+    return res.status(400).send('Empty password');
   }
 
   // await User.login(email, pwd)
