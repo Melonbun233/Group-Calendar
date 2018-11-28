@@ -21,7 +21,7 @@ async function getInfo (email) {
 
 async function updateUser (userId, userPwd) {
 	var query = "UPDATE Users SET userPwd = '" + userPwd + "' WHERE userId = '" + userId + "'";
-
+	
 	var result = await db.query(query)
 	.catch( (err) => {
 		throw err;
