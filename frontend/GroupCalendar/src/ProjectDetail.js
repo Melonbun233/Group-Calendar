@@ -267,11 +267,18 @@ export default class ProjectDeatail extends Component {
                 right = {button}
                 autoClose = {true}
             >
+            <TouchableWithoutFeedback
+                testID = 'memberButton'
+                onPress = {() => this.props.navigation.push('ProfileDetail', {
+                    userId: profile.userId
+                })}
+            >
             <View style = {[s.member, s.borderBottom]}>
                 <Text style = {cs.normalText}>
                 {profile.userFirstname + ' ' +  profile.userLastname}
                 </Text>
             </View>
+            </TouchableWithoutFeedback>
             </SwipeOut>
         );
     }

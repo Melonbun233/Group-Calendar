@@ -43,7 +43,7 @@ export default class GCNetwork extends Component {
 	}
 
 	static async updatePwd(userId, userPwd) {
-		let url = config.server.concat('/users');
+		let url = config.server.concat('/user');
 		let update = {userPwd};
 		try {
 			let response = await fetch (url, {
@@ -97,12 +97,38 @@ export default class GCNetwork extends Component {
 				},
 				credentials : 'include',
 			});
-			let responseJson = await response.json();
-
-			return {
-				profile : responseJson.profile,
-				status: response.status
+			
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				return {
+					profile : responseJson.profile,
+					status: response.status
+				}
 			}
+		} catch (error) {
+			throw Error('unable to find the user');
+		}
+	}
+
+	static async searchUserByEmail(userEmail) {
+		let url = config.server.concat('/user/search' + '?userEmail=' + userEmail);
+		try {
+			let response = await fetch(url, {
+				method: 'Get',
+				headers: {
+					'Content-Type' : 'application/json',
+				},
+				credentials : 'include',
+			});
+
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				return {
+					userId: responseJson,
+					status: response.status,
+				}
+			}
+			return {status: response.status};
 		} catch (error) {
 			throw Error('unable to find the user');
 		}

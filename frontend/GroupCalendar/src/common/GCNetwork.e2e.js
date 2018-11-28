@@ -67,7 +67,19 @@ export default class GCNetwork extends Component {
 		} catch (error) {
 			throw Error('unable to fetch profile');
 		}
-	}
+    }
+    
+    static async searchUserByEmail(userEmail) {
+		try {
+            return {
+                status:200,
+                userId: 1,
+            };
+		} catch (error) {
+			throw error;
+		}
+    }
+    
 	//	Function used to fetch user profile
 	//	Arguments
 	//		user_id: corresponding user id, this can be fetched from user

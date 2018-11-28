@@ -100,7 +100,7 @@ export default class EditPwd extends Component {
                     Alert.alert('Success!');
                     this.props.navigation.goBack();
                 } else {
-                    Alert.alert('Invalid New Password');
+                    Alert.alert('Internet Error ' + status.toString());
                 }
             } else {
                 this.setState({errors: {userOldPwd: 'old password incorrect'}});
