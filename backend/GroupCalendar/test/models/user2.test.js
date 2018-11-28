@@ -91,7 +91,6 @@ describe('Testing updateUser', () => {
 			})
 
 			var result = await User.updateUser(userId, userPwd);
-			expect(result).toBeNull();
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
