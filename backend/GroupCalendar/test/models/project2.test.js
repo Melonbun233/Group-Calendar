@@ -82,6 +82,7 @@ describe('Testing isOwner2', () => {
 	})
 
 	describe('Failure Test', () => {
+
 		test('query err', async () => {
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
@@ -171,8 +172,8 @@ describe('Testing isUserInProject2', () => {
 
 	})
 
-	describe('Failure Test', async () => {
-		test('err in 1', () => {
+	describe('Failure Test', () => {
+		test('err in 1', async () => {
 			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
 			});
@@ -217,7 +218,7 @@ describe('Testing isUserInInviteList', () => {
 
 	describe('Testing without err', () => {
 
-		test('true', () => {
+		test('true', async () => {
 			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([1, 2]);
 			});
@@ -241,8 +242,8 @@ describe('Testing isUserInInviteList', () => {
 
 	})
 
-	describe('Failure Test', async () => {
-		test('err', () => {
+	describe('Failure Test', () => {
+		test('err', async () => {
 			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
 			});
@@ -257,13 +258,13 @@ describe('Testing isUserInInviteList', () => {
 	})
 })
 
-describe('Testing addUserInMembership', async () => {
+describe('Testing addUserInMembership', () => {
 
 	var getInfoSpy = jest.spyOn(Project, 'addUserInMembership');
 
 	describe('Testing without err', () => {
 
-		test('no err', () => {
+		test('no err', async () => {
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([1]);
 			});
@@ -274,8 +275,8 @@ describe('Testing addUserInMembership', async () => {
 		})
 	})
 
-	describe('Failure Test', async () => {
-		test('query err', () => {
+	describe('Failure Test', () => {
+		test('query err', async () => {
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
 			});
