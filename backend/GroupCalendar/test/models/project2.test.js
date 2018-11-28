@@ -82,7 +82,7 @@ describe('Testing isOwner2', () => {
 	})
 
 	describe('Failure Test', () => {
-		test('query err', () => {
+		test('query err', async () => {
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
 			});
@@ -95,7 +95,7 @@ describe('Testing isOwner2', () => {
 
 		})
 
-		test('length > 1', () => {
+		test('length > 1', async () => {
 			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([2, 3]);
 			});
@@ -171,7 +171,7 @@ describe('Testing isUserInProject2', () => {
 
 	})
 
-	describe('Failure Test', () => {
+	describe('Failure Test', async () => {
 		test('err in 1', () => {
 			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
@@ -185,7 +185,7 @@ describe('Testing isUserInProject2', () => {
 
 		})
 
-		test('err in 2', () => {
+		test('err in 2', async () => {
 			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([1, 2]);
 			});
@@ -228,7 +228,7 @@ describe('Testing isUserInInviteList', () => {
 
 		})
 
-		test('false', () => {
+		test('false', async () => {
 			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 				return Promise.resolve([2, 3]);
 			});
@@ -241,7 +241,7 @@ describe('Testing isUserInInviteList', () => {
 
 	})
 
-	describe('Failure Test', () => {
+	describe('Failure Test', async () => {
 		test('err', () => {
 			Project.getInvitation = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject('err');
@@ -254,12 +254,57 @@ describe('Testing isUserInInviteList', () => {
 			expect(getInfoSpy).toHaveBeenCalled();
 
 		})
+	})
+})
 
+describe('Testing addUserInMembership', async () => {
+
+	var getInfoSpy = jest.spyOn(Project, 'addUserInMembership');
+
+	describe('Testing without err', () => {
+
+		test('no err', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([1]);
+			});
+
+			var result = await Project.addUserInMembership(projectId, userId);
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
 	})
 
+	describe('Failure Test', async () => {
+		test('query err', () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.reject('err');
+			});
 
+			await Project.addUserInMembership(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
 
+		})
+
+		test('length = 0', async () => {
+			ProjectDB.query = jest.fn().mockImplementationOnce(() => {
+				return Promise.resolve([]);
+			});
+
+			await Project.addUserInMembership(projectId, userId)
+			.catch(err => {
+				expect(err).toBeDefined();
+			})
+			expect(getInfoSpy).toHaveBeenCalled();
+
+		})
+	})
 })
+
+
+
 
 
 afterEach( () => {
