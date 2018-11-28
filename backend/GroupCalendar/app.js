@@ -108,8 +108,8 @@ app.use(cookieParser());
 
 app.listen(8000, '0.0.0.0');
 https.createServer({
-  key: fs.readFileSync('privatekey.pem'),
-  cert: fs.readFileSync('certificate.pem')
+  key: fs.readFileSync('TransportPrivate.pem'),
+  cert: fs.readFileSync('TransportCert.pem')
 }, app)
 .listen(8080, function () {
   console.log('app listening on port 8080')
