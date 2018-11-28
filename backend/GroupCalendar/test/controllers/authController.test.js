@@ -593,20 +593,20 @@ function mockLogin(isPassed, isValid){
 }
 
 beforeEach( () => {
-	// User.getInfo = getInfo;
-	// User.createUser = createUser;
-	// User.updateProfile = updateProfile;
-	// User.getProfileById = getProfileById;
-	// User.login = login;
+	User.getInfo = getInfo;
+	User.createUser = createUser;
+	User.updateProfile = updateProfile;
+	User.getProfileById = getProfileById;
+	User.login = login;
 
-	// Gverify.verify = verify;
-	User.getInfo.mockReset();
-	User.createUser.mockReset();
-	User.updateProfile.mockReset();
-	User.getProfileById.mockReset();
-	User.login.mockReset();
+	Gverify.verify = verify;
+	// User.getInfo.mockReset();
+	// User.createUser.mockReset();
+	// User.updateProfile.mockReset();
+	// User.getProfileById.mockReset();
+	// User.login.mockReset();
 
-	Gverify.verify.mockReset();
+	// Gverify.verify.mockReset();
 });
 
 
