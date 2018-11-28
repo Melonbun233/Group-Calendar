@@ -113,7 +113,7 @@ describe('Testing isOwner2', () => {
 
 describe('Testing isUserInProject2', () => {
 
-	var getInfoSpy = jest.spyOn(Project, 'isUserInProject2')；
+	var getInfoSpy = jest.spyOn(Project, 'isUserInProject2');
 
 	// mock list: getMemberId, isOwner2
 
@@ -135,8 +135,8 @@ describe('Testing isUserInProject2', () => {
 		});
 
 	})
-	
-	afterEach(()=> {
+
+	afterEach(() => {
 		// Project.isOwner2 = isOwner2;
 		// Project.getMemberId = getMemberId;
 
