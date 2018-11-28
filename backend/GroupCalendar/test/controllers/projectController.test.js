@@ -45,7 +45,7 @@ describe('Testing projectController', () => {
 			mockIsOwner(1);
 			mockPutEventOwner(0);
 			await projectController.putEventOwner(req, res);
-			expect(res.statusCode).toBe(403);			
+			expect(res.statusCode).toBe(400);			
 		})
 	})
 
@@ -95,19 +95,19 @@ describe('Testing projectController', () => {
 			expect(res.statusCode).toBe(400);
 			expect(JSON.parse(res._getData())).toEqual({"error": "isOwner error"});
 		})
-		test('userId is owner, putEventOwner success', async () => {
+		test('userId is owner, deleteEvents success', async () => {
 			var res = httpMocks.createResponse();
 			mockIsOwner(1);
 			mockDeleteEvents(1);
 			await projectController.deleteEvents(req, res);
 			expect(res.statusCode).toBe(200);
 		})
-		test('putEventOwner fail', async () => {
+		test('deleteEvents fail', async () => {
 			var res = httpMocks.createResponse();
 			mockIsOwner(1);
 			mockDeleteEvents(0);
 			await projectController.deleteEvents(req, res);
-			expect(res.statusCode).toBe(400);			
+			expect(res.statusCode).toBe(403);			
 			expect(JSON.parse(res._getData())).toEqual({"error": "deleteEvents fail"});
 		})
 	})
@@ -210,12 +210,12 @@ describe('Testing projectController', () => {
 			await projectController.deleteProject(req, res);
 			expect(res.statusCode).toBe(200);
 		})
-		test('putProject fail', async () => {
+		test('deleteProject fail', async () => {
 			var res = httpMocks.createResponse();
 			mockIsOwner(1);
 			mockDeleteProject(0);
 			await projectController.deleteProject(req, res);
-			expect(res.statusCode).toBe(400);			
+			expect(res.statusCode).toBe(403);			
 			expect(JSON.parse(res._getData())).toEqual({"error": "deleteProject fail"});
 		})
 	})
@@ -235,18 +235,17 @@ describe('Testing projectController', () => {
 		})
 		test('userId is owner, deleteMembers success', async () => {
 			var res = httpMocks.createResponse();
-			mockIsOwner(1);
+			mockIsUserInProject(1);
 			mockDeleteMembers(1);
 			await projectController.deleteMembers(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('deleteMembers fail', async () => {
 			var res = httpMocks.createResponse();
-			mockIsOwner(1);
+			mockIsUserInProject(1);
 			mockDeleteMembers(0);
 			await projectController.deleteMembers(req, res);
 			expect(res.statusCode).toBe(400);			
-			expect(JSON.parse(res._getData())).toEqual({"error": "deleteMembers fail"});
 		})
 	})
 
