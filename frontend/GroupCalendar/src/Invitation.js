@@ -179,7 +179,7 @@ export default class Invitation extends Component {
                 autoClose = {true}
             >
 			<TouchableWithoutFeedback
-				testId = 'initationButton'
+				testID = {item.projectName}
 				onPress = {() => this._onPressProject(item)}
 			>
 			<View style = {s.contentContainer}>

@@ -169,6 +169,7 @@ export default class ProjectDeatail extends Component {
             {isOwner && type !== 'view'? 
             <View style = {[s.button, s.borderBottom]}>
                 <Button
+                    testID = 'inviteMemberButton'
                     title = 'Invite a new member'
                     onPress = {() => {
                         AlertIOS.prompt(
@@ -219,6 +220,7 @@ export default class ProjectDeatail extends Component {
             {isOwner && type !== 'view'? 
             <View style = {[s.button, s.borderBottom]}>
                 <Button
+                    testID = 'createEventButton'
                     title = 'Create a new event'
                     onPress = {this._onCreateEvent.bind(this)}
                 />
@@ -550,6 +552,7 @@ export default class ProjectDeatail extends Component {
             </View>
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
+                    testID = 'endDatePicker'
                     title = 'Submit'
                     onPress = {() => {
                         this._onUpdateProject({
@@ -576,6 +579,7 @@ export default class ProjectDeatail extends Component {
             </View>
             <View style = {[s.button, s.borderTop, s.borderBottom]}>
                 <Button
+                    testID = 'startDatePicker'
                     title = 'Submit'
                     onPress = {() => {
                         this._onUpdateProject({
@@ -596,6 +600,7 @@ export default class ProjectDeatail extends Component {
         {isOwner && type !== 'view' ? 
             <View style = {s.button}>
                 <Button
+                    testID = 'deleteProjectButton'
                     title = 'Delete Project'
                     onPress = {() => {
                         AlertIOS.alert(
@@ -713,6 +718,7 @@ export default class ProjectDeatail extends Component {
                     showStartDatePicker: ~showStartDatePicker
                 })}
                 disabled = {!isOwner || type === 'view'}
+                testID = 'projectStartDateButton'
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
@@ -724,6 +730,7 @@ export default class ProjectDeatail extends Component {
             {showStartDatePicker ? startDatePicker : null}
             {/* end date */}
             <TouchableWithoutFeedback
+                testID = 'projectEndDateButton'
                 onPress = {() => this.setState({
                     showEndDatePicker: ~showEndDatePicker
                 })}
@@ -742,6 +749,7 @@ export default class ProjectDeatail extends Component {
                 onPress = {() => this.setState({
                     showMembers: ~showMembers
                 })}
+                testID = 'memberButton'
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
@@ -756,6 +764,7 @@ export default class ProjectDeatail extends Component {
                 onPress = {() => this.setState({
                     showEvents: ~showEvents
                 })}
+                testID = 'eventButton'
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.contentContainer}>
@@ -771,6 +780,7 @@ export default class ProjectDeatail extends Component {
                     onPress = {() => this.setState({
                         showMore: ~showMore
                     })}
+                    testID = 'moreButton'
                 >
                     <View style = {[s.listContainer, s.borderBottom]}>
                     <View style = {s.contentContainer}>

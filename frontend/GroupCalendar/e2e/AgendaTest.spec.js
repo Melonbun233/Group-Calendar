@@ -1,4 +1,4 @@
-describe('Test Profile', () => {
+describe('Test Agenda', () => {
     beforeAll(async () => {
         await element(by.id('UserEmail')).tap();
         await element(by.id('UserEmail')).typeText('test@mail.com');
@@ -9,21 +9,14 @@ describe('Test Profile', () => {
 
     beforeEach(async () => {
         await device.reloadReactNative();
-        await element(by.id('invitationButton')).tap();
     });
 
-    test('should render invitation page', async () => {
-        await expect(element(by.id('searchUserButton'))).toBeVisible();
+    test('should render agenda page', async () => {
+        await expect(element(by.id('One time event 3'))).toBeVisible();
     });
 
-    test('shoule render invitations', async () => {
-        await expect(element(by.id('Apple'))).toBeVisible();
-        await expect(element(by.id('Banana'))).toBeVisible();
-        await expect(element(by.id('Sushi'))).toBeVisible();
-    });
-
-    test('should render project detail page', async() => {
-        await element(by.id('Apple')).tap();
+    test('should show detailed project page', async() => {
+        await element(by.id('One time event 3')).tap();
         await expect(element(by.id('projectNameButton'))).toBeVisible();
         await expect(element(by.id('projectStartDateButton'))).toBeVisible();
         await expect(element(by.id('projectEndDateButton'))).toBeVisible();
@@ -32,28 +25,28 @@ describe('Test Profile', () => {
     });
 
     test('should not show start date pickers', async () => {
-        await element(by.id('Apple')).tap();
+        await element(by.id('One time event 3')).tap();
         await expect(element(by.id('startDatePicker'))).toBeNotVisible();
         await element(by.id('projectStartDateButton')).tap();
         await expect(element(by.id('startDatePicker'))).toBeNotVisible();
     });
 
     test('should not show end date pickers', async () => {
-        await element(by.id('Apple')).tap();
+        await element(by.id('One time event 3')).tap();
         await expect(element(by.id('endDatePicker'))).toBeNotVisible();
         await element(by.id('projectEndDateButton')).tap();
         await expect(element(by.id('endDatePicker'))).toBeNotVisible();
     });
 
     test('should not show members', async () => {
-        await element(by.id('Apple')).tap();
+        await element(by.id('One time event 3')).tap();
         await expect(element(by.id('inviteMemberButton'))).toBeNotVisible();
         await element(by.id('memberButton')).tap();
         await expect(element(by.id('inviteMemberButton'))).toBeNotVisible();
     });
 
     test('should not show events', async () => {
-        await element(by.id('Apple')).tap();
+        await element(by.id('One time event 3')).tap();
         await expect(element(by.id('createEventButton'))).toBeNotVisible();
         await element(by.id('eventButton')).tap();
         await expect(element(by.id('createEventButton'))).toBeNotVisible();

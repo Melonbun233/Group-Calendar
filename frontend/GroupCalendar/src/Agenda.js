@@ -123,6 +123,7 @@ export default class Calendar extends Component {
 			<View style = {s.item}>
 			<TouchableWithoutFeedback
 				onPress = {() => this._onPressEvent(item.projectId)}
+				testID = {event.eventName}
 			>
 			<View style = {[s.event, {backgroundColor: '#fff'}]}>
 			<View style = {[s.eventItem, {backgroundColor: '#fff'}]}>
