@@ -118,39 +118,13 @@ describe('Testing isUserInProject2', () => {
 
 	// mock list: getMemberId, isOwner2
 
-	// let isOwner2 = Project.isOwner2;
-	// let getMemberId = Project.getMemberId;
-
-	beforeEach(() => {
-		var isOwner2Spy = jest.spyOn(Project, 'isOwner2')
-		.mockImplementationOnce(() => {
-			return Promise.resolve(true);
-		});
-
-		var getMemberIdSpy = jest.spyOn(Project, 'getMemberId')
-		.mockImplementationOnce(() => {
-			return Promise.resolve([1,2]);
-		})
-		.mockImplementationOnce(() => {
-			return Promise.resolve([2, 3]);
-		});
-
-	})
-
-	afterEach(() => {
-		// Project.isOwner2 = isOwner2;
-		// Project.getMemberId = getMemberId;
-
-		isOwner2Spy.mockRestore();
-		getMemberIdSpy.mockRestore();
-	})
-
 	describe('Testing without err', () => {
 
 		test('is member, true', async () => {
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([1,2]);
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 1}]);
 			});
 
 			var result = await Project.isUserInProject2(projectId, userId);
@@ -161,12 +135,12 @@ describe('Testing isUserInProject2', () => {
 
 		test('is owner, true', async () => {
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([2, 3]);
-			});
-
-			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(true);
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{projectOwnerId: 1}]);
 			});
 
 			var result = await Project.isUserInProject2(projectId, userId);
@@ -177,12 +151,12 @@ describe('Testing isUserInProject2', () => {
 
 		test('not in, false', async () => {
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve([2, 3]);
-			});
-
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
-				return Promise.resolve(false);
+			ProjectDB.query = jest.fn()
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{userId: 2}]);
+			})
+			.mockImplementationOnce(() => {
+				return Promise.resolve([{projectOwnerId: 3}]);
 			});
 
 			var result = await Project.isUserInProject2(projectId, userId);
@@ -212,7 +186,7 @@ describe('Testing isUserInProject2', () => {
 				return Promise.resolve([1, 2]);
 			});
 
-			Project.getMemberId = jest.fn().mockImplementationOnce(() => {
+			Project.isOwner2 = jest.fn().mockImplementationOnce(() => {
 				return Promise.reject();
 			});
 
