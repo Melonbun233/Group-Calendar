@@ -162,21 +162,21 @@ async function isUserInProject2 (projectId, userId){
 	}
 }
 
-async function isMemberInProject (projectId, userId){
-	try{
-		var memberId = await getMemberId(projectId);
-	}catch (error){
-		throw error;
-	}
+// async function isMemberInProject (projectId, userId){
+// 	try{
+// 		var memberId = await getMemberId(projectId);
+// 	}catch (error){
+// 		throw error;
+// 	}
 
-	for (var i = 0; i < memberId.length; i++){
-		if (memberId[i] == userId){
-			return true;
-		}
-	}
+// 	for (var i = 0; i < memberId.length; i++){
+// 		if (memberId[i] == userId){
+// 			return true;
+// 		}
+// 	}
 
-	return false;
-}
+// 	return false;
+// }
 
 
 async function getProject (projectId){
@@ -618,7 +618,7 @@ module.exports = {
 	//isEventAvailable
 	isOwner2,
 	isUserInProject2,
-	isMemberInProject,
+	// isMemberInProject,
 	isUserInInviteList,
 	addUserInMembership,
 	addUserInEvents,
