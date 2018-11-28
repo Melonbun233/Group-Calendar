@@ -5,8 +5,8 @@ const Gverify = require('../../controllers/googleVerification')
 
 /*------------mocking db.query---------------*/
 jest.mock('../../databases/UserDB');
-jest.mock('../../database/ProjectDB');
-jest.mock('../../database/CalendarDB');
+jest.mock('../../databases/ProjectDB');
+jest.mock('../../databases/CalendarDB');
 
 // const db = require('../../databases/UserDB');
 // db.query = jest.fn();
