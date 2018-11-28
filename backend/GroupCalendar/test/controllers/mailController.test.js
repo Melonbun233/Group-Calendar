@@ -1,4 +1,4 @@
-const Mailer = require('nodemailer/lib/mailer');
+const Mailer = require('nodemailer');
 const MailController = require('../../controllers/mailController');
 
 /**
@@ -37,12 +37,9 @@ const transport = {
 
  	test('Testing by without err', () => {
  		beforeEach(() =>{ 
- 			// spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
- 			// 	return transport;
- 			// });
- 			 spyOn(Mailer.prototype, 'sendMail').mockImplementationOnce(() => {
- 			 	return transport;
- 			 })
+ 			spyOn(Mailer, 'createTransport').and.callFake(function (cb) {
+ 				return transport;
+ 			});
  		})
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";
@@ -55,7 +52,7 @@ const transport = {
  	test('Testing by with err', () => {
  		
  		beforeEach(() =>{ 
- 			spyOn(Mailer.prototype, 'sendMail').and.callFake(function (cb) {
+ 			spyOn(Mailer, 'createTransport').and.callFake(function (cb) {
  				return transportErr;
  			});
  		})
