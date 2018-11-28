@@ -37,10 +37,10 @@ const transport = {
 
  	test('Testing by without err', () => {
  		beforeEach(() =>{ 
- 			// spyOn(Mailer, 'createTransport').and.callFake(() => {
- 			// 	return transport;
- 			// });
- 			Mailer.createTransport = jest.fn().mockReturnValueOnce(transport);
+ 			spyOn(Mailer, 'createTransport').and.callFake(() => {
+ 				return transport;
+ 			});
+ 			// Mailer.createTransport = jest.fn().mockReturnValueOnce(transport);
  		})
  		var receiver = "yueruc@gmail.com";
  		var subject = "Test";

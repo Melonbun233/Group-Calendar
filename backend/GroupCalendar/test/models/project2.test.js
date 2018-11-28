@@ -1,4 +1,3 @@
-var httpMocks = require('node-mocks-http');
 const Project = require('../models/project');
 const ProjectDB = require('../databases/ProjectDB');
 const CalendarDB = require('../databases/CalendarDB');
@@ -30,37 +29,20 @@ const CalendarDB = require('../databases/CalendarDB');
  * isEventInProject
  * isEventAvailable
  */
+//
+var projectId = "1";
+var userId = "1";
+var eventId = "1";
 
-describe('Testing addEventMember', () => {
+describe('Testing isOwner2', () => {
 
-	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
+	var getInfoSpy = jest.spyOn(Project, 'isOwner2');
 
-	describe('Testing by invalid req', () => {
+	describe('Testing without err', () => {
 
-		var req = httpMocks.createRequest({
-			session: {
-				uuid: null
-			},
-			body: {
-				idToken: 'undefined',
-				accessToken: '123abc',
-				user: 
-				{ photo: 'https://example.com/photo.jpg',
-				familyName: 'Smith',
-				name: 'Jackal Smith',
-				pwd: '123456',
-				email: 'jsmith@gmail.com',
-				id: '12345',
-				givenName: 'Jackal' },
-				accessTokenExpirationDate: 3599.8298959732056,
-				serverAuthCode: null,
-				scopes: [] 
-			}
-		});
+		test('length = 0, false', async () => {
 
-		test('Unverifed; return 400', async () => {
-
-			mockVerify(false);
+			ProjectDB.query = jest.fn();
 
 			var res = httpMocks.createResponse();
 			await AuthController.authGoogle(req, res);
@@ -89,7 +71,7 @@ describe('Testing verify', () => {
 		await expect(Gverify.verify(idToken)).rejects.not.toBeUndefined();
 
 	})
-	
+
 })
 
 function mockVerify(isVerified){
