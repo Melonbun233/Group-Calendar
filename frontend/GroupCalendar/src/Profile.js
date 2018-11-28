@@ -60,15 +60,23 @@ export default class Profile extends Component {
 					let curr = new Date();
 					let userBirth = new Date(profile.userBirth);
 					let age = curr.getFullYear() - userBirth.getFullYear();
+					if (isNaN(age)) {
+						age = ' ';
+					}
 					this.setState({profile, age});
+				}
+				break;
+				case 401: {
+					this.props.onSessionOut();
 				}
 				break;
 				//fetch failed, probably user has expired the session
 				//we will log out
-			default: {
+				default: {
 				Alert.alert('HTTP ERROR ' + status.toString());
 				this.props.onSessionOut();
-			}}
+				}
+			}
 		} catch(error) {
 			Alert.alert(error.toString());
 		}

@@ -65,6 +65,10 @@ export default class Project extends Component {
 					Alert.alert('Not all projects fetched');
 				}
 				break;
+				case 401: {
+					this.props.onSessionOut();
+				}
+				break;
 				default: {
 					Alert.alert('Internet Error ' + status.toString());
 					this.props.onSessionOut();

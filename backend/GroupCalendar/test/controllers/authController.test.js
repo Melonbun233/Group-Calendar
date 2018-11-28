@@ -443,14 +443,15 @@ describe('Testing authApp', () => {
 	})
 	
 	describe('Testing by invalid req', () => {
-		var req = httpMocks.createRequest({
-			body: {
-				userEmail: 'jsmith@gmail.com',
-				userPwd: 'undefined'
-			}
-		});
+		
 
 		test('invalid res, return 400', async () => {
+			var req = httpMocks.createRequest({
+				body: {
+					userEmail: 'jsmith@gmail.com',
+					userPwd: 'undefined'
+				}
+			});
 
 			var res = httpMocks.createResponse();
 			await AuthController.authApp(req, res);
@@ -458,6 +459,22 @@ describe('Testing authApp', () => {
 			expect(res.statusCode).toBe(400);
 
 		})
+
+		test('invalid password, return 400', async () => {
+			var req = httpMocks.createRequest({
+				body: {
+					userEmail: 'jsmith@gmail.com',
+					userPwd: '1'
+				}
+			});
+
+			var res = httpMocks.createResponse();
+			await AuthController.authApp(req, res);
+			expect(getInfoSpy).toHaveBeenCalled();
+			expect(res.statusCode).toBe(400);
+
+		})
+
 	})
 })
 
