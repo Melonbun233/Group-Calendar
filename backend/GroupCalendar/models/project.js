@@ -1,6 +1,5 @@
 var ProjectDB = require('../databases/ProjectDB');
 var CalendarDB = require('../databases/CalendarDB');
-var UserDB = require('../databases/UserDB');
 
 // check ProjectDB -> Projects
 async function isOwner (projectId, userId){
@@ -32,8 +31,10 @@ async function isOwner2 (projectId, userId){
 
 	if (project.length > 1){
 		throw "Multiple projects with same projectId, something's wrong";
-	} else if (project.length == 0){
-		throw "projectId " + projectId + " does not exist in Projects table";
+	} 
+	else if (project.length == 0){
+		// throw "projectId " + projectId + " does not exist in Projects table";
+		return false;
 	}
 
 	if (project[0].projectOwnerId != userId){
@@ -577,10 +578,12 @@ async function isEventAvailable (eventId){
 		throw error;
 	});
 
+	console.log(result);
+
 	var userNum = result.length;
 
 	var query = "SELECT userLimit FROM Events WHERE eventId = '" + eventId + "'";
-	var result = await ProjectDB.query(query)
+	var result = await CalendarDB.query(query)
 	.catch (error => {
 		throw error;
 	});

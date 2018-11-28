@@ -5,7 +5,7 @@ import {Text, TextInput, View, StyleSheet, Alert, TouchableWithoutFeedback,
 import cs from './common/CommonStyles';
 import Storage from './common/Storage';
 import Profile from './Profile';
-import Calendar from './Calendar';
+import Calendar from './Agenda';
 import Project from './Project';
 import Invitation from './Invitation';
 import { GoogleSignin } from 'react-native-google-signin';
@@ -23,9 +23,9 @@ export default class MainPage extends Component {
 		super(props);
 		this.state = {
 			isLoading: true,
-			title: 'Calendar',
+			title: 'Agenda',
 			buttonColor: {
-				calendar: cs.blue,
+				agenda: cs.blue,
 				project: cs.black,
 				profile: cs.black,
 				invitation: cs.black,
@@ -58,7 +58,7 @@ export default class MainPage extends Component {
 			);
 		}
 		let {title} = this.state;
-		let calendarIcon = title == 'Calendar' ? 
+		let agendaIcon = title == 'Agenda' ? 
 		<SvgUri width = {24} height = {24} source = {require('../img/calendar-color.svg')}/> : 
 		<SvgUri width = {24} height = {24} source = {require('../img/calendar.svg')}/>;
 
@@ -89,13 +89,13 @@ export default class MainPage extends Component {
 				{/*Content Selection*/}
 				<View style = {[cs.container, s.bottomBar]}>
 					<TouchableWithoutFeedback 
-						testID = 'calendarButton'
-						onPress = {() => this._switchContent('Calendar')}
+						testID = 'agendaButton'
+						onPress = {() => this._switchContent('Agenda')}
 					>
 						<View style = {s.switchButton}>
-						{calendarIcon}
-						<Text style = {[buttonColor.calendar, {paddingTop:4,fontSize:10}]}>
-						Calendar</Text>
+						{agendaIcon}
+						<Text style = {[buttonColor.agenda, {paddingTop:4,fontSize:10}]}>
+						Agenda</Text>
 						</View>
 					</TouchableWithoutFeedback>
 					<TouchableWithoutFeedback 
@@ -139,18 +139,18 @@ export default class MainPage extends Component {
 		switch (_name) {
 			default : 
 				ret = {
-					title: 'Calendar',
+					title: 'Agenda',
 					buttonColor: {
-						calendar: cs.blue,
+						agenda: cs.blue,
 						project: cs.black,
 						profile: cs.black,
 						invitation: cs.black,
 					}
 				};
-			case 'Calendar' :
+			case 'Agenda' :
 				ret = {
-					title: 'Calendar',
-					buttonColor: {calendar: cs.blue}};
+					title: 'Agenda',
+					buttonColor: {agenda: cs.blue}};
 			break;
 			case 'Project' : 
 				ret = {
@@ -175,7 +175,7 @@ export default class MainPage extends Component {
 	//choose which content based on title
 	_getContent = () => {
 		switch(this.state.title) {
-			case 'Calendar' :
+			case 'Agenda' :
 				return(<Calendar
 					onSignOut = {this._onSignOut.bind(this)}
 					onSessionOut = {this._onSessionOut.bind(this)}

@@ -34,7 +34,7 @@ async function createEvents (req, res){
 		eventId = await Project.createEvents(req.body.projectId, req.body.event);
 		res.status(200).json({eventId});
 	} catch (error) {
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 
@@ -51,7 +51,7 @@ async function deleteEvents (req, res){
 		await Project.deleteEvents(req.body.eventId);
 		res.status(200).json();
 	} catch (error) {
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 
@@ -78,7 +78,7 @@ async function getProject (req, res) {
 		memberId = await Project.getMemberId(projectId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	/* add events to json project */
@@ -102,7 +102,7 @@ async function putProject(req, res){
 		await Project.putProject(req.body.projectId, req.body.update);
 		res.status(200).json();
 	} catch (error) {
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 
@@ -111,7 +111,7 @@ async function createProject (req, res){
 		var projectId = await Project.createProject(req.body.project, req.body.userId);
 		res.status(200).json({projectId});
 	} catch (error){
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 
@@ -128,7 +128,7 @@ async function deleteProject (req, res){
 		await Project.deleteProject(req.body.projectId);
 		res.status(200).json();
 	} catch (error) {
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 
@@ -145,7 +145,7 @@ async function deleteProject (req, res){
  // 		await Project.isUserInProject(projectId, userId);
  // 	} catch (error) {
  // 		console.log(error);
- // return res.status(500).end();
+ // return res.status(403).end();
  // 	}
 
 	// // this part is optional if owner could vote
@@ -153,14 +153,14 @@ async function deleteProject (req, res){
 	// 	isValidMember = !(await Project.isOwner2(projectId, userId));
 	// } catch (error) {
 	// 	console.log(error);
-	// return res.status(500).end();
+	// return res.status(403).end();
 	// }
 
 	try {
 		isValidMember = await Project.isUserInProject2(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 
@@ -173,14 +173,14 @@ async function deleteProject (req, res){
 	// 		return res.status(400).send('This user has already been in the event')
 	// 	}
 	// }	catch (error) {
-	// 	res.status(500).end();
+	// 	res.status(403).end();
 	// }
 
 	try {
 		var unrolledEvents = await Project.addUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	if (unrolledEvents.length == 0){
@@ -202,7 +202,7 @@ async function deleteEventMember (req, res){
 		isValidMember = await Project.isUserInProject2(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	if(!isValidMember) {
@@ -213,7 +213,7 @@ async function deleteEventMember (req, res){
 		await Project.deleteUserInEvents(projectId, eventIds, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	return res.status(200).json();
@@ -229,7 +229,7 @@ async function deleteEventMemberAll (req, res){
 		isValidMember = await Project.isUserInProject2(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	if(!isValidMember) {
@@ -240,7 +240,7 @@ async function deleteEventMemberAll (req, res){
 		await Project.deleteUserInEventsAll(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	return res.status(200).json();
@@ -260,18 +260,18 @@ async function inviteUser (req, res){
 	try {
 		if(!(await Project.isOwner2(projectId, userId))){
 			console.log('Only Project Owner can invite');
-			return res.status(400).send('Only Project Owner can invite');
+			return res.status(403).send('Only Project Owner can invite');
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try{
 		var result = await User.getInfo(invitedEmail);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	if (result == null){
@@ -291,7 +291,7 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 	
 	try {
@@ -301,39 +301,39 @@ async function inviteUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
 		await Project.addUserInInviteList(projectId, invitedId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	// send email to notify
 
-	try{
-		var invitor = await User.getProfile(userId);
-	} catch (error) {
-		console.log(error);
-		return res.status(500).end();
-	}
+	// try{
+	// 	var invitor = await User.getProfile(userId);
+	// } catch (error) {
+	// 	console.log(error);
+	// 	return res.status(403).end();
+	// }
 
-	var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
+	// var userName = `${invitor.userFirstName} ${invitor.userLastName}`;
 
 	try{
 		var invitedProject = await Project.getProject(projectId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	var projectName = `${invitedProject.projectName}`;
 
 	var receiver = invitedEmail;
 	var subject = '[Group Calendar]: New Project Invitation';
-	var text = `${userName} is inviting you to the Project: "${projectName}".`;
+	var text = `You are invited into the Project: "${projectName}". \nOpen the app and check it!`;
 	Mail.sendEmail(receiver, subject, text, text);
 
 	return res.status(200).json();
@@ -349,18 +349,18 @@ async function deleteInvitedUser (req, res){
 	//this part is optional
 	try {
 		if(!(await Project.isOwner2(projectId, userId))){
-			return res.status(400).send('Only Project Owner can delete invited user');
+			return res.status(403).send('Only Project Owner can delete invited user');
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	// try{
 	// 	var result = await User.getInfo(invitedEmail);
 	// } catch (error) {
 	// 	console.log(error);
-	// return res.status(500).end();
+	// return res.status(403).end();
 	// }
 
 	// if (result == null){
@@ -374,14 +374,14 @@ async function deleteInvitedUser (req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	try {
 		await Project.deleteUserInInviteList(projectId, userId);
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(403).end();
 	}
 
 	return res.status(200).json();
@@ -396,7 +396,7 @@ async function deleteMembers(req, res){
 		}
 	} catch (error) {
 		console.log(error);
-		return res.status(500).end();
+		return res.status(400).end();
 	}
 	
 	try{
@@ -404,7 +404,7 @@ async function deleteMembers(req, res){
 		res.status(200).end();
 	} catch (error) {
 		console.log(error);
-		res.status(500).end();
+		res.status(403).end();
 	}
 }
 

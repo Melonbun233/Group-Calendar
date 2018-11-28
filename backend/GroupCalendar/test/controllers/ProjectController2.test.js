@@ -1,6 +1,6 @@
 var httpMocks = require('node-mocks-http');
 const ProjectController = require('../../controllers/ProjectController');
-const User = require('../../models/user');
+// const User = require('../../models/user');
 const Project = require('../models/project');
 
 /**
@@ -15,21 +15,19 @@ const Project = require('../models/project');
  * isUserInProject2
  * addUserInInviteList
  * deleteUserInInviteList
- *
- * User:
  * isUserInInviteList
  */
 
-const isMemberInProject = Project.isMemberInProject;
-const addUserInEvents = Project.addUserInEvents;
-const deleteUserInEvents = Project.deleteUserInEvents;
-const deleteUserInEventsAll = Project.deleteUserInEventsAll;
-const isOwner2 = Project.isOwner2;
-const isUserInProject2 = Project.isUserInProject2;
-const addUserInInviteList = Project.addUserInInviteList;
-const deleteUserInInviteList = Project.deleteUserInInviteList;
+// const isMemberInProject = Project.isMemberInProject;
+// const addUserInEvents = Project.addUserInEvents;
+// const deleteUserInEvents = Project.deleteUserInEvents;
+// const deleteUserInEventsAll = Project.deleteUserInEventsAll;
+// const isOwner2 = Project.isOwner2;
+// const isUserInProject2 = Project.isUserInProject2;
+// const addUserInInviteList = Project.addUserInInviteList;
+// const deleteUserInInviteList = Project.deleteUserInInviteList;
+// const isUserInInviteList = Project.isUserInInviteList;
 
-const isUserInInviteList = User.isUserInInviteList;
 
 /**
  * Test List:
@@ -43,7 +41,7 @@ const isUserInInviteList = User.isUserInInviteList;
 
 describe('Testing addEventMember', () => {
 
-	var getInfoSpy = jest.spyOn(AuthController, 'authGoogle');
+	var getInfoSpy = jest.spyOn(ProjectController, 'addEventMember');
 
 	describe('Testing by invalid req', () => {
 

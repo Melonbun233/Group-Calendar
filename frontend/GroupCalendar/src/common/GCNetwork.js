@@ -304,6 +304,11 @@ export default class GCNetwork extends Component {
 				credentials : 'include',
 				body: JSON.stringify({user, profile}),
 			});
+
+			if (response.status == 200) {
+				let responseJson = await response.json();
+				await Storage.setProfile(responseJson.profile);
+			}
 			return response.status;
 		} catch (error) {
 			throw Error('unable to create user');
@@ -452,6 +457,21 @@ export default class GCNetwork extends Component {
 		}
 	}
 
+	static async deleteUser(userId, userEmail) {
+		let url = config.server.concat('/user');
+		try {
+			let response = await fetch(url, {
+				method: 'DELETE',
+				headers: {"Content-Type": "application/json"},
+				body: JSON.stringify({userId, userEmail}),
+				credentials : 'include',
+			});
+			return response.status;
+		} catch(error) {
+			throw Error('unable to delete user');
+		}
+	}
+
 	static async inviteUser(projectId, userId, invitedEmail) {
 		let url = config.server.concat('/project/invite');
 		try {
@@ -486,7 +506,7 @@ export default class GCNetwork extends Component {
 		let url = config.server.concat('/user/invite/decline');
 		try {
 			let response = await fetch(url, {
-				method: 'PUT',
+				method: 'DELETE',
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify({projectId, userId}),
 				credentials : 'include',

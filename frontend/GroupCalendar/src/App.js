@@ -10,9 +10,10 @@ import MainPage from './MainPage';
 import SignInPage from './SignInPage';
 import SignUpPage from './SignUpPage';
 import EditProfile from './EditProfile';
+import EditProject from './EditProject';
 import CreateProject from './CreateProject';
 import CreateEvent from './CreateEvent';
-import ChangePwd from './ChangePwd';
+import EditPwd from './EditPwd';
 import ProjectDetail from './ProjectDetail';
 import {createStackNavigator} from 'react-navigation';
 import GoogleSignInPwd from './GoogleSignInPwd';
@@ -32,9 +33,10 @@ const IntroStack = createStackNavigator(
 		SignUp: SignUpPage,
 		Main: MainPage,
 		EditProfile: EditProfile,
+		EditProject: EditProject,
 		CreateProject: CreateProject,
 		CreateEvent: CreateEvent,
-		ChangePwd: ChangePwd,
+		EditPwd: EditPwd,
 		GoogleSignIn: GoogleSignInPwd,
 		ProjectDetail: ProjectDetail,
 	},
