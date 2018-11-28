@@ -102,13 +102,13 @@ describe('Testing userController', () => {
 			var res = httpMocks.createResponse();
 			mockGetProfile(1);
 			mockGetInvitaion(1);
-			await User.profileGet(req, res);
+			await userController.profileGet(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('fail', async () => {
 			var res = httpMocks.createResponse();
 			mockGetProfile(0);
-			await User.profileGet(req, res);
+			await userController.profileGet(req, res);
 			expect(res.statusCode).toBe(403);
 		})
 	})
@@ -117,13 +117,13 @@ describe('Testing userController', () => {
 		test('success', async () => {
 			var res = httpMocks.createResponse();
 			mockModifyProfile(1);
-			await User.profileUpdate(req, res);
+			await userController.profileUpdate(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('fail', async () => {
 			var res = httpMocks.createResponse();
 			mockModifyProfile(0);
-			await User.profileUpdate(req, res);
+			await userController.profileUpdate(req, res);
 			expect(res.statusCode).toBe(403);
 		})
 	})
@@ -132,13 +132,13 @@ describe('Testing userController', () => {
 		test('success', async () => {
 			var res = httpMocks.createResponse();
 			mockGetProfileId(1);
-			await User.getProfileId(req, res);
+			await userController.getProfileId(req, res);
 			expect(res.statusCode).toBe(200);
 		})
 		test('fail', async () => {
 			var res = httpMocks.createResponse();
 			mockGetProfileId(0);
-			await User.getProfileId(req, res);
+			await userController.getProfileId(req, res);
 			expect(res.statusCode).toBe(403);
 		})
 	})
