@@ -15,7 +15,6 @@ jest.mock('../../databases/CalendarDB');
  * deleteUserInInviteList
  * isUserInProject2
  * addUserInMembership
- * deleteUserInInviteList
  */
 
  const getInvitation = Project.getInvitation;
@@ -23,7 +22,6 @@ jest.mock('../../databases/CalendarDB');
  const deleteUserInInviteList = Project.deleteUserInInviteList;
  const isUserInProject2 = Project.isUserInProject2;
  const addUserInMembership = Project.addUserInMembership;
- const deleteUserInInviteList = Project.deleteUserInInviteList;
 
 /**
  * Test List:
@@ -308,6 +306,5 @@ beforeEach( () => {
 	Project.deleteUserInInviteList = deleteUserInInviteList;
 	Project.isUserInProject2 = isUserInProject2;
 	Project.addUserInMembership = addUserInMembership;
-	Project.deleteUserInInviteList = deleteUserInInviteList;
 
 })
