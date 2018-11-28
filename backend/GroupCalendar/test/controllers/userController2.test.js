@@ -294,5 +294,3 @@ describe('Testing declineInvite', () => {
 afterEach( () => {
 	jest.resetAllMocks();
 })
-
-
