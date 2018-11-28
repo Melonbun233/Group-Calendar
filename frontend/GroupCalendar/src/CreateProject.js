@@ -207,6 +207,7 @@ export default class CreateProject extends Component {
             <View style = {s.contentContainer}>
             {/* Project Name */}
                 <TextField
+                    testID = 'projectName'
                     ref = {this.projectNameRef}
                     label = 'Project Name'
                     value = {projectName}
@@ -224,6 +225,7 @@ export default class CreateProject extends Component {
                 />
             {/* project Description */}
                 <TextField
+                    testID = 'projectDescription'
                     ref = {this.projectDescriptionRef}
                     label = 'Project Description'
                     value = {projectDescription}
@@ -245,6 +247,7 @@ export default class CreateProject extends Component {
                 onPress = {() => this.setState({
                     showStartDatePicker: ~showStartDatePicker
                 })}
+                testID = 'showStartDate'
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.dateContainer}>
@@ -259,6 +262,7 @@ export default class CreateProject extends Component {
                 onPress = {() => this.setState({
                     showEndDatePicker: ~showEndDatePicker
                 })}
+                testID = 'showEndDate'
             >
                 <View style = {[s.listContainer, s.borderBottom]}>
                 <View style = {s.dateContainer}>

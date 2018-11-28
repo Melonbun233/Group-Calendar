@@ -85,8 +85,8 @@ export default class SignUpPage extends Component {
 			this.setState({isLoading: false});
 			return;
 		}
+		Alert.alert
 		//correct info, create a new user
-		this.setState({isLoading: true});
 		let status = await Network.createUser(
 				{
 					user: {
@@ -215,7 +215,7 @@ export default class SignUpPage extends Component {
 					<Ripple
 						testID = 'signUpButton'
 						disabled = {isLoading}
-						onPress = {this._onSubmit}
+						onPress = {this._onSubmit.bind(this)}
 						style = {[cs.container, s.signUpButton]}
 					>
 						<Text style = {s.signUpMsg}>

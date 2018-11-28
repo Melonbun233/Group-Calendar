@@ -1,4 +1,4 @@
-describe('Test sign in', () => {
+describe('Test Sign In', () => {
     beforeEach(async () => {
         await device.reloadReactNative();
     });
@@ -17,9 +17,9 @@ describe('Test sign in', () => {
         await element(by.id('AppSignInButton')).tap();
         await element(by.id('AppSignInButton')).tap();
 
-        await expect(element(by.id('calendarButton'))).toBeNotVisible();
+        await expect(element(by.id('agendaButton'))).toBeNotVisible();
         await expect(element(by.id('projectButton'))).toBeNotVisible();
-        await expect(element(by.id('searchButton'))).toBeNotVisible();
+        await expect(element(by.id('invitationButton'))).toBeNotVisible();
         await expect(element(by.id('profileButton'))).toBeNotVisible();
     });
     
@@ -30,9 +30,9 @@ describe('Test sign in', () => {
         await element(by.id('AppSignInButton')).tap();
         await element(by.id('AppSignInButton')).tap();
     
-        await expect(element(by.id('calendarButton'))).toBeVisible();
+        await expect(element(by.id('agendaButton'))).toBeVisible();
         await expect(element(by.id('projectButton'))).toBeVisible();
-        await expect(element(by.id('searchButton'))).toBeVisible();
+        await expect(element(by.id('invitationButton'))).toBeVisible();
         await expect(element(by.id('profileButton'))).toBeVisible();
 
         await element(by.id('profileButton')).tap();

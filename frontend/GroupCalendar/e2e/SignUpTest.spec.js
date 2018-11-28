@@ -1,4 +1,4 @@
-describe.only('Test sign up', () => {
+describe.only('Test Sign Up', () => {
     beforeEach(async () => {
         await device.reloadReactNative();
         await element(by.id('SignUpButton')).tap();
@@ -86,9 +86,9 @@ describe.only('Test sign up', () => {
         await element(by.id('signUpButton')).tap();
         await element(by.id('signUpButton')).tap();
 
-        await expect(element(by.id('calendarButton'))).toBeVisible();
+        await expect(element(by.id('agendaButton'))).toBeVisible();
         await expect(element(by.id('projectButton'))).toBeVisible();
-        await expect(element(by.id('searchButton'))).toBeVisible();
+        await expect(element(by.id('invitationButton'))).toBeVisible();
         await expect(element(by.id('profileButton'))).toBeVisible();
 
         await element(by.id('profileButton')).tap();
