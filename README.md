@@ -2,6 +2,11 @@
 This project is an ios app that aims to help small group (10-20) to arrange and decide meeting time.  
 This app is developed during CPEN-321 (Software Engineering) at UBC.
 
+## Authors
+Zeng, Zhuohang (zeng_zh@foxmail.com)  
+Zhang, Yuxuan (alicechang0626@gmail.com)  
+Jiang, He (kylejoeca@gmail.com)  
+
 ## Project Details
 ### Architecture Diagram
 ![arch_new](https://user-images.githubusercontent.com/22037146/50525793-943c6600-0a92-11e9-87e3-8b37e663e1f3.png)
@@ -54,4 +59,9 @@ Use Detox for automated GUI test.
 
 ## Screen Shots
 <img width="250" alt="screen shot 2018-12-28 at 11 09 03" src="https://user-images.githubusercontent.com/22037146/50525578-2c395000-0a91-11e9-9995-2a0ee3cb40de.png"><img width="250" alt="screen shot 2018-12-28 at 11 09 20" src="https://user-images.githubusercontent.com/22037146/50525586-34918b00-0a91-11e9-8d41-25b61c875cfe.png"><img width="250" alt="screen shot 2018-12-28 at 11 09 25" src="https://user-images.githubusercontent.com/22037146/50525588-35c2b800-0a91-11e9-946f-1ea5e96b240a.png"><img width="250" alt="screen shot 2018-12-28 at 11 13 40" src="https://user-images.githubusercontent.com/22037146/50525651-aec20f80-0a91-11e9-86f9-f9950c22fae7.png"><img width="250" alt="screen shot 2018-12-28 at 11 09 30" src="https://user-images.githubusercontent.com/22037146/50525591-39563f00-0a91-11e9-812d-06d0c67335ae.png"><img width="250" alt="screen shot 2018-12-28 at 11 09 32" src="https://user-images.githubusercontent.com/22037146/50525594-39eed580-0a91-11e9-9c82-918d81abeda4.png">
+
+## Frameworks
+<img width="200" alt="react-native" src="https://user-images.githubusercontent.com/22037146/50526181-36f5e400-0a95-11e9-9186-ed0b3037ca62.png">
+<img width="200" alt="expressjs" src="https://user-images.githubusercontent.com/22037146/50526182-38bfa780-0a95-11e9-988d-21e20b8675f6.jpg">
+
 
